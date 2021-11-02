@@ -1,7 +1,7 @@
 'use strict'
 /**
  * 统一获取http数据
- * Created by yaoze on 2017/2/17.
+ * Created by yaoze on 2021/11/02.
  */
 import axios from 'axios' // 引入axios组件
 import querystring from 'query-string'
