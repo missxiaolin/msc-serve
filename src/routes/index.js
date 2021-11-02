@@ -5,7 +5,6 @@ import RouterConfigBuilder from '../library/utils/router_config_builder'
 
 /* GET home page. */
 router.get('/', function (req, res) {
-  console.log('ssssss')
   res.json({ title: '根路径' })
 })
 
