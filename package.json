@@ -3,7 +3,12 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "start": "node ./bin/www"
+    "start": "node ./bin/www",
+    "build:serve": "npm run watch & npm run server",
+    "serve": "node-dev ./dist/app.js",
+    "watch": "babel src --copy-files --watch --out-dir dist  --ignore src/public --verbose --source-maps",
+    "build": "babel src --copy-files -d dist --verbose",
+    "command": "NODE_ENV=production node dist/command.js"
   },
   "dependencies": {
     "@adonisjs/ace": "^5.0.8",
