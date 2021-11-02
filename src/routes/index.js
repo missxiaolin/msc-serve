@@ -1,9 +1,12 @@
-var express = require('express');
-var router = express.Router();
+var express = require('express')
+var router = express.Router()
+
+import RouterConfigBuilder from '../library/utils/router_config_builder'
 
 /* GET home page. */
-router.get('/', function(req, res, next) {
-  res.render('index', { title: 'Express' });
-});
+router.get('/', function (req, res) {
+  console.log('ssssss')
+  res.json({ title: '根路径' })
+})
 
-module.exports = router;
+export default router

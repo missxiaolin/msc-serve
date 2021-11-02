@@ -23,8 +23,7 @@ import _ from 'lodash'
 import ejs from 'ejs'
 import appConfig from './config/app'
 
-var indexRouter = require('./routes/index');
-var usersRouter = require('./routes/users');
+import router from './routes/index'
 
 const startup = () => {
   const app = express()
@@ -83,8 +82,16 @@ const startup = () => {
   //   next(createError(404))
   // })
 
-  app.use('/', indexRouter);
-  app.use('/users', usersRouter);
+  app.use('/', async (req, res, next) => {
+    let path = req.path
+    // 只对以 /api & /project/${projectId}/api 路径开头的接口进行响应
+    let projectApiReg = /^\/project\/\d+\/api/i
+    if (_.startsWith(path, '/api') || path.search(projectApiReg) === 0 || path == '/') {
+      return router(req, res, next)
+    } else {
+      next()
+    }
+  })
 
   app.set('port', appConfig.port)
 
