@@ -1,35 +1,25 @@
 import Token from '../library/utils/token'
+import API_RES from '../constants/api_res'
 
-
-const whileList = [];
-
-
+/**
+ * login 中间件
+ * @param {*} req 
+ * @param {*} res 
+ * @param {*} next 
+ * @returns 
+ */
 function login(req, res, next) {
-    let url = req.url
-    if (whileList.includes(url)) {
+    let token = req.get('token') || ""
+    if (!token) {
+        res.send(JSON.stringify(API_RES.needLoginIn()));
+        return
+    }
+    let data = Token.decrypt(token)
+    if (data.token) {
         next()
     } else {
-        let response = {
-            success: true,
-            model: {
-
-            }
-        }
-        let token = req.get('token') || ""
-        if (!token) {
-            response.success = false
-            response.errorCode = '1403'
-            res.send(JSON.stringify(response));
-        }
-        let data = Token.decrypt(token)
-        if (data.token) {
-            next()
-        } else {
-            response.success = false
-            response.errorCode = '1403'
-            res.send(JSON.stringify(response));
-        }
-
+        res.send(JSON.stringify(API_RES.needLoginIn()));
+        return
     }
 }
 

@@ -7,7 +7,7 @@
 function showResult(data, success = true, errorMessage = '', errorCode = null) {
     return {
         success,
-        data,
+        model: data,
         errorMessage,
     }
 }
@@ -23,7 +23,16 @@ function showError(errorMessage = '', errorCode = 10000, data = {}) {
     return showResult(data, false, errorMessage, errorCode)
 }
 
+/**
+ * @param {*} msg 
+ * @returns 
+ */
+function needLoginIn(msg = '请先登录') {
+    return showResult({}, false, msg, 10000)
+}
+
 export default {
     showResult,
-    showError
+    showError,
+    needLoginIn
 }
