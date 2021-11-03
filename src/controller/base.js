@@ -1,3 +1,4 @@
+import API_RES from '../constants/api_res'
 
 /**
  * 基础Base类
@@ -9,13 +10,9 @@
      * @param {*} data 
      * @param {*} success 
      * @param {*} errorMessage 
+     * @param {*} errorCode
      */
-    send(res, data, success = true, errorMessage = "") {
-        let result = {
-            model: data,
-            success: success,
-            errorMessage: errorMessage
-        }
-        return res.send(result)
+    send(res, data, success = true, errorMessage = "", errorCode = "") {
+        return res.send(API_RES.showResult(data, success, errorMessage, errorCode))
     }
 }
