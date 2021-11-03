@@ -27,6 +27,7 @@
     "ioredis": "^4.28.0",
     "ipip-datx": "^0.2.2",
     "jsonwebtoken": "^8.5.1",
+    "knex": "^0.95.13",
     "log4js": "^6.3.0",
     "moment": "^2.29.1",
     "morgan": "~1.9.1"
