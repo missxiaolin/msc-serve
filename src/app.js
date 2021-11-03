@@ -1,5 +1,5 @@
 /*
-Copyright(c)  2017  Lianjia, Inc. All Rights Reserved
+Copyright(c)  2021  Lianjia, Inc. All Rights Reserved
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
 
@@ -27,10 +27,6 @@ import ejs from 'ejs'
 const startup = () => {
   const app = express()
 
-  app.use(bodyParser.urlencoded({ "limit": "10000000kb" })); //
-
-  app.use(bodyParser.json({ "limit": "10000000kb" })); //
-
   // view engine setup
   app.set('views', path.join(__dirname, 'views'));
   // 设置模板引擎为ejs
@@ -43,15 +39,17 @@ const startup = () => {
   app.use(morgan('dev'))
   // app.use(express.json())
   // app.use(express.urlencoded({ extended: false }))
+  app.use(bodyParser.urlencoded({ "limit": "10000000kb" }))
   // 设置body-parser
-  app.use(bodyParser.urlencoded({ extended: false }))
+  // app.use(bodyParser.urlencoded({ extended: false }))
   // 解析json请求
-  app.use(bodyParser.json({ extended: false }))
+  // app.use(bodyParser.json({ extended: false }))
+  app.use(bodyParser.json({ "limit": "10000000kb" }))
   // 设置cookie-parse
   app.use(cookieParser())
 
   /* 添加静态路径 */
-  app.use(express.static(path.join(__dirname, 'public')))
+  app.use(express.static(path.join(__dirname, '../public')))
 
   // app.options('*', cors())
 
