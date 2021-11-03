@@ -6,13 +6,15 @@ const METHOD_TYPE_POST = 'post'
  * @param {String} url          接口url
  * @param {String} methodType   接口类型, METHOD_TYPE_GET / METHOD_TYPE_POST
  * @param {Function} func       实际controller函数
+ * @param {Boolean} needLogin   是否需要登录
  * @param {Object}
  */
-function routerConfigBuilder(url = '/', methodType = METHOD_TYPE_GET, func) {
+function routerConfigBuilder(url = '/', methodType = METHOD_TYPE_GET, func, needLogin = false) {
     let routerConfig = {}
     routerConfig[url] = {
         methodType,
         func,
+        needLogin
     }
     return routerConfig
 }

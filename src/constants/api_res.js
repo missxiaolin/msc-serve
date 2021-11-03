@@ -14,13 +14,13 @@ function showResult(data, success = true, errorMessage = '', errorCode = null) {
 
 /**
  * 返回错误消息
- * @param {*} errorMsg
+ * @param {*} errorMessage
  * @param {*} errorCode
  * @param {*} data
  * @param {*} action
  */
-function showError(errorMsg = '', errorCode = 10000, data = {}) {
-    return showResult(data, false, errorMsg, errorCode)
+function showError(errorMessage = '', errorCode = 10000, data = {}) {
+    return showResult(data, false, errorMessage, errorCode)
 }
 
 export default {
