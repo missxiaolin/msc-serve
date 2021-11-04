@@ -7,7 +7,7 @@ const indexController = new Index()
 // 首页
 const index = RouterConfigBuilder.routerConfigBuilder('/api/index', RouterConfigBuilder.METHOD_TYPE_GET, (req, res) => {
     return indexController.index(req, res)
-}, true)
+}, false)
 
 
 export default {
