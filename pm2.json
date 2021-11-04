@@ -1,0 +1,6 @@
+[
+    {
+      "name": "montor-server",
+      "script": "npm run start"
+    }
+]
