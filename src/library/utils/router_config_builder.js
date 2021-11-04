@@ -1,3 +1,5 @@
+import API_RES from '../../constants/api_res'
+
 const METHOD_TYPE_GET = 'get'
 const METHOD_TYPE_POST = 'post'
 
@@ -13,7 +15,14 @@ function routerConfigBuilder(url = '/', methodType = METHOD_TYPE_GET, func, need
     let routerConfig = {}
     routerConfig[url] = {
         methodType,
-        func,
+        func: (req, res, next) => {
+            // 封装一层, 统一加上catch代码
+            try {
+                func(req, res, next)
+            } catch(e) {
+                res.send(API_RES.showError('服务器错误', 10000, e.stack))
+            }
+        },
         needLogin
     }
     return routerConfig
