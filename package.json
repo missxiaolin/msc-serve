@@ -7,7 +7,8 @@
     "build:serve": "npm run watch & npm run server",
     "serve": "node-dev ./dist/app.js",
     "watch": "babel src --copy-files --watch --out-dir dist  --ignore src/public --verbose --source-maps",
-    "build": "babel src --copy-files -d dist --verbose"
+    "build": "babel src --copy-files -d dist --verbose",
+    "command": "NODE_ENV=production node dist/command.js"
   },
   "dependencies": {
     "@adonisjs/ace": "^5.0.8",
@@ -32,7 +33,8 @@
     "log4js": "^6.3.0",
     "md5": "^2.3.0",
     "moment": "^2.29.1",
-    "morgan": "~1.9.1"
+    "morgan": "~1.9.1",
+    "shelljs": "^0.8.4"
   },
   "devDependencies": {
     "babel-preset-env": "^1.7.0",
