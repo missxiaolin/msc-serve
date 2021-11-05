@@ -1,4 +1,6 @@
 import { Command } from '@adonisjs/ace'
+import shell from 'shelljs'
+import path from 'path'
 
 /**
  * 命令执行基础类
@@ -24,11 +26,25 @@ class Base extends Command {
      * @returns {Promise<void>}
      */
     async handle(args, options) {
-        this.log('command start')
     }
 
     async execute (args, options) {
 
+    }
+
+    /**
+     * 执行脚本
+     * @param {*} commandName 
+     * @param {*} args 
+     */
+    async execCommand(commandName, args = []) {
+        let argvString = args.map((arg) => { return `'${arg}'` }).join('   ')
+        let command = `NODE_ENV=production node ${projectBaseUri}/dist/command.js ${commandName}  ${argvString}`
+        shell.exec(command, {
+            async: true,
+            silent: true
+        }, () => {
+        })
     }
 
 }
