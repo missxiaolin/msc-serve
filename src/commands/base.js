@@ -47,6 +47,13 @@ class Base extends Command {
         })
     }
 
+    /**
+     * 打印log 日志
+     */
+    log() {
+
+    }
+
 }
 
 export default Base
