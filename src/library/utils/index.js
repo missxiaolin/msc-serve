@@ -65,6 +65,38 @@ const compare = property => {
     }
 }
 
+const isType = () => {
+    let _obj = {
+        isNumeric: 'Number',
+        isBoolean: 'Boolean',
+        isString: 'String',
+        isNull: 'Null',
+        isUndefined: 'Undefined',
+        isSymbol: 'Symbol',
+        isPlainObject: 'Object',
+        isArray: 'Array',
+        isRegExp: 'RegExp',
+        isDate: 'Date',
+        isfunction: 'Function',
+        isWindow: 'Window'
+    }
+
+    let _type = {},
+        _toString = _type.toString
+
+    for (var key in _obj) {
+        if (!_obj.hasOwnProperty(key)) break
+        _type[key] = (function () {
+            var reg = new RegExp("^\\[object " + _obj[key] + "\\]$")
+            return function anonymous(val) {
+                return reg.test(_toString.call(val))
+            }
+        })()
+    }
+
+    return _type
+}
+
 const { ip2Locate } = LIpip
 export default {
     sleep,
@@ -72,5 +104,6 @@ export default {
     ip2Locate,
     objectToArray,
     handleEmptyData,
-    compare
+    compare,
+    isType
 }
