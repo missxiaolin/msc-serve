@@ -9,7 +9,7 @@ import API_RES from '../constants/api_res'
  * @returns 
  */
 function login(req, res, next) {
-    let token = req.get('token') || ""
+    let token = req.get('Authorization') || ""
     if (!token) {
         res.send(API_RES.needLoginIn());
         return

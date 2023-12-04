@@ -54,7 +54,6 @@ export default class PerformanceModel {
         ]) {
             insertData[column] = data[column] || ""
         }
-        console.log(insertData)
         let insertResult = await Knex.returning('id')
             .insert(insertData)
             .into(tableName)
