@@ -3,7 +3,7 @@ import moment from "moment";
 import _ from "lodash";
 import ErrorSave from "../common/err_save";
 import LIpip from "../library/ipip";
-
+import config from "../config/common";
 const errprSave = new ErrorSave();
 
 /**
@@ -27,7 +27,17 @@ export default class Index extends Base {
     if (data.monitorIp) {
       data.cregion = LIpip.ip2Locate(data.monitorIp) || "";
     }
-    errprSave.save(data);
+    if (config.use.mq) {
+      mq.sendQueueMsg(
+        "webLogSave",
+        JSON.stringify(data) || {},
+        (res) => {},
+        (error) => {}
+      );
+    }
+    if (!config.use.mq) {
+      errprSave.save(data);
+    }
     return this.send(res, { title: "保存成功" });
   }
 }

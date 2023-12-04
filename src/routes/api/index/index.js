@@ -4,7 +4,7 @@ import RouterConfigBuilder from '../../../library/utils/router_config_builder'
 
 const indexController = new Index()
 
-// 首页
+// 保存
 const index = RouterConfigBuilder.routerConfigBuilder('/api/update', RouterConfigBuilder.METHOD_TYPE_POST, (req, res) => {
     return indexController.index(req, res)
 }, false)
