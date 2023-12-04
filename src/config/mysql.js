@@ -11,7 +11,7 @@ const development = {
     port: '3306',
     user: 'root',
     password: 'root',
-    database: 'web'
+    database: 'msc_log'
 }
 // 测试环境配置
 const testing = development

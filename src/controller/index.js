@@ -27,7 +27,6 @@ export default class Index extends Base {
     if (data.monitorIp) {
       data.cregion = LIpip.ip2Locate(data.monitorIp) || "";
     }
-    console.log(data);
     errprSave.save(data);
     return this.send(res, { title: "保存成功" });
   }
