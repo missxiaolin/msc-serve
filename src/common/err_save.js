@@ -1,8 +1,10 @@
 import Logger from "../library/logger";
 import * as error from "../config/err";
 import PerformanceModel from "../model/performance_model";
+import ResourceModel from '../model/resource_model';
 
 const performanceModel = new PerformanceModel();
+const resourceModel = new ResourceModel();
 export default class ErrorSave {
   constructor() {}
 
@@ -30,6 +32,15 @@ export default class ErrorSave {
         case error.JS_ERROR:
           break;
         case error.RESOURCE_ERROR:
+          data.level = item.level || "";
+          data.category = item.category || "";
+          data.happenDate = item.happenDate || "";
+          data.errorMsg = item.errorMsg || "";
+          data.url = item.url || "";
+          data.html = item.html || "";
+          data.resourceType = item.resourceType || "";
+          data.paths = item.paths || "";
+          resourceModel.save(data)
           break;
         case error.HTTP_LOG:
           break;
