@@ -97,6 +97,11 @@ export default class PerformanceModel {
         return [];
       });
 
+    for (let item of res) {
+      item.nt = JSON.parse(item.nt)
+      item.rf = JSON.parse(item.rf)
+    }
+
     return res;
   }
 
