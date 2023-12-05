@@ -38,6 +38,8 @@ export default class ResourceModel {
       "html",
       "resourceType",
       "paths",
+      "pageUrl",
+      "simpleUrl",
     ];
   }
 

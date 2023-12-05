@@ -40,6 +40,8 @@ export default class ErrorSave {
           data.html = item.html || "";
           data.resourceType = item.resourceType || "";
           data.paths = item.paths || "";
+          data.pageUrl = item.pageUrl || "";
+          data.simpleUrl = item.simpleUrl || "";
           resourceModel.save(data)
           break;
         case error.HTTP_LOG:
