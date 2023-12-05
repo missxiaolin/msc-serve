@@ -98,8 +98,12 @@ export default class PerformanceModel {
       });
 
     for (let item of res) {
-      item.nt = JSON.parse(item.nt)
-      item.rf = JSON.parse(item.rf)
+      item.nt = item.nt ? JSON.parse(item.nt) : ""
+      item.rf = item.rf ? JSON.parse(item.rf) : ""
+      item.fcp = item.fcp ? JSON.parse(item.fcp) : ""
+      item.fp = item.fp ? JSON.parse(item.fp) : ""
+      item.fmp = item.fmp ? JSON.parse(item.fmp) : ""
+      item.lcp = item.lcp ? JSON.parse(item.lcp) : ""
     }
 
     return res;

@@ -44,6 +44,10 @@ export default class ErrorSave {
           data.happenTime = item.happenDate || "";
           data.nt = item.NT ? JSON.stringify(item.NT) : "";
           data.rf = item.RF ? JSON.stringify(item.RF) : "";
+          data.fcp = item.FCP ? JSON.stringify(item.FCP) : "";
+          data.fp = item.FP ? JSON.stringify(item.FP) : "";
+          data.fmp = item.FMP ? JSON.stringify(item.FMP): "";
+          data.lcp = item.LCP ? JSON.stringify(item.LCP): "";
           performanceModel.save(data)
           break;
         default:
