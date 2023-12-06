@@ -35,6 +35,7 @@ export default class ErrorSave {
           data.level = item.level || "";
           data.category = item.category || "";
           data.happenDate = item.happenDate || "";
+          data.happenTime = item.happenDate || "";
           data.errorMsg = item.errorMsg || "";
           data.url = item.url || "";
           data.html = item.html || "";

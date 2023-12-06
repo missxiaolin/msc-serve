@@ -72,15 +72,22 @@ export default class ResourceModel {
    * @param {*} data
    * @returns
    */
-  async getPages(params) {
-  }
+  async getPages(params) {}
 
   /**
    * 总数
    * @param {*} params
    * @returns
    */
-  async getPagesCount(params) {
-    
+  async getPagesCount(params) {}
+
+  /**
+   * 获取每小时数据
+   * @returns
+   */
+  async getHoursCount() {
+    let sql = `select resourceType, DATE_FORMAT(happenTime,"%Y-%m-%d %H:00:00") as "hour", count("id") from resource_log where DATE_FORMAT(happenTime, '%Y-%m-%d') = CURDATE() group by resourceType, DATE_FORMAT(happenTime,"%Y-%m-%d %H:00:00")`;
+    let res = await Knex.raw(sql);
+    return res[0];
   }
 }
