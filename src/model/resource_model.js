@@ -72,14 +72,73 @@ export default class ResourceModel {
    * @param {*} data
    * @returns
    */
-  async getPages(params) {}
+  async getPages(params) {
+    let {
+      pageUrl = "", // 页面链接
+      resourceType = "", // 资源类型
+      url = "", // 资源链接
+      startTime = "",
+      endTime = "",
+      pageSize = 10,
+      page = 1,
+    } = params;
+    let tableName = getTableName();
+    let res = Knex.select(this.tableColumnArr)
+      .from(tableName)
+      .where("happenTime", "<", endTime)
+      .andWhere("happenTime", ">", startTime);
+    if (pageUrl) {
+      res = res.andWhere("pageUrl", pageUrl);
+    }
+    if (resourceType) {
+      res = res.andWhere("resourceType", resourceType);
+    }
+    if (url) {
+      res = res.andWhere("url", url);
+    }
+    res = await res
+      .limit(pageSize)
+      .offset(page * pageSize - pageSize)
+      .catch((err) => {
+        console.log(err);
+        return [];
+      });
+    return res;
+  }
 
   /**
    * 总数
    * @param {*} params
    * @returns
    */
-  async getPagesCount(params) {}
+  async getPagesCount(params) {
+    let {
+      pageUrl = "", // 页面链接
+      resourceType = "", // 资源类型
+      url = "", // 资源链接
+      startTime = "",
+      endTime = "",
+    } = params;
+    let tableName = getTableName();
+    let res = Knex.from(tableName)
+      .where("happenTime", "<", endTime)
+      .andWhere("happenTime", ">", startTime);
+    if (pageUrl) {
+      res = res.andWhere("pageUrl", pageUrl);
+    }
+    if (resourceType) {
+      res = res.andWhere("resourceType", resourceType);
+    }
+    if (url) {
+      res = res.andWhere("url", url);
+    }
+    res = await res.count("* as resourceCount").catch((err) => {
+      console.log(err);
+      return [];
+    });
+
+    return res[0].resourceCount;
+  }
 
   /**
    * 获取每小时数据

@@ -5,7 +5,7 @@ import RouterConfigBuilder from '../../../library/utils/router_config_builder'
 const resourceController = new Resource()
 
 // 性能列表
-const resourceList = RouterConfigBuilder.routerConfigBuilder('/adm/resource/list', RouterConfigBuilder.METHOD_TYPE_GET, (req, res) => {
+const resourceList = RouterConfigBuilder.routerConfigBuilder('/adm/resource/list', RouterConfigBuilder.METHOD_TYPE_POST, (req, res) => {
     return resourceController.list(req, res)
 }, false)
 

@@ -16,6 +16,20 @@ export default class Resource extends Base {
   async list(req, res) {
     let data = req.body || {},
       result = {};
+    result.list = await resourceModel.getPages(data)
+    result.count = await resourceModel.getPagesCount(data);
+    return this.send(res, result);
+  }
+
+  /**
+   * 获取一个时间段数据
+   * @param {*} req 
+   * @param {*} res 
+   * @returns 
+   */
+  async getGroupByHours(req, res) {
+    let data = req.body || {},
+      result = {};
     result.tb = await resourceModel.getHoursCount()
     return this.send(res, result);
   }
