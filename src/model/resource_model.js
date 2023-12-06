@@ -144,8 +144,12 @@ export default class ResourceModel {
    * 获取每小时数据
    * @returns
    */
-  async getHoursCount() {
-    let sql = `select resourceType, DATE_FORMAT(happenTime,"%Y-%m-%d %H:00:00") as "hour", count("id") from resource_log where DATE_FORMAT(happenTime, '%Y-%m-%d') = CURDATE() group by resourceType, DATE_FORMAT(happenTime,"%Y-%m-%d %H:00:00")`;
+  async getHoursCount(params) {
+    let {
+      startTime = "",
+      endTime = "",
+    } = params;
+    let sql = `select resourceType, DATE_FORMAT(happenTime,"%Y-%m-%d %H:00:00") as "hour", count("id") as count from resource_log where happenTime > "${startTime}" and happenTime < "${endTime}" group by resourceType, DATE_FORMAT(happenTime,"%Y-%m-%d %H:00:00")`;
     let res = await Knex.raw(sql);
     return res[0];
   }

@@ -1,4 +1,5 @@
 import LIpip from "../ipip";
+import moment from 'moment'
 /**
  * URL 参数解析
  * @param {String} url
@@ -99,6 +100,29 @@ const isType = () => {
 };
 
 const { ip2Locate } = LIpip;
+
+/**
+ * @description 获取两个时间间 间隔 {n} 小时 所有时间
+ * @param {*} startDateTime
+ * @param {*} endDateTime
+ * @returns
+ *
+ * @example betweenDateTimeAllHours('2023-06-03 00:50:00', '2023-06-03 12:30:00', 3)
+ */
+export const betweenDateTimeAllHours = (startDateTime, endDateTime, spacing = 1) => {
+	let hourList = [];
+	endDateTime = endDateTime || moment().format("YYYY-MM-DD HH:mm:ss");
+	const start = moment(startDateTime);
+	const end = moment(endDateTime);
+	let hoursLen = end.diff(start, "hours");
+	hoursLen = Math.round(hoursLen / spacing); // 时间区间 四舍五入
+	hourList.push(start.format("YYYY-MM-DD HH:mm:ss"));
+	for (let i = 1; i <= hoursLen; i++) {
+		const newTime = start.add(spacing, "hours").format("YYYY-MM-DD HH:mm:ss");
+    hourList.push(newTime)
+	}
+	return hourList;
+};
 
 export default {
   sleep,
