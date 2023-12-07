@@ -40,6 +40,7 @@ export default class ResourceModel {
       "paths",
       "pageUrl",
       "simpleUrl",
+      "ip"
     ];
   }
 

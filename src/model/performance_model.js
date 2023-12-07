@@ -41,6 +41,7 @@ export default class PerformanceModel {
       "lcp",
       "nt",
       "rf",
+      "ip",
     ];
   }
 

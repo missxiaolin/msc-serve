@@ -10,6 +10,7 @@ export default class ErrorSave {
 
   save(res) {
     let useData = res.data.lists;
+    console.log(res)
     let data = {
       monitorAppId: res.data.appUid.monitorAppId || "",
       uuId: res.data.appUid.uuId || "",
@@ -26,6 +27,7 @@ export default class ErrorSave {
       country: res.cregion.country || "",
       province: res.cregion.province || "",
       city: res.cregion.city || "",
+      ip: res.monitorIp || "",
     };
     useData.forEach((item) => {
       switch (item.category) {
