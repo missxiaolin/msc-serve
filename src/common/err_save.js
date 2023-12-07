@@ -1,16 +1,17 @@
 import Logger from "../library/logger";
 import * as error from "../config/err";
 import PerformanceModel from "../model/performance_model";
-import ResourceModel from '../model/resource_model';
+import ResourceModel from "../model/resource_model";
+import PageModel from "../model/page_model";
 
 const performanceModel = new PerformanceModel();
 const resourceModel = new ResourceModel();
+const pageModel = new PageModel();
 export default class ErrorSave {
   constructor() {}
 
   save(res) {
     let useData = res.data.lists;
-    console.log(res)
     let data = {
       monitorAppId: res.data.appUid.monitorAppId || "",
       uuId: res.data.appUid.uuId || "",
@@ -45,11 +46,25 @@ export default class ErrorSave {
           data.paths = item.paths || "";
           data.pageUrl = item.pageUrl || "";
           data.simpleUrl = item.simpleUrl || "";
-          resourceModel.save(data)
+          resourceModel.save(data);
           break;
         case error.HTTP_LOG:
           break;
         case error.PAGE_PV:
+          data.level = item.level || "";
+          data.category = item.category || "";
+          data.happenDate = item.happenDate || "";
+          data.happenTime = item.happenDate || "";
+          data.pageUrl = item.pageUrl || "";
+          data.simpleUrl = item.simpleUrl || "";
+          data.to = item.to || "";
+          data.from = item.from || "";
+          data.subType = item.subType || "";
+          data.duration = item.duration || "";
+          data.startTime = item.startTime || "";
+          data.referrer = item.referrer || "";
+          data.type = item.type || "";
+          pageModel.save(data);
           break;
         case error.PERFORMANCE:
           data.level = item.level || "";
@@ -62,9 +77,9 @@ export default class ErrorSave {
           data.rf = item.RF ? JSON.stringify(item.RF) : "";
           data.fcp = item.FCP ? JSON.stringify(item.FCP) : "";
           data.fp = item.FP ? JSON.stringify(item.FP) : "";
-          data.fmp = item.FMP ? JSON.stringify(item.FMP): "";
-          data.lcp = item.LCP ? JSON.stringify(item.LCP): "";
-          performanceModel.save(data)
+          data.fmp = item.FMP ? JSON.stringify(item.FMP) : "";
+          data.lcp = item.LCP ? JSON.stringify(item.LCP) : "";
+          performanceModel.save(data);
           break;
         default:
       }

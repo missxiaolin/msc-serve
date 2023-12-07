@@ -204,7 +204,7 @@ CREATE TABLE `page_log` (
   `pageUrl` varchar(1000) NOT NULL DEFAULT '' COMMENT '页面链接',
   `simpleUrl` varchar(1000) NOT NULL DEFAULT '' COMMENT '页面带*链接',
   `to` varchar(300) NOT NULL DEFAULT '' COMMENT '跳转进入页面',
-  `form` varchar(300) NOT NULL DEFAULT '' COMMENT '来源页面',
+  `from` varchar(300) NOT NULL DEFAULT '' COMMENT '来源页面',
   `subType` int(11) DEFAULT NULL COMMENT '子类型 ：popstate、hashchange',
   `duration` int(11) DEFAULT NULL COMMENT 'from 页面 停留时间',
   `startTime` int(11) NOT NULL COMMENT '时间',
