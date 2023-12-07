@@ -3,10 +3,12 @@ import * as error from "../config/err";
 import PerformanceModel from "../model/performance_model";
 import ResourceModel from "../model/resource_model";
 import PageModel from "../model/page_model";
+import UserClickeModel from "../model/user_click_model";
 
 const performanceModel = new PerformanceModel();
 const resourceModel = new ResourceModel();
 const pageModel = new PageModel();
+const userClickeModel = new UserClickeModel();
 export default class ErrorSave {
   constructor() {}
 
@@ -49,6 +51,27 @@ export default class ErrorSave {
           resourceModel.save(data);
           break;
         case error.HTTP_LOG:
+          break;
+        case error.USER_CLICK:
+          data.level = item.level || "";
+          data.category = item.category || "";
+          data.happenDate = item.happenDate || "";
+          data.happenTime = item.happenDate || "";
+          data.pageUrl = item.pageUrl || "";
+          data.simpleUrl = item.simpleUrl || "";
+          data.tagName = item.tagName || "";
+          data.top = item.top || "";
+          data.left = item.left || "";
+          data.eventType = item.eventType || "";
+          data.pageHeight = item.pageHeight || "";
+          data.scrollTop = item.scrollTop || "";
+          data.subType = item.subType || "";
+          data.paths = item.paths || "";
+          data.startTime = item.startTime || "";
+          data.innerHTML = item.innerHTML || "";
+          data.viewport = item.viewport ? JSON.stringify(item.viewport) : "";
+          data.targetInfo = item.targetInfo ? JSON.stringify(item.targetInfo)  : "";
+          userClickeModel.save(data);
           break;
         case error.PAGE_PV:
           data.level = item.level || "";
