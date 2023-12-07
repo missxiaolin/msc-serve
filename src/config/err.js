@@ -1,6 +1,6 @@
 export const JS_ERROR = 'JS_ERROR'
 export const RESOURCE_ERROR  = 'RESOURCE_ERROR'
-export const HTTP_LOG = 'HTTP_ERROR'
+export const HTTP_LOG = 'HTTP_LOG'
 export const PAGE_PV = 'PAGE_CHANGE'
 export const USER_CLICK = 'USER_CLICK'
 export const PERFORMANCE = 'PERFORMANCE'

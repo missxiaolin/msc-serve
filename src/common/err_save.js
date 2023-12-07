@@ -4,11 +4,13 @@ import PerformanceModel from "../model/performance_model";
 import ResourceModel from "../model/resource_model";
 import PageModel from "../model/page_model";
 import UserClickeModel from "../model/user_click_model";
+import HttpModel from "../model/http_model";
 
 const performanceModel = new PerformanceModel();
 const resourceModel = new ResourceModel();
 const pageModel = new PageModel();
 const userClickeModel = new UserClickeModel();
+const httpModel = new HttpModel();
 export default class ErrorSave {
   constructor() {}
 
@@ -35,6 +37,7 @@ export default class ErrorSave {
     useData.forEach((item) => {
       switch (item.category) {
         case error.JS_ERROR:
+          
           break;
         case error.RESOURCE_ERROR:
           data.level = item.level || "";
@@ -51,6 +54,24 @@ export default class ErrorSave {
           resourceModel.save(data);
           break;
         case error.HTTP_LOG:
+          data.level = item.level || "";
+          data.category = item.category || "";
+          data.happenDate = item.happenDate || "";
+          data.happenTime = item.happenDate || "";
+          data.pageUrl = item.pageUrl || "";
+          data.simpleUrl = item.simpleUrl || "";
+          data.duration = item.duration || "";
+          data.method = item.method || "";
+          data.pathName = item.pathName || "";
+          data.requestText = item.requestText || "";
+          data.responseText = item.responseText || "";
+          data.httpOptions  = item.httpOptions || "";
+          data.status = item.status || "";
+          data.timeout = item.timeout || "";
+          data.statusText = item.statusText || "";
+          data.type = item.type || "";
+          data.eventType = item.eventType || "";
+          httpModel.save(data)
           break;
         case error.USER_CLICK:
           data.level = item.level || "";
