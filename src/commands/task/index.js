@@ -33,24 +33,17 @@ export default class TaskManager extends Base {
     await this.closeOtherTaskManager();
 
     this.log("开始休眠");
-    for (let i = 0; i < 30; i++) {
+    for (let i = 0; i < 10; i++) {
       await Util.getInstance().sleep(1 * 1000);
-      this.log(`休眠中, 第${i + 1}秒`);
+      console.log(`休眠中, 第${i + 1}秒`);
     }
     this.log("休眠完毕");
     this.log("开始注册cron任务");
     // 注册定时任务
-    this.log("注册每分钟执行一次的任务");
-    this.registerTaskRepeatPer1Minute();
-    // this.log("注册每5分钟执行一次的任务");
-    // this.registerTaskRepeatPer5Minute();
-    // this.log("注册每10分钟执行一次的任务");
-    // this.registerTaskRepeatPer10Minute();
-    // this.log("注册每1小时执行一次的任务");
-    // this.registerTaskRepeatPer1Hour();
-    // this.log("注册每6小时执行一次的任务");
-    // this.registerTaskRepeatPer6Hour();
-    // this.log("全部定时任务注册完毕, 等待执行");
+    this.registerTaskRepeatPer59Minute();
+
+    // 一分钟任务
+    this.registerTaskRepeatPer1Minute()
   }
 
   /**
@@ -58,17 +51,27 @@ export default class TaskManager extends Base {
    */
   async registerTaskRepeatPer1Minute() {
     schedule.scheduleJob("0 */1 * * * *", () => {
-      this.log("测试执行1分钟");
+      console.log('每分钟任务')
+      const startTime = moment().format("YYYY-MM-DD 00:00:00"),
+        endTime = moment().format("YYYY-MM-DD 23:59:59");
+      const summaryCommandList = ["Page:Analysis"];
+      for (let summaryCommand of summaryCommandList) {
+        this.dispatchParseCommand(summaryCommand, startTime, endTime);
+      }
     });
   }
 
   /**
-   * 每5分钟的第30秒启动
+   * 每小时59分59秒执行
    */
-  async registerTaskRepeatPer5Minute() {
-    // 每5分钟的第30秒启动
-    schedule.scheduleJob("0 */5 * * * *", () => {
-    //   this.log("测试执行5分钟");
+  async registerTaskRepeatPer59Minute() {
+    schedule.scheduleJob("59 59 * * * *", () => {
+      const startTime = moment().format("YYYY-MM-DD 00:00:00"),
+        endTime = moment().format("YYYY-MM-DD 23:59:59");
+      const summaryCommandList = ["Page:Analysis"];
+      for (let summaryCommand of summaryCommandList) {
+        this.dispatchParseCommand(summaryCommand, startTime, endTime);
+      }
     });
   }
 

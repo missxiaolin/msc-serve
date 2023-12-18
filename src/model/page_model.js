@@ -71,6 +71,34 @@ export default class PageModel {
   }
 
   /**
+   * uv pv
+   * @param {*} params 
+   * @returns 
+   */
+  async getIsUCount(params) {
+    let { startTime, endTime, isUv = false } = params;
+    let tableName = getTableName();
+    let res = Knex.from(tableName)
+      .where("happenTime", "<", endTime)
+      .andWhere("happenTime", ">", startTime);
+
+    
+    if (isUv) {
+      res = await res.countDistinct("uuId as pageCount").catch((err) => {
+        console.log(err);
+        return [];
+      });
+    } else {
+      res = await res.count("* as pageCount").catch((err) => {
+        console.log(err);
+        return [];
+      });
+    }
+    
+    return res[0].pageCount;
+  }
+
+  /**
    * 分页
    * @param {*} data
    * @returns
