@@ -1,6 +1,6 @@
 import Base from './base'
 
-// npm run commone Command:Demo user ceshi --onlyFlag false
+// npm run command Command:Demo user ceshi --onlyFlag false
 class CommandDemo extends Base {
     static get signature() {
         return `
