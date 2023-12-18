@@ -9,7 +9,11 @@ const index = RouterConfigBuilder.routerConfigBuilder('/api/update', RouterConfi
     return indexController.index(req, res)
 }, false)
 
+const analyseCore = RouterConfigBuilder.routerConfigBuilder('/api/analyse/core/analyse', RouterConfigBuilder.METHOD_TYPE_POST, (req, res) => {
+    return indexController.analyseCore(req, res)
+}, true)
 
 export default {
     ...index,
+    ...analyseCore
 }
