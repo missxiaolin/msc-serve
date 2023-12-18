@@ -20,7 +20,7 @@ function routerConfigBuilder(url = '/', methodType = METHOD_TYPE_GET, func, need
             try {
                 func(req, res, next)
             } catch(e) {
-                res.send(API_RES.showError('服务器错误', 10000, e.stack))
+                res.send(API_RES.showError('服务器错误', 10001, e.stack))
             }
         },
         needLogin

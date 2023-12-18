@@ -7,9 +7,11 @@ import config from "../config/common";
 import md5 from "md5";
 import AdmUser from "../model/adm_user";
 import Token from "../library/utils/token";
+import PageDataAnalysisModel from "../model/page_analysis_model";
 
 const errprSave = new ErrorSave();
 const admUser = new AdmUser();
+const pageDataAnalysisModel = new PageDataAnalysisModel();
 
 /**
  * 首页
@@ -69,35 +71,36 @@ export default class Index extends Base {
 
   /**
    * 首页头部数据
-   * @param {*} req 
-   * @param {*} res 
-   * @returns 
+   * @param {*} req
+   * @param {*} res
+   * @returns
    */
-  analyseCore(req, res) {
+  async analyseCore(req, res) {
     let data = req.body || {},
       result = {
-        "todayData": {
-          "pvCount": 10140,
-          "uvCount": 2436,
-          "newUvCount": 712,
-          "oldVisitor": 468,
-          "ipCounct": 2647,
-          "jumpCount": 6715,
-          "visitFrequency": 416
+        todayData: {},
+        yesterdayData: {},
       },
-      "yesterdayData": {
-          "pvCount": 20785,
-          "uvCount": 3835,
-          "newUvCount": 1509,
-          "oldVisitor": 832,
-          "ipCounct": 5516,
-          "jumpCount": 12960,
-          "visitFrequency": 542
+      { analyseTime } = data;
+
+    analyseTime = moment(analyseTime).format("YYYY-MM-DD");
+    const preDate = moment(analyseTime)
+      .subtract(1, "days")
+      .format("YYYY-MM-DD");
+
+    const pageData = await pageDataAnalysisModel.getTimeInData([
+      analyseTime,
+      preDate,
+    ]);
+    pageData.forEach((item) => {
+      if (item.happenTime == preDate) {
+        result.yesterdayData = item;
       }
-      };
+      if (item.happenTime == analyseTime) {
+        result.todayData = item;
+      }
+    });
 
     return this.send(res, result);
   }
-
-  
 }
