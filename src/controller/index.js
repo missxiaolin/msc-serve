@@ -76,24 +76,24 @@ export default class Index extends Base {
   analyseCore(req, res) {
     let data = req.body || {},
       result = {
-        todayData: {
-          pvCount: 7087,
-          uvCount: 1547,
-          newUvCount: 503,
-          oldVisitor: 311,
-          ipCounct: 1645,
-          jumpCount: 4758,
-          visitFrequency: 4.58,
-        },
-        yesterdayData: {
-          pvCount: 20785,
-          uvCount: 3835,
-          newUvCount: 1509,
-          oldVisitor: 832,
-          ipCounct: 5516,
-          jumpCount: 12960,
-          visitFrequency: 5.42,
-        },
+        "todayData": {
+          "pvCount": 10140,
+          "uvCount": 2436,
+          "newUvCount": 712,
+          "oldVisitor": 468,
+          "ipCounct": 2647,
+          "jumpCount": 6715,
+          "visitFrequency": 416
+      },
+      "yesterdayData": {
+          "pvCount": 20785,
+          "uvCount": 3835,
+          "newUvCount": 1509,
+          "oldVisitor": 832,
+          "ipCounct": 5516,
+          "jumpCount": 12960,
+          "visitFrequency": 542
+      }
       };
 
     return this.send(res, result);
