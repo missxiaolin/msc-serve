@@ -40,8 +40,8 @@ export default class TaskManager extends Base {
     this.log("休眠完毕");
     this.log("开始注册cron任务");
     // 注册定时任务
-    // this.log("注册每分钟执行一次的任务");
-    // this.registerTaskRepeatPer1Minute();
+    this.log("注册每分钟执行一次的任务");
+    this.registerTaskRepeatPer1Minute();
     // this.log("注册每5分钟执行一次的任务");
     // this.registerTaskRepeatPer5Minute();
     // this.log("注册每10分钟执行一次的任务");
@@ -68,7 +68,7 @@ export default class TaskManager extends Base {
   async registerTaskRepeatPer5Minute() {
     // 每5分钟的第30秒启动
     schedule.scheduleJob("0 */5 * * * *", () => {
-      this.log("测试执行5分钟");
+    //   this.log("测试执行5分钟");
     });
   }
 
