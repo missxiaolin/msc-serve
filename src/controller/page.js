@@ -97,21 +97,21 @@ export default class PageIndex extends Base {
           axisData: [],
           seriesData: [],
         },
-        url: {
+        simpleUrl: {
           axisData: [],
           seriesData: [],
         },
       };
 
+    // simpleUrl
     let urls = await pageModel.getGroupByCount({
       startTime: data.startTime,
       endTime: data.endTime,
       selKey: "simpleUrl",
     });
-    urls.forEach((item) => {
-      result.url.axisData.push(item.simpleUrl);
-      result.url.seriesData.push(item.count);
-    });
+    urls = urls.reverse();
+    result.simpleUrl.axisData = urls.map((item) => item.simpleUrl);
+    result.simpleUrl.seriesData = urls.map((item) => item.count);
 
     return this.send(res, result);
   }
