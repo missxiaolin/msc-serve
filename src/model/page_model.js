@@ -102,6 +102,10 @@ export default class PageModel {
     return res[0].pageCount;
   }
 
+  /**
+   * @param {*} params 
+   * @returns 
+   */
   async getCountGroupByUuid(params) {
     let { startTime, endTime } = params;
     let tableName = getTableName();
@@ -113,6 +117,34 @@ export default class PageModel {
       .count("* as pageCount")
       .groupBy("ip", "os", "device", "browserInfo", "userAgent");
     return res;
+  }
+
+  /**
+   * @param {*} params 
+   * @returns 
+   */
+  async getUuidCount(params) {
+    let { agoDay, uuIds } = params;
+    let tableName = getTableName();
+    let res = await Knex.from(tableName)
+      .countDistinct("uuId as pageCount")
+      .where("happenTime", "<", agoDay)
+      .andWhere("uuId", "in", uuIds);
+    return res[0].pageCount
+  }
+
+  /**
+   * @param {*} params 
+   */
+  async getUuid(params) {
+    let { startTime, endTime, isUuId = false } = params;
+    let tableName = getTableName();
+    let res = Knex.from(tableName)
+      .select('uuId')
+      .distinct('uuId')
+      .where("happenTime", "<", endTime)
+      .andWhere("happenTime", ">", startTime);
+    return res
   }
 
   /**

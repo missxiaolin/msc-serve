@@ -31,6 +31,7 @@ class PageAnalysis extends Base {
       this.warn("参数不正确, 自动退出");
       return;
     }
+    let agoDay = moment(endTime).subtract(1, "day").format(DATE_FORMAT.DISPLAY_BY_SECOND)
     let result = {
       pvCount: await pageModel.getIsUCount({
         startTime,
@@ -61,7 +62,19 @@ class PageAnalysis extends Base {
     })
     result.jumpCount = lists.filter(item => item.pageCount === 1).length; // 小时内跳出率
     result.visitFrequency = result.uvCount == 0 ? result.pvCount :  (result.pvCount / result.uvCount).toFixed(2) * 1 
-    console.log(result);
+    let uuIdList = await pageModel.getUuid({
+      startTime,
+      endTime,
+    })
+    if (uuIdList.length == 0) {
+      result.newUvCount = 0
+    } else {
+      let oldUuidCount = await pageModel.getUuidCount({
+        agoDay,
+        uuIds: uuIdList
+      })
+      result.newUvCount = uuIdList.length - oldUuidCount
+    }
     this.handleSavePage(result);
   }
 
