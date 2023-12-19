@@ -9,7 +9,13 @@ const pageHoursList = RouterConfigBuilder.routerConfigBuilder('/adm/page/hours/l
     return pageController.getGroupByHours(req, res)
 }, true)
 
+// 综合数据
+const allRoundPage = RouterConfigBuilder.routerConfigBuilder('/adm/page/echart/by/uuid', RouterConfigBuilder.METHOD_TYPE_POST, (req, res) => {
+    return pageController.getGropyBuUuId(req, res)
+}, true)
+
 
 export default {
     ...pageHoursList,
+    ...allRoundPage
 }

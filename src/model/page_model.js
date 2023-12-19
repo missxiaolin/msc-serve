@@ -103,8 +103,8 @@ export default class PageModel {
   }
 
   /**
-   * @param {*} params 
-   * @returns 
+   * @param {*} params
+   * @returns
    */
   async getCountGroupByUuid(params) {
     let { startTime, endTime } = params;
@@ -113,15 +113,15 @@ export default class PageModel {
       .where("happenTime", "<", endTime)
       .andWhere("happenTime", ">", startTime);
     res = await res
-      .select('ip', 'os', 'device', 'browserInfo', 'userAgent')
+      .select("ip", "os", "device", "browserInfo", "userAgent")
       .count("* as pageCount")
       .groupBy("ip", "os", "device", "browserInfo", "userAgent");
     return res;
   }
 
   /**
-   * @param {*} params 
-   * @returns 
+   * @param {*} params
+   * @returns
    */
   async getUuidCount(params) {
     let { agoDay, uuIds } = params;
@@ -130,21 +130,38 @@ export default class PageModel {
       .countDistinct("uuId as pageCount")
       .where("happenTime", "<", agoDay)
       .andWhere("uuId", "in", uuIds);
-    return res[0].pageCount
+    return res[0].pageCount;
   }
 
   /**
-   * @param {*} params 
+   * @param {*} params
    */
   async getUuid(params) {
-    let { startTime, endTime, isUuId = false } = params;
+    let { startTime, endTime } = params;
     let tableName = getTableName();
-    let res = Knex.from(tableName)
-      .select('uuId')
-      .distinct('uuId')
+    let res = await Knex.from(tableName)
+      .select("uuId")
+      .distinct("uuId")
       .where("happenTime", "<", endTime)
       .andWhere("happenTime", ">", startTime);
-    return res
+    return res;
+  }
+
+  /**
+   * @param {*} params
+   */
+  async getGroupByCount(params) {
+    let { startTime, endTime, limit = 30, selKey = "*" } = params;
+    let tableName = getTableName();
+    let res = await Knex.from(tableName)
+      .select(`${selKey}`)
+      .where("happenTime", "<", endTime)
+      .andWhere("happenTime", ">", startTime)
+      .groupBy(`${selKey}`)
+      .countDistinct("uuId as count")
+      .orderBy("count", "desc")
+      .limit(limit);
+    return res;
   }
 
   /**
@@ -167,8 +184,8 @@ export default class PageModel {
 
   /**
    * 获取每小时数据 uv
-   * @param {*} params 
-   * @returns 
+   * @param {*} params
+   * @returns
    */
   async getHoursCountUv(params) {
     let { startTime = "", endTime = "" } = params;
