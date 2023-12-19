@@ -155,12 +155,24 @@ export default class PageModel {
   async getPages(params) {}
 
   /**
-   * 获取每小时数据
+   * 获取每小时数据 pv
    * @returns
    */
-  async getHoursCount(params) {
+  async getHoursCountPv(params) {
     let { startTime = "", endTime = "" } = params;
-    let sql = `select resourceType, DATE_FORMAT(happenTime,"%Y-%m-%d %H:00:00") as "hour", count("id") as count from resource_log where happenTime > "${startTime}" and happenTime < "${endTime}" group by resourceType, DATE_FORMAT(happenTime,"%Y-%m-%d %H:00:00")`;
+    let sql = `select DATE_FORMAT(happenTime,"%Y-%m-%d %H:00:00") as "hour", count("id") as count from page_log where happenTime > "${startTime}" and happenTime < "${endTime}" group by DATE_FORMAT(happenTime,"%Y-%m-%d %H:00:00")`;
+    let res = await Knex.raw(sql);
+    return res[0];
+  }
+
+  /**
+   * 获取每小时数据 uv
+   * @param {*} params 
+   * @returns 
+   */
+  async getHoursCountUv(params) {
+    let { startTime = "", endTime = "" } = params;
+    let sql = `select DATE_FORMAT(happenTime,"%Y-%m-%d %H:00:00") as "hour", count(distinct uuId) as count from page_log where happenTime > "${startTime}" and happenTime < "${endTime}" group by DATE_FORMAT(happenTime,"%Y-%m-%d %H:00:00")`;
     let res = await Knex.raw(sql);
     return res[0];
   }

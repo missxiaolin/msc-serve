@@ -4,9 +4,9 @@ import RouterConfigBuilder from '../../../library/utils/router_config_builder'
 
 const pageController = new PageIndex()
 
-// 页面UV PV
+// 页面UV PV 图表
 const pageHoursList = RouterConfigBuilder.routerConfigBuilder('/adm/page/hours/list', RouterConfigBuilder.METHOD_TYPE_POST, (req, res) => {
-    return pageController.list(req, res)
+    return pageController.getGroupByHours(req, res)
 }, true)
 
 
