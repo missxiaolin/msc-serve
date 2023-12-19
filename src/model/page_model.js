@@ -72,19 +72,23 @@ export default class PageModel {
 
   /**
    * uv pv
-   * @param {*} params 
-   * @returns 
+   * @param {*} params
+   * @returns
    */
   async getIsUCount(params) {
-    let { startTime, endTime, isUv = false } = params;
+    let { startTime, endTime, isUv = false, isIp = false } = params;
     let tableName = getTableName();
     let res = Knex.from(tableName)
       .where("happenTime", "<", endTime)
       .andWhere("happenTime", ">", startTime);
 
-    
     if (isUv) {
       res = await res.countDistinct("uuId as pageCount").catch((err) => {
+        console.log(err);
+        return [];
+      });
+    } else if (isIp) {
+      res = await res.countDistinct("ip as pageCount").catch((err) => {
         console.log(err);
         return [];
       });
@@ -94,8 +98,21 @@ export default class PageModel {
         return [];
       });
     }
-    
+
     return res[0].pageCount;
+  }
+
+  async getCountGroupByUuid(params) {
+    let { startTime, endTime } = params;
+    let tableName = getTableName();
+    let res = Knex.from(tableName)
+      .where("happenTime", "<", endTime)
+      .andWhere("happenTime", ">", startTime);
+    res = await res
+      .select('ip', 'os', 'device', 'browserInfo', 'userAgent')
+      .count("* as pageCount")
+      .groupBy("ip", "os", "device", "browserInfo", "userAgent");
+    return res;
   }
 
   /**

@@ -36,20 +36,32 @@ class PageAnalysis extends Base {
         startTime,
         endTime,
         isUv: false,
+        isIp: false,
       }),
       uvCount: await pageModel.getIsUCount({
         startTime,
         endTime,
         isUv: true,
+        isIp: false,
       }),
       newUvCount: 0,
-      ipCounct: 0,
+      ipCounct: await pageModel.getIsUCount({
+        startTime,
+        endTime,
+        isUv: false,
+        isIp: true,
+      }),
       jumpCount: 0,
       visitFrequency: 0,
       happenTime: moment().format("YYYY-MM-DD"),
     };
-
-    console.log(result)
+    let lists = await pageModel.getCountGroupByUuid({
+      startTime,
+      endTime,
+    })
+    result.jumpCount = lists.filter(item => item.pageCount === 1).length; // 小时内跳出率
+    result.visitFrequency = result.uvCount == 0 ? result.pvCount :  (result.pvCount / result.uvCount).toFixed(2) * 1 
+    console.log(result);
     this.handleSavePage(result);
   }
 
