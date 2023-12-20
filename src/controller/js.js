@@ -1,6 +1,6 @@
 import Base from "./base";
-
 import JsModel from "../model/js_model";
+import { betweenDateTimeAllHours } from "../library/utils/index";
 
 const jsModel = new JsModel();
 
@@ -16,7 +16,22 @@ export default class JsController extends Base {
    */
   async jsEchart(req, res) {
     let data = req.body || {},
-      result = {};
+      result = {
+        axisData: betweenDateTimeAllHours(data.startTime, data.endTime),
+        seriesData: []
+      };
+
+    let hourData = await jsModel.getHoursCount(data)
+    result.axisData.forEach(time => {
+      let value = 0
+      hourData.forEach(v => {
+        if (v.hour == time) {
+          value = v.count
+        }
+      })
+      result.seriesData.push(value)
+    })
+    
 
     return this.send(res, result);
   }

@@ -140,5 +140,23 @@ export default class JsModel {
    * 获取每小时数据
    * @returns
    */
-  async getHoursCount(params) {}
+  async getHoursCount(params) {
+    let {
+      pageUrl = "",
+      startTime = "",
+      endTime = "",
+      errorMsg = "",
+    } = params;
+
+    let sql = `select DATE_FORMAT(happenTime,"%Y-%m-%d %H:00:00") as "hour", count("id") as count from js_log where happenTime > "${startTime}" and happenTime < "${endTime}"`;
+    if (pageUrl) {
+      sql = `${sql} pageUrl = "${pageUrl}"`
+    }
+    if (errorMsg) {
+      sql = `${sql} errorMsg = "${errorMsg}"`
+    }
+    sql = `${sql} group by DATE_FORMAT(happenTime,"%Y-%m-%d %H:00:00")`
+    let res = await Knex.raw(sql);
+    return res[0];
+  }
 }

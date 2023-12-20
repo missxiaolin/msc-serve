@@ -10,7 +10,7 @@ const jsList = RouterConfigBuilder.routerConfigBuilder('/adm/js/list', RouterCon
 }, true)
 
 // js图表
-const jsEchat = RouterConfigBuilder.routerConfigBuilder('/adm/js/echart/hour/by/pageurl', RouterConfigBuilder.METHOD_TYPE_POST, (req, res) => {
+const jsEchat = RouterConfigBuilder.routerConfigBuilder('/adm/js/echart/hour', RouterConfigBuilder.METHOD_TYPE_POST, (req, res) => {
     return jsController.jsEchart(req, res)
 }, true)
 
