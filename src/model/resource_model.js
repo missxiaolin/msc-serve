@@ -40,7 +40,7 @@ export default class ResourceModel {
       "paths",
       "pageUrl",
       "simpleUrl",
-      "ip"
+      "ip",
     ];
   }
 
@@ -98,6 +98,7 @@ export default class ResourceModel {
       res = res.andWhere("url", url);
     }
     res = await res
+      .orderBy("happenTime", "desc")
       .limit(pageSize)
       .offset(page * pageSize - pageSize)
       .catch((err) => {
@@ -146,10 +147,7 @@ export default class ResourceModel {
    * @returns
    */
   async getHoursCount(params) {
-    let {
-      startTime = "",
-      endTime = "",
-    } = params;
+    let { startTime = "", endTime = "" } = params;
     let sql = `select resourceType, DATE_FORMAT(happenTime,"%Y-%m-%d %H:00:00") as "hour", count("id") as count from resource_log where happenTime > "${startTime}" and happenTime < "${endTime}" group by resourceType, DATE_FORMAT(happenTime,"%Y-%m-%d %H:00:00")`;
     let res = await Knex.raw(sql);
     return res[0];

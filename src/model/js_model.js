@@ -99,6 +99,7 @@ export default class JsModel {
       res = res.andWhere("errorMsg", errorMsg);
     }
     res = await res
+    .orderBy("happenTime", "desc")
       .limit(pageSize)
       .offset(page * pageSize - pageSize)
       .catch((err) => {
