@@ -14,8 +14,14 @@ const allRoundPage = RouterConfigBuilder.routerConfigBuilder('/adm/page/echart/b
     return pageController.getGropyBuUuId(req, res)
 }, true)
 
+// 地图数据
+const geoDistribution = RouterConfigBuilder.routerConfigBuilder('/adm/page/echart/geo/distribution', RouterConfigBuilder.METHOD_TYPE_POST, (req, res) => {
+    return pageController.groupByCity(req, res)
+}, true)
+
 
 export default {
     ...pageHoursList,
-    ...allRoundPage
+    ...allRoundPage,
+    ...geoDistribution
 }

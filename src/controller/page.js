@@ -77,27 +77,27 @@ export default class PageIndex extends Base {
   async getGropyBuUuId(req, res) {
     let data = req.body || {},
       result = {
-        simpleUrl: {
+        simpleUrl: { // 页面
           axisData: [],
           seriesData: [],
         },
-        browser: {
+        browser: { // 浏览器版本
           axisData: [],
           seriesData: [],
         },
-        cregion: {
+        cregion: { // 城市
           axisData: [],
           seriesData: [],
         },
-        device: {
+        device: { // 浏览设备
           axisData: [],
           seriesData: [],
         },
-        os: {
+        os: { // 系统版本
           axisData: [],
           seriesData: [],
         },
-        screen: {
+        screen: { // 设备分辨率
           axisData: [],
           seriesData: [],
         },
@@ -107,6 +107,7 @@ export default class PageIndex extends Base {
     let urls = await pageModel.getGroupByCount({
       startTime: data.startTime,
       endTime: data.endTime,
+      limit: data.limit || 30,
       selKeys: ["simpleUrl"],
       groupByKey: ["simpleUrl"],
     });
@@ -115,23 +116,99 @@ export default class PageIndex extends Base {
     result.simpleUrl.seriesData = urls.map((item) => item.count);
 
     // 城市
+    let cregions = await pageModel.getGroupByCount({
+      startTime: data.startTime,
+      endTime: data.endTime,
+      limit: data.limit || 30,
+      selKeys: ["country", "province", "city"],
+      groupByKey: ["country", "province", "city"],
+    });
+    cregions = cregions.reverse();
+    result.cregion.axisData = cregions.map(
+      (item) => `${item.country} ${item.province} ${item.city}`
+    );
+    result.cregion.seriesData = cregions.map((item) => item.count);
+
+    // 浏览器设备
+    let devices = await pageModel.getGroupByCount({
+      startTime: data.startTime,
+      endTime: data.endTime,
+      limit: data.limit || 30,
+      selKeys: ["device"],
+      groupByKey: ["device"],
+    });
+    devices = devices.reverse();
+    result.device.axisData = devices.map((item) => item.device);
+    result.device.seriesData = devices.map((item) => item.count);
+
+    // 系统版本
+    let oss = await pageModel.getGroupByCount({
+      startTime: data.startTime,
+      endTime: data.endTime,
+      limit: data.limit || 30,
+      selKeys: ["os"],
+      groupByKey: ["os"],
+    });
+
+    oss = oss.reverse();
+    result.os.axisData = oss.map((item) => item.os);
+    result.os.seriesData = oss.map((item) => item.count);
+
+    // 系统版本
+    let browsers = await pageModel.getGroupByCount({
+      startTime: data.startTime,
+      endTime: data.endTime,
+      limit: data.limit || 30,
+      selKeys: ["browserInfo"],
+      groupByKey: ["browserInfo"],
+    });
+
+    browsers = browsers.reverse();
+    result.browser.axisData = browsers.map((item) => item.browserInfo);
+    result.browser.seriesData = browsers.map((item) => item.count);
+
     let screens = await pageModel.getGroupByCount({
+      startTime: data.startTime,
+      endTime: data.endTime,
+      limit: data.limit || 30,
+      selKeys: ["screenWidth", "screenHeight"],
+      groupByKey: ["screenWidth", "screenHeight"],
+    });
+
+    screens = screens.reverse();
+    result.screen.axisData = screens.map((item) => `${item.screenWidth}x${item.screenHeight}`);
+    result.screen.seriesData = screens.map((item) => item.count);
+
+
+
+    return this.send(res, result);
+  }
+
+
+  /**
+   * 世界地图图表
+   * @param {*} req 
+   * @param {*} res 
+   * @returns 
+   */
+  async groupByCity(req, res) {
+    let data = req.body || {},
+      result = [];
+
+    // 城市
+    let cregions = await pageModel.getGroupByCount({
       startTime: data.startTime,
       endTime: data.endTime,
       selKeys: ["country", "province", "city"],
       groupByKey: ["country", "province", "city"],
     });
-    screens = screens.reverse();
-    result.screen.axisData = screens.map(
-      (item) => `${item.country} ${item.province} ${item.city}`
-    );
-    result.screen.seriesData = screens.map((item) => item.count);
-
-    result.screens = screens;
-
-    // 浏览器设备
-    
-
+    cregions.forEach(item => {
+      let obj = {
+        name: `${item.country} ${item.province} ${item.city}`,
+        value: item.count
+      }
+      result.push(obj);
+    })
     return this.send(res, result);
   }
 }

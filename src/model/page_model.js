@@ -154,19 +154,25 @@ export default class PageModel {
     let {
       startTime,
       endTime,
-      limit = 30,
+      limit = 0,
       selKeys = "*",
       groupByKey = [],
     } = params;
     let tableName = getTableName();
-    let res = await Knex.from(tableName)
+    let res = Knex.from(tableName)
       .select(selKeys)
       .where("happenTime", "<", endTime)
       .andWhere("happenTime", ">", startTime)
       .groupBy(groupByKey)
       .countDistinct("uuId as count")
       .orderBy("count", "desc")
-      .limit(limit);
+
+    if (limit != 0) {
+      res = res.limit(limit);
+    }
+
+    res = await res;
+      
     return res;
   }
 
