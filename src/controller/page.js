@@ -77,6 +77,10 @@ export default class PageIndex extends Base {
   async getGropyBuUuId(req, res) {
     let data = req.body || {},
       result = {
+        simpleUrl: {
+          axisData: [],
+          seriesData: [],
+        },
         browser: {
           axisData: [],
           seriesData: [],
@@ -97,21 +101,36 @@ export default class PageIndex extends Base {
           axisData: [],
           seriesData: [],
         },
-        simpleUrl: {
-          axisData: [],
-          seriesData: [],
-        },
       };
 
-    // simpleUrl
+    // url
     let urls = await pageModel.getGroupByCount({
       startTime: data.startTime,
       endTime: data.endTime,
-      selKey: "simpleUrl",
+      selKeys: ["simpleUrl"],
+      groupByKey: ["simpleUrl"],
     });
     urls = urls.reverse();
     result.simpleUrl.axisData = urls.map((item) => item.simpleUrl);
     result.simpleUrl.seriesData = urls.map((item) => item.count);
+
+    // 城市
+    let screens = await pageModel.getGroupByCount({
+      startTime: data.startTime,
+      endTime: data.endTime,
+      selKeys: ["country", "province", "city"],
+      groupByKey: ["country", "province", "city"],
+    });
+    screens = screens.reverse();
+    result.screen.axisData = screens.map(
+      (item) => `${item.country} ${item.province} ${item.city}`
+    );
+    result.screen.seriesData = screens.map((item) => item.count);
+
+    result.screens = screens;
+
+    // 浏览器设备
+    
 
     return this.send(res, result);
   }

@@ -151,13 +151,19 @@ export default class PageModel {
    * @param {*} params
    */
   async getGroupByCount(params) {
-    let { startTime, endTime, limit = 30, selKey = "*" } = params;
+    let {
+      startTime,
+      endTime,
+      limit = 30,
+      selKeys = "*",
+      groupByKey = [],
+    } = params;
     let tableName = getTableName();
     let res = await Knex.from(tableName)
-      .select(`${selKey}`)
+      .select(selKeys)
       .where("happenTime", "<", endTime)
       .andWhere("happenTime", ">", startTime)
-      .groupBy(`${selKey}`)
+      .groupBy(groupByKey)
       .countDistinct("uuId as count")
       .orderBy("count", "desc")
       .limit(limit);
