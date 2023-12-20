@@ -126,7 +126,7 @@ export default class PerformanceModel {
     }
     res = await res.count("* as performanceCount").catch((err) => {
       console.log(err);
-      return [];
+      return 0;
     });
 
     return res[0].performanceCount;

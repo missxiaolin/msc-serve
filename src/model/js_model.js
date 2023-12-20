@@ -78,13 +78,66 @@ export default class JsModel {
    * @param {*} data
    * @returns
    */
-  async getPages(params) {}
+  async getPages(params) {
+    let {
+      pageUrl = "",
+      startTime = "",
+      endTime = "",
+      errorMsg = "",
+      pageSize = 10,
+      page = 1,
+    } = params;
+    let tableName = getTableName();
+    let res = Knex.select(this.tableColumnArr)
+      .from(tableName)
+      .where("happenTime", "<", endTime)
+      .andWhere("happenTime", ">", startTime);
+    if (pageUrl) {
+      res = res.andWhere("pageUrl", pageUrl);
+    }
+    if (errorMsg) {
+      res = res.andWhere("errorMsg", errorMsg);
+    }
+    res = await res
+      .limit(pageSize)
+      .offset(page * pageSize - pageSize)
+      .catch((err) => {
+        console.log(err);
+        return [];
+      });
+
+    return res
+  }
+
+  /**
+   * 分页总数
+   * @param {*} params 
+   * @returns 
+   */
+  async getPagesCount(params) {
+    let { pageUrl = "", startTime = "", endTime = "", errorMsg = "" } = params;
+
+    let tableName = getTableName();
+    let res = Knex.from(tableName)
+      .where("happenTime", "<", endTime)
+      .andWhere("happenTime", ">", startTime);
+    if (pageUrl) {
+      res = res.andWhere("pageUrl", pageUrl);
+    }
+    if (errorMsg) {
+      res = res.andWhere("errorMsg", errorMsg);
+    }
+    res = await res.count("* as jsCount").catch((err) => {
+      console.log(err);
+      return 0;
+    });
+
+    return res[0].jsCount;
+  }
 
   /**
    * 获取每小时数据
    * @returns
    */
-  async getHoursCount(params) {
-    
-  }
+  async getHoursCount(params) {}
 }
