@@ -99,7 +99,7 @@ export default class JsModel {
       res = res.andWhere("errorMsg", errorMsg);
     }
     res = await res
-    .orderBy("happenTime", "desc")
+      .orderBy("happenTime", "desc")
       .limit(pageSize)
       .offset(page * pageSize - pageSize)
       .catch((err) => {
@@ -107,13 +107,13 @@ export default class JsModel {
         return [];
       });
 
-    return res
+    return res;
   }
 
   /**
    * 分页总数
-   * @param {*} params 
-   * @returns 
+   * @param {*} params
+   * @returns
    */
   async getPagesCount(params) {
     let { pageUrl = "", startTime = "", endTime = "", errorMsg = "" } = params;
@@ -137,25 +137,61 @@ export default class JsModel {
   }
 
   /**
+   * @param {*} params
+   */
+  async getGroupByCount(params) {
+    let {
+      startTime,
+      endTime,
+      limit = 0,
+      pageUrl = "",
+      errorMsg = "",
+      selKeys = "*",
+      groupByKey = [],
+      isUuIdDistinct = false,
+    } = params;
+    let tableName = getTableName();
+    let res = Knex.from(tableName)
+      .select(selKeys)
+      .where("happenTime", "<", endTime)
+      .andWhere("happenTime", ">", startTime);
+
+    if (pageUrl) {
+      res = res.andWhere("pageUrl", pageUrl);
+    }
+    if (errorMsg) {
+      res = res.andWhere("errorMsg", errorMsg);
+    }
+    if (isUuIdDistinct) {
+      res = res.countDistinct("uuId as count");
+    } else {
+      res = res.count("* as count");
+    }
+    res = res.groupBy(groupByKey);
+    if (limit != 0) {
+      res = res.limit(limit);
+    }
+
+    res = await res;
+
+    return res;
+  }
+
+  /**
    * 获取每小时数据
    * @returns
    */
   async getHoursCount(params) {
-    let {
-      pageUrl = "",
-      startTime = "",
-      endTime = "",
-      errorMsg = "",
-    } = params;
+    let { pageUrl = "", startTime = "", endTime = "", errorMsg = "" } = params;
 
     let sql = `select DATE_FORMAT(happenTime,"%Y-%m-%d %H:00:00") as "hour", count("id") as count from js_log where happenTime > "${startTime}" and happenTime < "${endTime}"`;
     if (pageUrl) {
-      sql = `${sql} pageUrl = "${pageUrl}"`
+      sql = `${sql} pageUrl = "${pageUrl}"`;
     }
     if (errorMsg) {
-      sql = `${sql} errorMsg = "${errorMsg}"`
+      sql = `${sql} errorMsg = "${errorMsg}"`;
     }
-    sql = `${sql} group by DATE_FORMAT(happenTime,"%Y-%m-%d %H:00:00")`
+    sql = `${sql} group by DATE_FORMAT(happenTime,"%Y-%m-%d %H:00:00")`;
     let res = await Knex.raw(sql);
     return res[0];
   }
