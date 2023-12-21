@@ -229,6 +229,11 @@ export default class PageIndex extends Base {
 
     result.list = await pageModel.getGroupPages(data)
     result.count = await pageModel.getPagesGroupCount(data)
+    result.pvCount = await pageModel.getIsUCount({
+      ...data,
+      isUv: false,
+      isIp: false
+    })
     return this.send(res, result);
   }
 }
