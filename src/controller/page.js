@@ -77,27 +77,33 @@ export default class PageIndex extends Base {
   async getGropyBuUuId(req, res) {
     let data = req.body || {},
       result = {
-        simpleUrl: { // 页面
+        simpleUrl: {
+          // 页面
           axisData: [],
           seriesData: [],
         },
-        browser: { // 浏览器版本
+        browser: {
+          // 浏览器版本
           axisData: [],
           seriesData: [],
         },
-        cregion: { // 城市
+        cregion: {
+          // 城市
           axisData: [],
           seriesData: [],
         },
-        device: { // 浏览设备
+        device: {
+          // 浏览设备
           axisData: [],
           seriesData: [],
         },
-        os: { // 系统版本
+        os: {
+          // 系统版本
           axisData: [],
           seriesData: [],
         },
-        screen: { // 设备分辨率
+        screen: {
+          // 设备分辨率
           axisData: [],
           seriesData: [],
         },
@@ -176,20 +182,19 @@ export default class PageIndex extends Base {
     });
 
     screens = screens.reverse();
-    result.screen.axisData = screens.map((item) => `${item.screenWidth}x${item.screenHeight}`);
+    result.screen.axisData = screens.map(
+      (item) => `${item.screenWidth}x${item.screenHeight}`
+    );
     result.screen.seriesData = screens.map((item) => item.count);
-
-
 
     return this.send(res, result);
   }
 
-
   /**
    * 世界地图图表
-   * @param {*} req 
-   * @param {*} res 
-   * @returns 
+   * @param {*} req
+   * @param {*} res
+   * @returns
    */
   async groupByCity(req, res) {
     let data = req.body || {},
@@ -202,13 +207,28 @@ export default class PageIndex extends Base {
       selKeys: ["country", "province", "city"],
       groupByKey: ["country", "province", "city"],
     });
-    cregions.forEach(item => {
+    cregions.forEach((item) => {
       let obj = {
         name: `${item.country} ${item.province} ${item.city}`,
-        value: item.count
-      }
+        value: item.count,
+      };
       result.push(obj);
-    })
+    });
+    return this.send(res, result);
+  }
+
+  /**
+   * 页面列表
+   * @param {*} req
+   * @param {*} res
+   * @returns
+   */
+  async pageList(req, res) {
+    let data = req.body || {},
+      result = {};
+
+    result.list = await pageModel.getGroupPages(data)
+    result.count = await pageModel.getPagesGroupCount(data)
     return this.send(res, result);
   }
 }

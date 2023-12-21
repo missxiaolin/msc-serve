@@ -165,14 +165,14 @@ export default class PageModel {
       .andWhere("happenTime", ">", startTime)
       .groupBy(groupByKey)
       .countDistinct("uuId as count")
-      .orderBy("count", "desc")
+      .orderBy("count", "desc");
 
     if (limit != 0) {
       res = res.limit(limit);
     }
 
     res = await res;
-      
+
     return res;
   }
 
@@ -181,7 +181,56 @@ export default class PageModel {
    * @param {*} data
    * @returns
    */
-  async getPages(params) {}
+  async getGroupPages(params) {
+    let {
+      startTime,
+      endTime,
+      simpleUrl = "",
+      pageSize = 10,
+      page = 1,
+    } = params;
+    let tableName = getTableName();
+    let res = Knex.from(tableName)
+      .select("simpleUrl")
+      .groupBy("simpleUrl")
+      .count("* as pageCount")
+      .where("happenTime", "<", endTime)
+      .andWhere("happenTime", ">", startTime);
+
+    if (simpleUrl) {
+      res = res.andWhere("simpleUrl", simpleUrl);
+    }
+    res = await res
+      .limit(pageSize)
+      .offset(page * pageSize - pageSize)
+      .catch((err) => {
+        console.log(err);
+        return [];
+      });
+
+    return res;
+  }
+
+  /**
+   * 分页总数
+   * @param {*} params
+   * @returns
+   */
+  async getPagesGroupCount(params) {
+    let { startTime, endTime, simpleUrl = "" } = params;
+    let tableName = getTableName();
+    let res = Knex.from(tableName)
+      .where("happenTime", "<", endTime)
+      .andWhere("happenTime", ">", startTime);
+    if (simpleUrl) {
+      res = res.andWhere("simpleUrl", simpleUrl);
+    }
+    res = await res.countDistinct("simpleUrl as pageCount").catch(() => {
+      return 0;
+    });
+
+    return res[0].pageCount;
+  }
 
   /**
    * 获取每小时数据 pv

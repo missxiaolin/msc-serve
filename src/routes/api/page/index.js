@@ -19,9 +19,15 @@ const geoDistribution = RouterConfigBuilder.routerConfigBuilder('/adm/page/echar
     return pageController.groupByCity(req, res)
 }, true)
 
+// 列表
+const pageList = RouterConfigBuilder.routerConfigBuilder('/adm/page/list', RouterConfigBuilder.METHOD_TYPE_POST, (req, res) => {
+    return pageController.pageList(req, res)
+}, true)
+
 
 export default {
     ...pageHoursList,
     ...allRoundPage,
-    ...geoDistribution
+    ...geoDistribution,
+    ...pageList
 }
