@@ -33,10 +33,12 @@ export default class PageIndex extends Base {
     let pvData = await pageModel.getHoursCountPv({
       startTime: data.startTime,
       endTime: data.endTime,
+      simpleUrl: data.simpleUrl || ""
     });
     let uvData = await pageModel.getHoursCountUv({
       startTime: data.startTime,
       endTime: data.endTime,
+      simpleUrl: data.simpleUrl || ""
     });
     pvData.forEach((item) => {
       result.pvTotal = result.pvTotal + item.count;

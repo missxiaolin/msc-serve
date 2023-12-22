@@ -198,10 +198,10 @@ export default class JsModel {
 
     let sql = `select DATE_FORMAT(happenTime,"%Y-%m-%d %H:00:00") as "hour", count("id") as count from js_log where happenTime > "${startTime}" and happenTime < "${endTime}"`;
     if (pageUrl) {
-      sql = `${sql} pageUrl = "${pageUrl}"`;
+      sql = `${sql} and pageUrl = "${pageUrl}"`;
     }
     if (errorMsg) {
-      sql = `${sql} errorMsg = "${errorMsg}"`;
+      sql = `${sql} and errorMsg = "${errorMsg}"`;
     }
     sql = `${sql} group by DATE_FORMAT(happenTime,"%Y-%m-%d %H:00:00")`;
     let res = await Knex.raw(sql);
