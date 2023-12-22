@@ -25,38 +25,42 @@ export default class Performance extends Base {
 
   /**
    * 页面平均性能
-   * @param {*} req 
-   * @param {*} res 
-   * @returns 
+   * @param {*} req
+   * @param {*} res
+   * @returns
    */
   async pageAvgDetail(req, res) {
     let data = req.body || {},
       result = {
         NT: {
-          FP: 112.73581351156976,
-          TTI: 659.8831901984818,
-          DomReady: 660.1176923116576,
-          Load: 899.733389456246,
-          FirseByte: 104.0733477525911,
-          DNS: 0.021755225993362964,
-          TCP: 2.9860884567463306,
-          SSL: 2.9713077955348317,
-          TTFB: 94.93051951485415,
-          Trans: 8.596136853923412,
-          DomParse: 239.8066455571626,
-          Res: 239.6070929860476,
+          // FP: 112.73581351156976,
+          // TTI: 659.8831901984818,
+          // DomReady: 660.1176923116576,
+          // Load: 899.733389456246,
+          // FirseByte: 104.0733477525911,
+          // DNS: 0.021755225993362964,
+          // TCP: 2.9860884567463306,
+          // SSL: 2.9713077955348317,
+          // TTFB: 94.93051951485415,
+          // Trans: 8.596136853923412,
+          // DomParse: 239.8066455571626,
+          // Res: 239.6070929860476,
         },
         FP: {
-          totalStartTime: 362.73965088893215,
-          total: 1,
-          startTime: 362.73965088893215,
+          // startTime: 362.73965088893215,
         },
         FCP: {
-          totalStartTime: 1280.0842817435969,
-          total: 1,
-          startTime: 1280.0842817435969,
+          // startTime: 1280.0842817435969,
         },
       };
+
+    let ntAvg = await performanceModel.getAvgNtTimeDataSql(data)
+    let fpAvg = await performanceModel.getAvgFpTimeDataSql(data)
+    let fcpAvg = await performanceModel.getAvgFpTimeDataSql(data)
+    result.NT = ntAvg[0] || {}
+    result.FP = fpAvg[0] || {}
+    result.FCP = fcpAvg[0] || {}
+
 
     return this.send(res, result);
   }

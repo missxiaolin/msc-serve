@@ -132,4 +132,58 @@ export default class PerformanceModel {
 
     return res[0].performanceCount;
   }
+
+  /**
+   * 获取NT 平均数据
+   * @param {*} params 
+   */
+  async getAvgNtTimeDataSql(params) {
+    let { simpleUrl = "", startTime = "", endTime = "" } = params;
+    let sql = `select avg(JSON_EXTRACT(nt,'$.FP')) as "FP", avg(JSON_EXTRACT(nt,'$.TTI')) as "TTI", avg(JSON_EXTRACT(nt,'$.DomReady')) as "DomReady", avg(JSON_EXTRACT(nt,'$.Load')) as "Load", avg(JSON_EXTRACT(nt,'$.FirseByte')) as "FirseByte", avg(JSON_EXTRACT(nt,'$.DNS')) as "DNS", avg(JSON_EXTRACT(nt,'$.TCP')) as "TCP", avg(JSON_EXTRACT(nt,'$.SSL')) as "SSL", avg(JSON_EXTRACT(nt,'$.TTFB')) as "TTFB", avg(JSON_EXTRACT(nt,'$.Trans')) as "Trans", avg(JSON_EXTRACT(nt,'$.DomParse')) as "DomParse", avg(JSON_EXTRACT(nt,'$.Res'))  as "Res" from performance_log where nt != "" and happenTime > "${startTime}" and happenTime < "${endTime}"`
+    if (simpleUrl) {
+      sql = `${sql} and simpleUrl = "${simpleUrl}"`;
+    }
+    let res = await Knex.raw(sql);
+    if (res.length > 0) {
+      return res[0]
+    }
+
+    return {}
+  }
+
+  /**
+   * 获取FP 平均数据
+   * @param {*} params 
+   */
+  async getAvgFpTimeDataSql(params) {
+    let { simpleUrl = "", startTime = "", endTime = "" } = params;
+    let sql = `select avg(JSON_EXTRACT(fp,'$.startTime')) as "startTime" from performance_log where fp != "" and happenTime > "${startTime}" and happenTime < "${endTime}"`
+    if (simpleUrl) {
+      sql = `${sql} and simpleUrl = "${simpleUrl}"`;
+    }
+    let res = await Knex.raw(sql);
+    if (res.length > 0) {
+      return res[0]
+    }
+
+    return {}
+  }
+
+  /**
+   * 获取FCP 平均数据
+   * @param {*} params 
+   */
+  async getAvgFpTimeDataSql(params) {
+    let { simpleUrl = "", startTime = "", endTime = "" } = params;
+    let sql = `select avg(JSON_EXTRACT(fcp,'$.startTime')) as "startTime" from performance_log where fcp != "" and happenTime > "${startTime}" and happenTime < "${endTime}"`
+    if (simpleUrl) {
+      sql = `${sql} and simpleUrl = "${simpleUrl}"`;
+    }
+    let res = await Knex.raw(sql);
+    if (res.length > 0) {
+      return res[0]
+    }
+
+    return {}
+  }
 }
