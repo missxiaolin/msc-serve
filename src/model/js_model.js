@@ -116,7 +116,7 @@ export default class JsModel {
    * @returns
    */
   async getPagesCount(params) {
-    let { pageUrl = "", startTime = "", endTime = "", errorMsg = "" } = params;
+    let { pageUrl = "", startTime = "", endTime = "", errorMsg = "", simpleUrl = "" } = params;
 
     let tableName = getTableName();
     let res = Knex.from(tableName)
@@ -124,6 +124,9 @@ export default class JsModel {
       .andWhere("happenTime", ">", startTime);
     if (pageUrl) {
       res = res.andWhere("pageUrl", pageUrl);
+    }
+    if (simpleUrl) {
+      res = res.andWhere("simpleUrl", simpleUrl);
     }
     if (errorMsg) {
       res = res.andWhere("errorMsg", errorMsg);
@@ -194,11 +197,14 @@ export default class JsModel {
    * @returns
    */
   async getHoursCount(params) {
-    let { pageUrl = "", startTime = "", endTime = "", errorMsg = "" } = params;
+    let { pageUrl = "", startTime = "", endTime = "", errorMsg = "", simpleUrl = "" } = params;
 
     let sql = `select DATE_FORMAT(happenTime,"%Y-%m-%d %H:00:00") as "hour", count("id") as count from js_log where happenTime > "${startTime}" and happenTime < "${endTime}"`;
     if (pageUrl) {
       sql = `${sql} and pageUrl = "${pageUrl}"`;
+    }
+    if (simpleUrl) {
+      sql = `${sql} and simpleUrl = "${simpleUrl}"`;
     }
     if (errorMsg) {
       sql = `${sql} and errorMsg = "${errorMsg}"`;
