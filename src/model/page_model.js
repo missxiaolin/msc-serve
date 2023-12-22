@@ -155,6 +155,7 @@ export default class PageModel {
       startTime,
       endTime,
       limit = 0,
+      simpleUrl = "",
       selKeys = "*",
       groupByKey = [],
     } = params;
@@ -162,11 +163,15 @@ export default class PageModel {
     let res = Knex.from(tableName)
       .select(selKeys)
       .where("happenTime", "<", endTime)
-      .andWhere("happenTime", ">", startTime)
+      .andWhere("happenTime", ">", startTime);
+
+    if (simpleUrl) {
+      res = res.andWhere("simpleUrl", simpleUrl);
+    }
+    res = res
       .groupBy(groupByKey)
       .countDistinct("uuId as count")
       .orderBy("count", "desc");
-
     if (limit != 0) {
       res = res.limit(limit);
     }

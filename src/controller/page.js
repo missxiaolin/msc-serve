@@ -206,6 +206,7 @@ export default class PageIndex extends Base {
       endTime: data.endTime,
       selKeys: ["country", "province", "city"],
       groupByKey: ["country", "province", "city"],
+      simpleUrl: data.simpleUrl
     });
     cregions.forEach((item) => {
       let obj = {
