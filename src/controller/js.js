@@ -72,4 +72,44 @@ export default class JsController extends Base {
 
     return this.send(res, result);
   }
+
+  /**
+   * js 按照errorMsg 进行分组
+   * @param {*} req 
+   * @param {*} res 
+   * @returns 
+   */
+  async errorByErrormsg(req, res) {
+    let data = req.body || {},
+      result = [];
+    let jsCounts = await jsModel.getGroupByCount({
+      ...data,
+      selKeys: ["errorMsg"],
+      groupByKey: ["errorMsg"],
+    })
+    let errorMsgs = jsCounts.map((item) => item.errorMsg);
+    let dataErrorMsg = await jsModel.getGroupByCount({
+      startTime: data.startTime,
+      endTime: data.endTime,
+      simpleUrl: data.simpleUrl,
+      selKeys: ["errorMsg"],
+      groupByKey: ["errorMsg"],
+      isUuIdDistinct: true
+    })
+
+    jsCounts.forEach(err => {
+      let userCount = 0
+      dataErrorMsg.forEach(item => {
+        if (err.errorMsg == item.errorMsg) {
+          userCount = item.count
+        }
+      })
+      err.userCount = userCount
+    })
+
+    
+
+    result = jsCounts
+    return this.send(res, result);
+  }
 }

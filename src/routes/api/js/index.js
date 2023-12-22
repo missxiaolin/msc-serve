@@ -15,7 +15,15 @@ const jsEchat = RouterConfigBuilder.routerConfigBuilder('/adm/js/echart/hour', R
 }, true)
 
 
+// js 按照errorMsg 进行分组
+const errorByErrormsg = RouterConfigBuilder.routerConfigBuilder('/adm/js/aggregate/error/by/errormsg', RouterConfigBuilder.METHOD_TYPE_POST, (req, res) => {
+    return jsController.errorByErrormsg(req, res)
+}, true)
+
+
+
 export default {
     ...jsEchat,
-    ...jsList
+    ...jsList,
+    ...errorByErrormsg
 }

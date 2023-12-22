@@ -145,9 +145,11 @@ export default class JsModel {
       endTime,
       limit = 0,
       pageUrl = "",
+      simpleUrl = "",
       errorMsg = "",
       selKeys = "*",
       groupByKey = [],
+      errorMsgs = [],
       isUuIdDistinct = false,
     } = params;
     let tableName = getTableName();
@@ -159,15 +161,24 @@ export default class JsModel {
     if (pageUrl) {
       res = res.andWhere("pageUrl", pageUrl);
     }
+    if (simpleUrl) {
+      res = res.andWhere("simpleUrl", simpleUrl);
+    }
     if (errorMsg) {
       res = res.andWhere("errorMsg", errorMsg);
+    }
+    if (errorMsgs && errorMsgs.length > 0) {
+      res = res.andWhere("errorMsg", 'in', errorMsgs);
     }
     if (isUuIdDistinct) {
       res = res.countDistinct("uuId as count");
     } else {
       res = res.count("* as count");
     }
-    res = res.groupBy(groupByKey);
+    if (groupByKey && groupByKey.length > 0) {
+      res = res.groupBy(groupByKey);
+    }
+    
     if (limit != 0) {
       res = res.limit(limit);
     }
@@ -176,6 +187,7 @@ export default class JsModel {
 
     return res;
   }
+
 
   /**
    * 获取每小时数据
