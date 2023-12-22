@@ -9,7 +9,13 @@ const performanceList = RouterConfigBuilder.routerConfigBuilder('/adm/performanc
     return performanceController.list(req, res)
 }, true)
 
+// 页面平均性能
+const pageAvgDetail = RouterConfigBuilder.routerConfigBuilder('/adm/performance/echart/by/url', RouterConfigBuilder.METHOD_TYPE_POST, (req, res) => {
+    return performanceController.pageAvgDetail(req, res)
+}, true)
+
 
 export default {
     ...performanceList,
+    ...pageAvgDetail
 }
