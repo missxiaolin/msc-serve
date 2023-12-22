@@ -52,12 +52,6 @@ export default class TaskManager extends Base {
   async registerTaskRepeatPer1Minute() {
     schedule.scheduleJob("0 */1 * * * *", () => {
       console.log('每分钟任务')
-      const startTime = moment().format("YYYY-MM-DD 00:00:00"),
-        endTime = moment().format("YYYY-MM-DD 23:59:59");
-      const summaryCommandList = ["Page:Analysis"];
-      for (let summaryCommand of summaryCommandList) {
-        this.dispatchParseCommand(summaryCommand, startTime, endTime);
-      }
     });
   }
 
