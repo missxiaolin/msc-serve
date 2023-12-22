@@ -242,8 +242,12 @@ export default class PageModel {
    * @returns
    */
   async getHoursCountPv(params) {
-    let { startTime = "", endTime = "" } = params;
-    let sql = `select DATE_FORMAT(happenTime,"%Y-%m-%d %H:00:00") as "hour", count("id") as count from page_log where happenTime > "${startTime}" and happenTime < "${endTime}" group by DATE_FORMAT(happenTime,"%Y-%m-%d %H:00:00")`;
+    let { startTime = "", endTime = "", simpleUrl = "" } = params;
+    let sql = `select DATE_FORMAT(happenTime,"%Y-%m-%d %H:00:00") as "hour", count("id") as count from page_log where happenTime > "${startTime}" and happenTime < "${endTime}"`;
+    if (simpleUrl) {
+      sql = `${sql} and simpleUrl = "${simpleUrl}"`;
+    }
+    sql = `${sql} group by DATE_FORMAT(happenTime,"%Y-%m-%d %H:00:00")`
     let res = await Knex.raw(sql);
     return res[0];
   }
@@ -254,8 +258,12 @@ export default class PageModel {
    * @returns
    */
   async getHoursCountUv(params) {
-    let { startTime = "", endTime = "" } = params;
-    let sql = `select DATE_FORMAT(happenTime,"%Y-%m-%d %H:00:00") as "hour", count(distinct uuId) as count from page_log where happenTime > "${startTime}" and happenTime < "${endTime}" group by DATE_FORMAT(happenTime,"%Y-%m-%d %H:00:00")`;
+    let { startTime = "", endTime = "", simpleUrl = "" } = params;
+    let sql = `select DATE_FORMAT(happenTime,"%Y-%m-%d %H:00:00") as "hour", count(distinct uuId) as count from page_log where happenTime > "${startTime}" and happenTime < "${endTime}"`;
+    if (simpleUrl) {
+      sql = `${sql} and simpleUrl = "${simpleUrl}"`;
+    }
+    sql = `${sql} group by DATE_FORMAT(happenTime,"%Y-%m-%d %H:00:00")`
     let res = await Knex.raw(sql);
     return res[0];
   }
