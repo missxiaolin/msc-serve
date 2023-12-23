@@ -116,6 +116,7 @@ export default class PageIndex extends Base {
       startTime: data.startTime,
       endTime: data.endTime,
       limit: data.limit || 30,
+      simpleUrl: data.simpleUrl,
       selKeys: ["simpleUrl"],
       groupByKey: ["simpleUrl"],
     });
@@ -127,6 +128,7 @@ export default class PageIndex extends Base {
     let cregions = await pageModel.getGroupByCount({
       startTime: data.startTime,
       endTime: data.endTime,
+      simpleUrl: data.simpleUrl,
       limit: data.limit || 30,
       selKeys: ["country", "province", "city"],
       groupByKey: ["country", "province", "city"],
@@ -142,6 +144,7 @@ export default class PageIndex extends Base {
       startTime: data.startTime,
       endTime: data.endTime,
       limit: data.limit || 30,
+      simpleUrl: data.simpleUrl,
       selKeys: ["device"],
       groupByKey: ["device"],
     });
@@ -154,6 +157,7 @@ export default class PageIndex extends Base {
       startTime: data.startTime,
       endTime: data.endTime,
       limit: data.limit || 30,
+      simpleUrl: data.simpleUrl,
       selKeys: ["os"],
       groupByKey: ["os"],
     });
@@ -167,6 +171,7 @@ export default class PageIndex extends Base {
       startTime: data.startTime,
       endTime: data.endTime,
       limit: data.limit || 30,
+      simpleUrl: data.simpleUrl,
       selKeys: ["browserInfo"],
       groupByKey: ["browserInfo"],
     });
@@ -179,6 +184,7 @@ export default class PageIndex extends Base {
       startTime: data.startTime,
       endTime: data.endTime,
       limit: data.limit || 30,
+      simpleUrl: data.simpleUrl,
       selKeys: ["screenWidth", "screenHeight"],
       groupByKey: ["screenWidth", "screenHeight"],
     });
