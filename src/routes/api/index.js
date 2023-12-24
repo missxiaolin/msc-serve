@@ -4,6 +4,7 @@ import performance from './performance/index'
 import resource from './resource/index'
 import page from './page/index'
 import js from './js/index'
+import request from './request/index'
 
 export default {
     ...index,
@@ -11,5 +12,6 @@ export default {
     ...performance,
     ...resource,
     ...page,
-    ...js
+    ...js,
+    ...request
 }

@@ -116,7 +116,13 @@ export default class JsModel {
    * @returns
    */
   async getPagesCount(params) {
-    let { pageUrl = "", startTime = "", endTime = "", errorMsg = "", simpleUrl = "" } = params;
+    let {
+      pageUrl = "",
+      startTime = "",
+      endTime = "",
+      errorMsg = "",
+      simpleUrl = "",
+    } = params;
 
     let tableName = getTableName();
     let res = Knex.from(tableName)
@@ -171,7 +177,7 @@ export default class JsModel {
       res = res.andWhere("errorMsg", errorMsg);
     }
     if (errorMsgs && errorMsgs.length > 0) {
-      res = res.andWhere("errorMsg", 'in', errorMsgs);
+      res = res.andWhere("errorMsg", "in", errorMsgs);
     }
     if (isUuIdDistinct) {
       res = res.countDistinct("uuId as count");
@@ -181,7 +187,7 @@ export default class JsModel {
     if (groupByKey && groupByKey.length > 0) {
       res = res.groupBy(groupByKey);
     }
-    
+
     if (limit != 0) {
       res = res.limit(limit);
     }
@@ -191,13 +197,18 @@ export default class JsModel {
     return res;
   }
 
-
   /**
    * 获取每小时数据
    * @returns
    */
   async getHoursCount(params) {
-    let { pageUrl = "", startTime = "", endTime = "", errorMsg = "", simpleUrl = "" } = params;
+    let {
+      pageUrl = "",
+      startTime = "",
+      endTime = "",
+      errorMsg = "",
+      simpleUrl = "",
+    } = params;
 
     let sql = `select DATE_FORMAT(happenTime,"%Y-%m-%d %H:00:00") as "hour", count("id") as count from js_log where happenTime > "${startTime}" and happenTime < "${endTime}"`;
     if (pageUrl) {

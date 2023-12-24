@@ -46,7 +46,7 @@ export default class HttpModel {
       "timeout",
       "statusText",
       "type",
-      "eventType"
+      "eventType",
     ];
   }
 
@@ -81,4 +81,76 @@ export default class HttpModel {
    */
   async getPages(params) {}
 
+  /**
+   * 获取表格数据
+   * @param {*} params
+   * @returns
+   */
+  async byPathNameCountPages(params) {
+    let {
+      simpleUrl = "",
+      startTime = "",
+      endTime = "",
+      selKeys = "*",
+      groupByKey = [],
+      isUuIdDistinct = false,
+      status = "",
+    } = params;
+    let tableName = getTableName();
+    let res = Knex.from(tableName)
+      .select(selKeys)
+      .where("happenTime", "<", endTime)
+      .andWhere("happenTime", ">", startTime);
+    if (simpleUrl) {
+      res = res.andWhere("simpleUrl", simpleUrl);
+    }
+    if (status) {
+      res = res.andWhere("status", status);
+    }
+    if (groupByKey && groupByKey.length > 0) {
+      res = res.groupBy(groupByKey);
+    }
+    if (isUuIdDistinct) {
+      res = res.countDistinct("uuId as count");
+    } else {
+      res = res.count("* as count");
+    }
+
+    res = await res;
+
+    return res;
+  }
+
+  /**
+   * 平均耗时
+   * @param {*} params
+   * @returns
+   */
+  async getAvgDuration(params) {
+    let {
+      simpleUrl = "",
+      startTime = "",
+      endTime = "",
+      status = "",
+      pathNames = [],
+    } = params;
+    let tableName = getTableName();
+    let res = Knex.from(tableName)
+      .select("pathName")
+      .avg("duration as avgDuration")
+      .where("happenTime", "<", endTime)
+      .andWhere("happenTime", ">", startTime);
+
+    if (simpleUrl) {
+      res = res.andWhere("simpleUrl", simpleUrl);
+    }
+    if (pathNames && pathNames.length > 0) {
+      res = res.andWhere("pathName", "in", pathNames);
+    }
+    if (status) {
+      res = res.andWhere("status", status);
+    }
+    res = res.groupBy("pathName");
+    return await res;
+  }
 }
