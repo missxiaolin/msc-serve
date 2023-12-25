@@ -52,9 +52,9 @@ for (let url of Object.keys(routerConfigMap)) {
 }
 
 /* GET home page. */
-withoutLoginRouter.get('/', function (req, res) {
-  res.json({ title: '根路径' })
-})
+// withoutLoginRouter.get('/', function (req, res) {
+//   res.json({ title: '根路径' })
+// })
 
 // 处理逻辑为: 从上到下, 依次处理
 baseRouter.use('/', withoutLoginRouter)

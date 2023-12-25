@@ -24,6 +24,8 @@ import bodyParser from 'body-parser'
 import _ from 'lodash'
 import ejs from 'ejs'
 
+const serve = require("koa-static-server");
+
 const startup = () => {
   const app = express()
 
@@ -49,7 +51,14 @@ const startup = () => {
   app.use(cookieParser())
 
   /* 添加静态路径 */
-  app.use(express.static(path.join(__dirname, '../public')))
+  // app.use(express.static(path.join(__dirname, '../public')))
+
+  /**
+ * 创建静态文件
+ */
+// app.use(koaStatic(__dirname + '/views'));
+  // app.use(serve({ rootDir: "static", rootPath: "/monitor/upload/static" }));
+  // app.use(serve({ rootDir: "dist" }));
 
   // app.options('*', cors())
 
