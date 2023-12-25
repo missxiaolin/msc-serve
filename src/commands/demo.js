@@ -18,7 +18,6 @@ class CommandDemo extends Base {
     }
 
     async execute(args, options) {
-        console.log('测试')
         console.log(args)
         console.log(options)
         let { onlyFlag, logName, isTest } = options

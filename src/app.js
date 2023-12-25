@@ -34,9 +34,10 @@ const startup = () => {
   // 设置模板引擎为ejs
   // 设置模板引擎为ejs
   // app.set('view engine', 'ejs')
-  app.engine('html', ejs.renderFile)
-  // app.set('view engine', 'html')
-  app.set('view engine', 'ejs')
+  app.engine('html', ejs.__express);
+  // app.engine('html', ejs.renderFile)
+  app.set('view engine', 'html')
+  // app.set('view engine', 'ejs')
 
   app.use(morgan('dev'))
   // app.use(express.json())
@@ -81,7 +82,7 @@ const startup = () => {
     let path = req.path
     // 只对以 /api & /project/${projectId}/api 路径开头的接口进行响应
     let projectApiReg = /^\/project\/\d+\/api/i
-    if (_.startsWith(path, '/api') || _.startsWith(path, '/adm') || path.search(projectApiReg) === 0 || path == '/') {
+    if (_.startsWith(path, '/api') || _.startsWith(path, '/adm') || path.search(projectApiReg) === 0) {
       return router(req, res, next)
     } else {
       next()
@@ -90,6 +91,9 @@ const startup = () => {
 
   // 支持前端History模式 => https://router.vuejs.org/zh/guide/essentials/history-mode.html#后端配置例子
   // 将所有404页面均返回index.html
+  // app.use('*', (req, res) => {
+  //   res.render('index')
+  // })
   app.use('*', (req, res) => {
     res.json({
       success: false,
