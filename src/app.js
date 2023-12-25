@@ -31,9 +31,8 @@ const startup = () => {
 
   // view engine setup
   app.set('views', path.join(__dirname, 'views'));
+  
   // 设置模板引擎为ejs
-  // 设置模板引擎为ejs
-  // app.set('view engine', 'ejs')
   app.engine('html', ejs.__express);
   // app.engine('html', ejs.renderFile)
   app.set('view engine', 'html')
@@ -52,7 +51,7 @@ const startup = () => {
   app.use(cookieParser())
 
   /* 添加静态路径 */
-  // app.use(express.static(path.join(__dirname, '../public')))
+  app.use(express.static(path.join(__dirname, './static')))
 
   /**
  * 创建静态文件
@@ -91,16 +90,17 @@ const startup = () => {
 
   // 支持前端History模式 => https://router.vuejs.org/zh/guide/essentials/history-mode.html#后端配置例子
   // 将所有404页面均返回index.html
-  // app.use('*', (req, res) => {
-  //   res.render('index')
-  // })
   app.use('*', (req, res) => {
-    res.json({
-      success: false,
-      errorMessage: '接口不存在',
-      model: {}
-    })
+    res.type('html')
+    res.render('index')
   })
+  // app.use('*', (req, res) => {
+  //   res.json({
+  //     success: false,
+  //     errorMessage: '接口不存在',
+  //     model: {}
+  //   })
+  // })
 
   // catch 404 and forward to error handler
   // app.use(function(req, res, next) {
