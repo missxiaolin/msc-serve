@@ -1,5 +1,12 @@
 # express-serve
 
+## sdk
+
+https://github.com/missxiaolin/msc-sdk
+
+## adm
+
+https://github.com/missxiaolin/msc-adm
 
 ## 基础安装
 
