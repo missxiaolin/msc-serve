@@ -30,7 +30,6 @@
     "ipip-datx": "^0.2.2",
     "jsonwebtoken": "^8.5.1",
     "knex": "^0.95.13",
-    "koa-static-server": "^1.5.2",
     "log4js": "^6.3.0",
     "md5": "^2.3.0",
     "moment": "^2.29.1",

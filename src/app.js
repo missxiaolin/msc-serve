@@ -24,8 +24,6 @@ import bodyParser from "body-parser";
 import _ from "lodash";
 import ejs from "ejs";
 
-const serve = require("koa-static-server");
-
 const startup = () => {
   const app = express();
 
