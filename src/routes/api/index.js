@@ -5,6 +5,7 @@ import resource from './resource/index'
 import page from './page/index'
 import js from './js/index'
 import request from './request/index'
+import project from './project'
 
 export default {
     ...index,
@@ -13,5 +14,6 @@ export default {
     ...resource,
     ...page,
     ...js,
-    ...request
+    ...request,
+    ...project
 }
