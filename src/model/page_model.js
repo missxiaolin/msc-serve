@@ -76,12 +76,21 @@ export default class PageModel {
    * @returns
    */
   async getIsUCount(params) {
-    let { startTime, endTime, isUv = false, isIp = false } = params;
+    let {
+      startTime,
+      endTime,
+      isUv = false,
+      isIp = false,
+      monitorAppId = "",
+    } = params;
     let tableName = getTableName();
     let res = Knex.from(tableName)
       .where("happenTime", "<", endTime)
       .andWhere("happenTime", ">", startTime);
 
+    if (monitorAppId) {
+      res = res.andWhere("monitorAppId", monitorAppId);
+    }
     if (isUv) {
       res = await res.countDistinct("uuId as pageCount").catch((err) => {
         console.log(err);
@@ -107,11 +116,14 @@ export default class PageModel {
    * @returns
    */
   async getCountGroupByUuid(params) {
-    let { startTime, endTime } = params;
+    let { startTime, endTime, monitorAppId = "" } = params;
     let tableName = getTableName();
     let res = Knex.from(tableName)
       .where("happenTime", "<", endTime)
       .andWhere("happenTime", ">", startTime);
+    if (monitorAppId) {
+      res = res.andWhere("monitorAppId", monitorAppId);
+    }
     res = await res
       .select("ip", "os", "device", "browserInfo", "userAgent")
       .count("* as pageCount")
@@ -124,12 +136,13 @@ export default class PageModel {
    * @returns
    */
   async getUuidCount(params) {
-    let { agoDay, uuIds } = params;
+    let { agoDay, uuIds, monitorAppId } = params;
     let tableName = getTableName();
     let res = await Knex.from(tableName)
       .countDistinct("uuId as pageCount")
       .where("happenTime", "<", agoDay)
-      .andWhere("uuId", "in", uuIds);
+      .andWhere("uuId", "in", uuIds)
+      .andWhere("monitorAppId", monitorAppId);
     return res[0].pageCount;
   }
 
@@ -137,13 +150,14 @@ export default class PageModel {
    * @param {*} params
    */
   async getUuid(params) {
-    let { startTime, endTime } = params;
+    let { startTime, endTime, monitorAppId } = params;
     let tableName = getTableName();
     let res = await Knex.from(tableName)
       .select("uuId")
       .distinct("uuId")
       .where("happenTime", "<", endTime)
-      .andWhere("happenTime", ">", startTime);
+      .andWhere("happenTime", ">", startTime)
+      .andWhere("monitorAppId", monitorAppId);
     return res;
   }
 
@@ -247,7 +261,7 @@ export default class PageModel {
     if (simpleUrl) {
       sql = `${sql} and simpleUrl = "${simpleUrl}"`;
     }
-    sql = `${sql} group by DATE_FORMAT(happenTime,"%Y-%m-%d %H:00:00")`
+    sql = `${sql} group by DATE_FORMAT(happenTime,"%Y-%m-%d %H:00:00")`;
     let res = await Knex.raw(sql);
     return res[0];
   }
@@ -263,7 +277,7 @@ export default class PageModel {
     if (simpleUrl) {
       sql = `${sql} and simpleUrl = "${simpleUrl}"`;
     }
-    sql = `${sql} group by DATE_FORMAT(happenTime,"%Y-%m-%d %H:00:00")`
+    sql = `${sql} group by DATE_FORMAT(happenTime,"%Y-%m-%d %H:00:00")`;
     let res = await Knex.raw(sql);
     return res[0];
   }

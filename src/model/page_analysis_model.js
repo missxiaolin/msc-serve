@@ -20,6 +20,7 @@ export default class PageDataAnalysisModel {
       "newUvCount",
       "ipCounct",
       "jumpCount",
+      "monitorAppId",
       "visitFrequency",
       "happenTime",
     ];

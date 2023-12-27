@@ -2,9 +2,11 @@ import Base from "../base";
 import moment from "moment";
 import PageModel from "../../model/page_model";
 import PageDataAnalysisModel from "../../model/page_analysis_model";
+import ProjectModel from "../../model/project";
 import DATE_FORMAT from "../../constants/date_format";
 
 const pageModel = new PageModel();
+const projectModel = new ProjectModel();
 const pageDataAnalysisModel = new PageDataAnalysisModel();
 
 class PageAnalysis extends Base {
@@ -31,19 +33,42 @@ class PageAnalysis extends Base {
       this.warn("参数不正确, 自动退出");
       return;
     }
-    let agoDay = moment(endTime).subtract(1, "day").format(DATE_FORMAT.DISPLAY_BY_SECOND)
+    let happenTime = moment().format("YYYY-MM-DD");
+    let agoDay = moment(endTime)
+      .subtract(1, "day")
+      .format(DATE_FORMAT.DISPLAY_BY_SECOND);
+    let allProject = await projectModel.getStatusAll();
+    allProject.forEach((item) => {
+      this.getPageData({
+        item,
+        agoDay,
+        startTime,
+        endTime,
+        happenTime,
+      });
+    });
+  }
+
+  /**
+   * 分析page数据
+   * @param {*} data
+   */
+  async getPageData(data) {
+    const { item, agoDay, startTime, endTime, happenTime } = data;
     let result = {
       pvCount: await pageModel.getIsUCount({
         startTime,
         endTime,
         isUv: false,
         isIp: false,
+        monitorAppId: item.monitorAppId
       }),
       uvCount: await pageModel.getIsUCount({
         startTime,
         endTime,
         isUv: true,
         isIp: false,
+        monitorAppId: item.monitorAppId
       }),
       newUvCount: 0,
       ipCounct: await pageModel.getIsUCount({
@@ -51,30 +76,38 @@ class PageAnalysis extends Base {
         endTime,
         isUv: false,
         isIp: true,
+        monitorAppId: item.monitorAppId
       }),
       jumpCount: 0,
       visitFrequency: 0,
-      happenTime: moment().format("YYYY-MM-DD"),
+      happenTime: happenTime,
     };
     let lists = await pageModel.getCountGroupByUuid({
       startTime,
       endTime,
-    })
-    result.jumpCount = lists.filter(item => item.pageCount === 1).length; // 小时内跳出率
-    result.visitFrequency = result.uvCount == 0 ? result.pvCount :  (result.pvCount / result.uvCount).toFixed(2) * 1 
+      monitorAppId: item.monitorAppId
+    });
+    result.jumpCount = lists.filter((item) => item.pageCount === 1).length; // 小时内跳出率
+    result.visitFrequency =
+      result.uvCount == 0
+        ? result.pvCount
+        : (result.pvCount / result.uvCount).toFixed(2) * 1;
     let uuIdList = await pageModel.getUuid({
       startTime,
       endTime,
-    })
+      monitorAppId: item.monitorAppId
+    });
     if (uuIdList.length == 0) {
-      result.newUvCount = 0
+      result.newUvCount = 0;
     } else {
       let oldUuidCount = await pageModel.getUuidCount({
         agoDay,
-        uuIds: uuIdList
-      })
-      result.newUvCount = uuIdList.length - oldUuidCount
+        uuIds: uuIdList,
+        monitorAppId: item.monitorAppId
+      });
+      result.newUvCount = uuIdList.length - oldUuidCount;
     }
+    result.monitorAppId = item.monitorAppId;
     this.handleSavePage(result);
   }
 
