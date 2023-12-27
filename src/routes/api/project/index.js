@@ -14,8 +14,14 @@ const projectList = RouterConfigBuilder.routerConfigBuilder('/adm/project/list',
     return projectController.projectList(req, res)
 }, true)
 
+// 获取所有项目列表
+const projectStatusAllList = RouterConfigBuilder.routerConfigBuilder('/adm/project/all/status/list', RouterConfigBuilder.METHOD_TYPE_POST, (req, res) => {
+    return projectController.projectStatusAllList(req, res)
+}, true)
+
 
 export default {
     ...projectSave,
-    ...projectList
+    ...projectList,
+    ...projectStatusAllList
 }

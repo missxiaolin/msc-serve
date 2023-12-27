@@ -50,4 +50,18 @@ export default class Project extends Base {
     result.count = await projectModel.getPagesCount(data);
     return this.send(res, result);
   }
+
+  /**
+   * 获取所有没有被禁用的项目
+   * @param {*} req 
+   * @param {*} res 
+   * @returns 
+   */
+  async projectStatusAllList(req, res) {
+    let data = req.body || {},
+      result = {};
+
+    result = await projectModel.getStatusAll();
+    return this.send(res, result);
+  }
 }
