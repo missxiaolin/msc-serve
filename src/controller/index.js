@@ -65,7 +65,7 @@ export default class Index extends Base {
     if (user.id) {
       return this.send(res, {
         token: Token.encrypt({ id: user.id }),
-        projectAll: await projectModel.getStatusAll()
+        projectAll: await projectModel.getStatusAll(),
       });
     } else {
       return this.send(res, {}, false, "账号密码错误");
@@ -86,15 +86,17 @@ export default class Index extends Base {
       },
       { analyseTime } = data;
 
+    let MonitorAppId = req.get("MonitorAppId") || "";
     analyseTime = moment(analyseTime).format("YYYY-MM-DD");
     const preDate = moment(analyseTime)
       .subtract(1, "days")
       .format("YYYY-MM-DD");
 
-    const pageData = await pageDataAnalysisModel.getTimeInData([
-      analyseTime,
-      preDate,
-    ]);
+    const pageData = await pageDataAnalysisModel.getTimeInData(
+      [analyseTime, preDate],
+      MonitorAppId
+    );
+
     pageData.forEach((item) => {
       if (item.happenTime == preDate) {
         result.yesterdayData = item;

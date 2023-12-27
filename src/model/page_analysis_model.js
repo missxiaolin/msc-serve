@@ -52,14 +52,14 @@ export default class PageDataAnalysisModel {
 
   /**
    * 修改
-   * @param {*} data 
-   * @param {*} id 
-   * @returns 
+   * @param {*} data
+   * @param {*} id
+   * @returns
    */
   async updateData(data, id) {
     let tableName = getTableName();
-    let updateResult = await Knex.from(tableName).update(data).where('id', id)
-    return updateResult
+    let updateResult = await Knex.from(tableName).update(data).where("id", id);
+    return updateResult;
   }
 
   /**
@@ -82,11 +82,12 @@ export default class PageDataAnalysisModel {
    * @param {*} timeData
    * @returns
    */
-  async getTimeInData(timeData) {
+  async getTimeInData(timeData, MonitorAppId) {
     let tableName = getTableName();
     let res = await Knex.select("*")
       .from(tableName)
-      .whereIn("happenTime", timeData);
+      .whereIn("happenTime", timeData)
+      .andWhere("MonitorAppId", MonitorAppId);
 
     return res;
   }
