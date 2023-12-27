@@ -9,7 +9,13 @@ const projectSave = RouterConfigBuilder.routerConfigBuilder('/adm/project/save',
     return projectController.projectSave(req, res)
 }, true)
 
+// 项目列表
+const projectList = RouterConfigBuilder.routerConfigBuilder('/adm/project/list', RouterConfigBuilder.METHOD_TYPE_POST, (req, res) => {
+    return projectController.projectList(req, res)
+}, true)
+
 
 export default {
     ...projectSave,
+    ...projectList
 }

@@ -21,9 +21,16 @@ export default class Project extends Base {
         ...data,
         startTime: startAt,
         updateTime: startAt,
-        watch: JSON.stringify(data.watch)
+        watch: JSON.stringify(data.watch),
       });
-
+    } else {
+      let param = {
+        ...data,
+        updateTime: startAt,
+        watch: JSON.stringify(data.watch),
+      };
+      delete param.monitorAppId;
+      result = await projectModel.update(param, param.id);
     }
 
     return this.send(res, result);
@@ -31,14 +38,16 @@ export default class Project extends Base {
 
   /**
    * 获取项目列表
-   * @param {*} req 
-   * @param {*} res 
-   * @returns 
+   * @param {*} req
+   * @param {*} res
+   * @returns
    */
   async projectList(req, res) {
     let data = req.body || {},
-      startAt = moment().format("YYYY-MM-DD HH:mm:ss"),
       result = {};
+
+    result.list = await projectModel.getPages(data);
+    result.count = await projectModel.getPagesCount(data);
     return this.send(res, result);
   }
 }
