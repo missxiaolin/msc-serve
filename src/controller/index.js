@@ -6,12 +6,14 @@ import LIpip from "../library/ipip";
 import config from "../config/common";
 import md5 from "md5";
 import AdmUser from "../model/adm_user";
+import ProjectModel from "../model/project";
 import Token from "../library/utils/token";
 import PageDataAnalysisModel from "../model/page_analysis_model";
 
 const errprSave = new ErrorSave();
 const admUser = new AdmUser();
 const pageDataAnalysisModel = new PageDataAnalysisModel();
+const projectModel = new ProjectModel();
 
 /**
  * 首页
@@ -63,6 +65,7 @@ export default class Index extends Base {
     if (user.id) {
       return this.send(res, {
         token: Token.encrypt({ id: user.id }),
+        projectAll: await projectModel.getStatusAll()
       });
     } else {
       return this.send(res, {}, false, "账号密码错误");

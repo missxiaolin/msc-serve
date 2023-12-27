@@ -7,6 +7,8 @@ const BASE_TABLE_NAME = "projects";
 const TABLE_COLUMN = [];
 
 const DISOLAYT_TABLE_COLUMN = [];
+export const PROJECT_OPEN = 1
+export const PROJECT_CLOSE = 2
 
 function getTableName() {
   return BASE_TABLE_NAME;
@@ -82,6 +84,19 @@ export default class ProjectModel {
         Logger.warn("查询失败, 错误原因 =>", e);
         return {};
       });
+
+    return res;
+  }
+
+  /**
+   * 获取所有开启的项目
+   * @returns 
+   */
+  async getStatusAll() {
+    let tableName = getTableName();
+    let res = await Knex.select("*")
+      .from(tableName)
+      .where("status", PROJECT_OPEN)
 
     return res;
   }
