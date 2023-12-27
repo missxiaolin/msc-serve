@@ -23,6 +23,7 @@ export default class ProjectModel {
       "encryption",
       "maxQueues",
       "watch",
+      "status",
       "startTime",
       "updateTime",
     ];
