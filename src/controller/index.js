@@ -86,7 +86,7 @@ export default class Index extends Base {
       },
       { analyseTime } = data;
 
-    let MonitorAppId = req.get("MonitorAppId") || "";
+    const monitorAppId = req.get("MonitorAppId") || "";
     analyseTime = moment(analyseTime).format("YYYY-MM-DD");
     const preDate = moment(analyseTime)
       .subtract(1, "days")
@@ -94,7 +94,7 @@ export default class Index extends Base {
 
     const pageData = await pageDataAnalysisModel.getTimeInData(
       [analyseTime, preDate],
-      MonitorAppId
+      monitorAppId
     );
 
     pageData.forEach((item) => {

@@ -95,12 +95,16 @@ export default class HttpModel {
       groupByKey = [],
       isUuIdDistinct = false,
       status = "",
+      monitorAppId = "",
     } = params;
     let tableName = getTableName();
     let res = Knex.from(tableName)
       .select(selKeys)
       .where("happenTime", "<", endTime)
       .andWhere("happenTime", ">", startTime);
+    if (monitorAppId) {
+      res = res.andWhere("monitorAppId", monitorAppId);
+    }
     if (simpleUrl) {
       res = res.andWhere("simpleUrl", simpleUrl);
     }
@@ -133,6 +137,7 @@ export default class HttpModel {
       endTime = "",
       status = "",
       pathNames = [],
+      monitorAppId = "",
     } = params;
     let tableName = getTableName();
     let res = Knex.from(tableName)
@@ -140,7 +145,9 @@ export default class HttpModel {
       .avg("duration as avgDuration")
       .where("happenTime", "<", endTime)
       .andWhere("happenTime", ">", startTime);
-
+    if (monitorAppId) {
+      res = res.andWhere("monitorAppId", monitorAppId);
+    }
     if (simpleUrl) {
       res = res.andWhere("simpleUrl", simpleUrl);
     }

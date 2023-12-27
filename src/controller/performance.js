@@ -16,6 +16,8 @@ export default class Performance extends Base {
   async list(req, res) {
     let data = req.body || {},
       result = {};
+    const monitorAppId = req.get("MonitorAppId") || "";
+    data.monitorAppId = monitorAppId;
     let list = await performanceModel.getPages(data);
     let count = await performanceModel.getPagesCount(data);
     result.list = list;
@@ -54,13 +56,14 @@ export default class Performance extends Base {
         },
       };
 
-    let ntAvg = await performanceModel.getAvgNtTimeDataSql(data)
-    let fpAvg = await performanceModel.getAvgFpTimeDataSql(data)
-    let fcpAvg = await performanceModel.getAvgFpTimeDataSql(data)
-    result.NT = ntAvg[0] || {}
-    result.FP = fpAvg[0] || {}
-    result.FCP = fcpAvg[0] || {}
-
+    const monitorAppId = req.get("MonitorAppId") || "";
+    data.monitorAppId = monitorAppId;
+    let ntAvg = await performanceModel.getAvgNtTimeDataSql(data);
+    let fpAvg = await performanceModel.getAvgFpTimeDataSql(data);
+    let fcpAvg = await performanceModel.getAvgFpTimeDataSql(data);
+    result.NT = ntAvg[0] || {};
+    result.FP = fpAvg[0] || {};
+    result.FCP = fcpAvg[0] || {};
 
     return this.send(res, result);
   }

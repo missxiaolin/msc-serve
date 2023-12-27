@@ -171,6 +171,7 @@ export default class PageModel {
       limit = 0,
       simpleUrl = "",
       selKeys = "*",
+      monitorAppId = "",
       groupByKey = [],
     } = params;
     let tableName = getTableName();
@@ -178,6 +179,9 @@ export default class PageModel {
       .select(selKeys)
       .where("happenTime", "<", endTime)
       .andWhere("happenTime", ">", startTime);
+    if (monitorAppId) {
+      res = res.andWhere("monitorAppId", monitorAppId);
+    }
 
     if (simpleUrl) {
       res = res.andWhere("simpleUrl", simpleUrl);
@@ -207,6 +211,7 @@ export default class PageModel {
       simpleUrl = "",
       pageSize = 10,
       page = 1,
+      monitorAppId = "",
     } = params;
     let tableName = getTableName();
     let res = Knex.from(tableName)
@@ -215,6 +220,10 @@ export default class PageModel {
       .count("* as pageCount")
       .where("happenTime", "<", endTime)
       .andWhere("happenTime", ">", startTime);
+
+    if (monitorAppId) {
+      res = res.andWhere("monitorAppId", monitorAppId);
+    }
 
     if (simpleUrl) {
       res = res.andWhere("simpleUrl", simpleUrl);
@@ -256,10 +265,18 @@ export default class PageModel {
    * @returns
    */
   async getHoursCountPv(params) {
-    let { startTime = "", endTime = "", simpleUrl = "" } = params;
+    let {
+      startTime = "",
+      endTime = "",
+      simpleUrl = "",
+      monitorAppId = "",
+    } = params;
     let sql = `select DATE_FORMAT(happenTime,"%Y-%m-%d %H:00:00") as "hour", count("id") as count from page_log where happenTime > "${startTime}" and happenTime < "${endTime}"`;
     if (simpleUrl) {
       sql = `${sql} and simpleUrl = "${simpleUrl}"`;
+    }
+    if (monitorAppId) {
+      sql = `${sql} and monitorAppId = "${monitorAppId}"`;
     }
     sql = `${sql} group by DATE_FORMAT(happenTime,"%Y-%m-%d %H:00:00")`;
     let res = await Knex.raw(sql);
@@ -272,10 +289,18 @@ export default class PageModel {
    * @returns
    */
   async getHoursCountUv(params) {
-    let { startTime = "", endTime = "", simpleUrl = "" } = params;
+    let {
+      startTime = "",
+      endTime = "",
+      simpleUrl = "",
+      monitorAppId = "",
+    } = params;
     let sql = `select DATE_FORMAT(happenTime,"%Y-%m-%d %H:00:00") as "hour", count(distinct uuId) as count from page_log where happenTime > "${startTime}" and happenTime < "${endTime}"`;
     if (simpleUrl) {
       sql = `${sql} and simpleUrl = "${simpleUrl}"`;
+    }
+    if (monitorAppId) {
+      sql = `${sql} and MonitorAppId = "${monitorAppId}"`;
     }
     sql = `${sql} group by DATE_FORMAT(happenTime,"%Y-%m-%d %H:00:00")`;
     let res = await Knex.raw(sql);

@@ -79,6 +79,7 @@ export default class PerformanceModel {
       pageUrl = "",
       startTime = "",
       endTime = "",
+      monitorAppId = "",
       pageSize = 10,
       page = 1,
     } = params;
@@ -87,6 +88,9 @@ export default class PerformanceModel {
       .from(tableName)
       .where("happenTime", "<", endTime)
       .andWhere("happenTime", ">", startTime);
+    if (monitorAppId) {
+      res = res.andWhere("monitorAppId", monitorAppId);
+    }
     if (pageUrl) {
       res = res.andWhere("pageUrl", pageUrl);
     }
@@ -117,11 +121,19 @@ export default class PerformanceModel {
    * @returns
    */
   async getPagesCount(params) {
-    let { pageUrl = "", startTime = "", endTime = "" } = params;
+    let {
+      pageUrl = "",
+      startTime = "",
+      endTime = "",
+      monitorAppId = "",
+    } = params;
     let tableName = getTableName();
     let res = Knex.from(tableName)
       .where("happenTime", "<", endTime)
       .andWhere("happenTime", ">", startTime);
+    if (monitorAppId) {
+      res = res.andWhere("monitorAppId", monitorAppId);
+    }
     if (pageUrl) {
       res = res.andWhere("pageUrl", pageUrl);
     }
@@ -135,55 +147,64 @@ export default class PerformanceModel {
 
   /**
    * 获取NT 平均数据
-   * @param {*} params 
+   * @param {*} params
    */
   async getAvgNtTimeDataSql(params) {
-    let { simpleUrl = "", startTime = "", endTime = "" } = params;
-    let sql = `select avg(JSON_EXTRACT(nt,'$.FP')) as "FP", avg(JSON_EXTRACT(nt,'$.TTI')) as "TTI", avg(JSON_EXTRACT(nt,'$.DomReady')) as "DomReady", avg(JSON_EXTRACT(nt,'$.Load')) as "Load", avg(JSON_EXTRACT(nt,'$.FirseByte')) as "FirseByte", avg(JSON_EXTRACT(nt,'$.DNS')) as "DNS", avg(JSON_EXTRACT(nt,'$.TCP')) as "TCP", avg(JSON_EXTRACT(nt,'$.SSL')) as "SSL", avg(JSON_EXTRACT(nt,'$.TTFB')) as "TTFB", avg(JSON_EXTRACT(nt,'$.Trans')) as "Trans", avg(JSON_EXTRACT(nt,'$.DomParse')) as "DomParse", avg(JSON_EXTRACT(nt,'$.Res'))  as "Res" from performance_log where nt != "" and happenTime > "${startTime}" and happenTime < "${endTime}"`
+    let { simpleUrl = "", startTime = "", endTime = "", monitorAppId = "" } = params;
+    let sql = `select avg(JSON_EXTRACT(nt,'$.FP')) as "FP", avg(JSON_EXTRACT(nt,'$.TTI')) as "TTI", avg(JSON_EXTRACT(nt,'$.DomReady')) as "DomReady", avg(JSON_EXTRACT(nt,'$.Load')) as "Load", avg(JSON_EXTRACT(nt,'$.FirseByte')) as "FirseByte", avg(JSON_EXTRACT(nt,'$.DNS')) as "DNS", avg(JSON_EXTRACT(nt,'$.TCP')) as "TCP", avg(JSON_EXTRACT(nt,'$.SSL')) as "SSL", avg(JSON_EXTRACT(nt,'$.TTFB')) as "TTFB", avg(JSON_EXTRACT(nt,'$.Trans')) as "Trans", avg(JSON_EXTRACT(nt,'$.DomParse')) as "DomParse", avg(JSON_EXTRACT(nt,'$.Res'))  as "Res" from performance_log where nt != "" and happenTime > "${startTime}" and happenTime < "${endTime}"`;
+    if (monitorAppId) {
+      sql = `${sql} and monitorAppId = "${monitorAppId}"`;
+    }
     if (simpleUrl) {
       sql = `${sql} and simpleUrl = "${simpleUrl}"`;
     }
     let res = await Knex.raw(sql);
     if (res.length > 0) {
-      return res[0]
+      return res[0];
     }
 
-    return {}
+    return {};
   }
 
   /**
    * 获取FP 平均数据
-   * @param {*} params 
+   * @param {*} params
    */
   async getAvgFpTimeDataSql(params) {
-    let { simpleUrl = "", startTime = "", endTime = "" } = params;
-    let sql = `select avg(JSON_EXTRACT(fp,'$.startTime')) as "startTime" from performance_log where fp != "" and happenTime > "${startTime}" and happenTime < "${endTime}"`
+    let { simpleUrl = "", startTime = "", endTime = "", monitorAppId = "" } = params;
+    let sql = `select avg(JSON_EXTRACT(fp,'$.startTime')) as "startTime" from performance_log where fp != "" and happenTime > "${startTime}" and happenTime < "${endTime}"`;
+    if (monitorAppId) {
+      sql = `${sql} and monitorAppId = "${monitorAppId}"`;
+    }
     if (simpleUrl) {
       sql = `${sql} and simpleUrl = "${simpleUrl}"`;
     }
     let res = await Knex.raw(sql);
     if (res.length > 0) {
-      return res[0]
+      return res[0];
     }
 
-    return {}
+    return {};
   }
 
   /**
    * 获取FCP 平均数据
-   * @param {*} params 
+   * @param {*} params
    */
   async getAvgFpTimeDataSql(params) {
-    let { simpleUrl = "", startTime = "", endTime = "" } = params;
-    let sql = `select avg(JSON_EXTRACT(fcp,'$.startTime')) as "startTime" from performance_log where fcp != "" and happenTime > "${startTime}" and happenTime < "${endTime}"`
+    let { simpleUrl = "", startTime = "", endTime = "", monitorAppId = "" } = params;
+    let sql = `select avg(JSON_EXTRACT(fcp,'$.startTime')) as "startTime" from performance_log where fcp != "" and happenTime > "${startTime}" and happenTime < "${endTime}"`;
+    if (monitorAppId) {
+      sql = `${sql} and monitorAppId = "${monitorAppId}"`;
+    }
     if (simpleUrl) {
       sql = `${sql} and simpleUrl = "${simpleUrl}"`;
     }
     let res = await Knex.raw(sql);
     if (res.length > 0) {
-      return res[0]
+      return res[0];
     }
 
-    return {}
+    return {};
   }
 }

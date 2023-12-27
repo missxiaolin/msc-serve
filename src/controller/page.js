@@ -30,15 +30,18 @@ export default class PageIndex extends Base {
           data: [],
         },
       ];
+    const monitorAppId = req.get("MonitorAppId") || "";
     let pvData = await pageModel.getHoursCountPv({
       startTime: data.startTime,
       endTime: data.endTime,
-      simpleUrl: data.simpleUrl || ""
+      simpleUrl: data.simpleUrl || "",
+      monitorAppId,
     });
     let uvData = await pageModel.getHoursCountUv({
       startTime: data.startTime,
       endTime: data.endTime,
-      simpleUrl: data.simpleUrl || ""
+      simpleUrl: data.simpleUrl || "",
+      monitorAppId,
     });
     pvData.forEach((item) => {
       result.pvTotal = result.pvTotal + item.count;
@@ -111,10 +114,12 @@ export default class PageIndex extends Base {
         },
       };
 
+    const monitorAppId = req.get("MonitorAppId") || "";
     // url
     let urls = await pageModel.getGroupByCount({
       startTime: data.startTime,
       endTime: data.endTime,
+      monitorAppId,
       limit: data.limit || 30,
       simpleUrl: data.simpleUrl,
       selKeys: ["simpleUrl"],
@@ -128,6 +133,7 @@ export default class PageIndex extends Base {
     let cregions = await pageModel.getGroupByCount({
       startTime: data.startTime,
       endTime: data.endTime,
+      monitorAppId,
       simpleUrl: data.simpleUrl,
       limit: data.limit || 30,
       selKeys: ["country", "province", "city"],
@@ -143,6 +149,7 @@ export default class PageIndex extends Base {
     let devices = await pageModel.getGroupByCount({
       startTime: data.startTime,
       endTime: data.endTime,
+      monitorAppId,
       limit: data.limit || 30,
       simpleUrl: data.simpleUrl,
       selKeys: ["device"],
@@ -156,6 +163,7 @@ export default class PageIndex extends Base {
     let oss = await pageModel.getGroupByCount({
       startTime: data.startTime,
       endTime: data.endTime,
+      monitorAppId,
       limit: data.limit || 30,
       simpleUrl: data.simpleUrl,
       selKeys: ["os"],
@@ -170,6 +178,7 @@ export default class PageIndex extends Base {
     let browsers = await pageModel.getGroupByCount({
       startTime: data.startTime,
       endTime: data.endTime,
+      monitorAppId,
       limit: data.limit || 30,
       simpleUrl: data.simpleUrl,
       selKeys: ["browserInfo"],
@@ -183,6 +192,7 @@ export default class PageIndex extends Base {
     let screens = await pageModel.getGroupByCount({
       startTime: data.startTime,
       endTime: data.endTime,
+      monitorAppId,
       limit: data.limit || 30,
       simpleUrl: data.simpleUrl,
       selKeys: ["screenWidth", "screenHeight"],
@@ -207,14 +217,15 @@ export default class PageIndex extends Base {
   async groupByCity(req, res) {
     let data = req.body || {},
       result = [];
-
+    const monitorAppId = req.get("MonitorAppId") || "";
     // 城市
     let cregions = await pageModel.getGroupByCount({
       startTime: data.startTime,
       endTime: data.endTime,
+      monitorAppId,
       selKeys: ["country", "province", "city"],
       groupByKey: ["country", "province", "city"],
-      simpleUrl: data.simpleUrl
+      simpleUrl: data.simpleUrl,
     });
     cregions.forEach((item) => {
       let obj = {
@@ -236,13 +247,15 @@ export default class PageIndex extends Base {
     let data = req.body || {},
       result = {};
 
-    result.list = await pageModel.getGroupPages(data)
-    result.count = await pageModel.getPagesGroupCount(data)
+    const monitorAppId = req.get("MonitorAppId") || "";
+    result.list = await pageModel.getGroupPages(data);
+    data.monitorAppId = monitorAppId
+    result.count = await pageModel.getPagesGroupCount(data);
     result.pvCount = await pageModel.getIsUCount({
       ...data,
       isUv: false,
-      isIp: false
-    })
+      isIp: false,
+    });
     return this.send(res, result);
   }
 }

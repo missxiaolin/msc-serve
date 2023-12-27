@@ -86,12 +86,16 @@ export default class JsModel {
       errorMsg = "",
       pageSize = 10,
       page = 1,
+      monitorAppId = "",
     } = params;
     let tableName = getTableName();
     let res = Knex.select(this.tableColumnArr)
       .from(tableName)
       .where("happenTime", "<", endTime)
       .andWhere("happenTime", ">", startTime);
+    if (monitorAppId) {
+      res = res.andWhere("monitorAppId", monitorAppId);
+    }
     if (pageUrl) {
       res = res.andWhere("pageUrl", pageUrl);
     }
@@ -122,12 +126,16 @@ export default class JsModel {
       endTime = "",
       errorMsg = "",
       simpleUrl = "",
+      monitorAppId = "",
     } = params;
 
     let tableName = getTableName();
     let res = Knex.from(tableName)
       .where("happenTime", "<", endTime)
       .andWhere("happenTime", ">", startTime);
+    if (monitorAppId) {
+      res = res.andWhere("monitorAppId", monitorAppId);
+    }
     if (pageUrl) {
       res = res.andWhere("pageUrl", pageUrl);
     }
@@ -156,6 +164,7 @@ export default class JsModel {
       pageUrl = "",
       simpleUrl = "",
       errorMsg = "",
+      monitorAppId = "",
       selKeys = "*",
       groupByKey = [],
       errorMsgs = [],
@@ -167,6 +176,9 @@ export default class JsModel {
       .where("happenTime", "<", endTime)
       .andWhere("happenTime", ">", startTime);
 
+    if (monitorAppId) {
+      res = res.andWhere("monitorAppId", monitorAppId);
+    }
     if (pageUrl) {
       res = res.andWhere("pageUrl", pageUrl);
     }
@@ -208,9 +220,13 @@ export default class JsModel {
       endTime = "",
       errorMsg = "",
       simpleUrl = "",
+      monitorAppId = "",
     } = params;
 
     let sql = `select DATE_FORMAT(happenTime,"%Y-%m-%d %H:00:00") as "hour", count("id") as count from js_log where happenTime > "${startTime}" and happenTime < "${endTime}"`;
+    if (monitorAppId) {
+      sql = `${sql} and monitorAppId = "${monitorAppId}"`;
+    }
     if (pageUrl) {
       sql = `${sql} and pageUrl = "${pageUrl}"`;
     }
