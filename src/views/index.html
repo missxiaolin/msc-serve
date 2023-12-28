@@ -1,17 +1,50 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>vue3-admin</title>
-    <script type="module" crossorigin src="/static/index-f4eb0487.js"></script>
+    <script src="http://www.missxiaolin.com/monitorSdk.js"></script>
+    <script>
+      new window.MonitorSdk({
+        monitorAppId: "adm",
+        watch: {
+          pageChange: true,
+          jsError: true,
+          vueError: true,
+          promise: true,
+          xhr: true,
+          performance: true,
+          whiteScreen: true,
+          click: true,
+          resource: true,
+          fetch: true,
+        },
+        report: {
+          url: "http://127.0.0.1:9001/api/update", //错误上报地址
+          reportType: 1, // 1:fetch 2:img 3
+          maxQueues: 100, // img 尽量限制在 10条
+          beforeSend: (data) => data,
+          encryption: 0,
+          delay: 30000,
+        },
+        behavior: {
+          click: true,
+          pageChange: true,
+        },
+        customInfo: {
+          getDynamic: () => {
+            //获取动态传参  1.4.5版本及以后支持该方式
+          },
+        },
+      });
+    </script>
+    <script type="module" crossorigin src="/static/index-da95a02c.js"></script>
     <link rel="stylesheet" href="/static/index-78aab0eb.css">
   </head>
   <body>
-    <div id="app">
-      
-    </div>
+    <div id="app"></div>
     
   </body>
 </html>
