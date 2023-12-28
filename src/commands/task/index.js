@@ -44,7 +44,12 @@ export default class TaskManager extends Base {
 
     // 一分钟任务
     this.registerTaskRepeatPer1Minute()
+
+    // 每天凌晨执行一次任务
+    this.registerTaskRepeatPer1Day()
   }
+
+
 
   /**
    * 每分钟启动一次
@@ -70,19 +75,23 @@ export default class TaskManager extends Base {
   }
 
   /**
+   * 每天凌晨执行一次任务
+   */
+  async registerTaskRepeatPer1Day() {
+    schedule.scheduleJob("0 0 0 * * *", () => {
+      const summaryCommandList = ["Data:Hour:Init"];
+      for (let summaryCommand of summaryCommandList) {
+        this.dispatchParseCommand(summaryCommand);
+      }
+    })
+  }
+
+  /**
    * 注册每10分钟执行一次的任务
    */
   async registerTaskRepeatPer10Minute() {
     // 每10分钟的第30秒启动
     schedule.scheduleJob("15 */10 * * * * *", function () {});
-  }
-
-  /**
-   * 注册每1小时执行一次的任务
-   */
-  async registerTaskRepeatPer1Hour() {
-    // 每小时15分30秒启动
-    schedule.scheduleJob("30 15 * * * * *", function () {});
   }
 
   /**

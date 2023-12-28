@@ -14,6 +14,8 @@ const registedCommandList = [
     './commands/demo', // 命令demo测试
     './commands/task/index', // 定时任务
     './commands/page/index', // page 分析
+    './commands/dataHour/dataInit.js', // dataHour表初始化
+    './commands/dataHour/index.js', // 分析数据插入
 ]
 
 
