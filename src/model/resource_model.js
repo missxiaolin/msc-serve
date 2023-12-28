@@ -156,7 +156,7 @@ export default class ResourceModel {
    */
   async getHoursCount(params) {
     let { startTime = "", endTime = "", monitorAppId = "" } = params;
-    let sql = `select resourceType, DATE_FORMAT(happenTime,"%Y-%m-%d %H:00:00") as "hour", count("id") as count from resource_log where happenTime > "${startTime}" and happenTime < "${endTime}"`;
+    let sql = `select resourceType, DATE_FORMAT(happenTime,"%Y-%m-%d %H:00:00") as "hour", count("id") as count from resource_log where happenTime >= "${startTime}" and happenTime <= "${endTime}"`;
     if (monitorAppId) {
       sql = `${sql} and monitorAppId = "${monitorAppId}"`;
     }

@@ -85,8 +85,8 @@ export default class PageModel {
     } = params;
     let tableName = getTableName();
     let res = Knex.from(tableName)
-      .where("happenTime", "<", endTime)
-      .andWhere("happenTime", ">", startTime);
+      .where("happenTime", "<=", endTime)
+      .andWhere("happenTime", ">=", startTime);
 
     if (monitorAppId) {
       res = res.andWhere("monitorAppId", monitorAppId);

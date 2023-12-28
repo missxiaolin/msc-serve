@@ -42,8 +42,11 @@ export default class TaskManager extends Base {
     // 注册定时任务
     this.registerTaskRepeatPer59Minute();
 
-    // 一分钟任务
+    // 1分钟任务
     this.registerTaskRepeatPer1Minute()
+
+    // 5分钟任务
+    this.registerTaskRepeatPer5Minute()
 
     // 每天凌晨执行一次任务
     this.registerTaskRepeatPer1Day()
@@ -52,11 +55,23 @@ export default class TaskManager extends Base {
 
 
   /**
-   * 每分钟启动一次
+   * 每1分钟启动一次
    */
   async registerTaskRepeatPer1Minute() {
     schedule.scheduleJob("0 */1 * * * *", () => {
       console.log('每分钟任务')
+    });
+  }
+
+  /**
+   * 每5分钟启动一次
+   */
+  async registerTaskRepeatPer5Minute() {
+    schedule.scheduleJob("59 */4 * * * *", () => {
+      const summaryCommandList = ["Data:Hour"];
+      for (let summaryCommand of summaryCommandList) {
+        this.dispatchParseCommand(summaryCommand);
+      }
     });
   }
 

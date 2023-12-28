@@ -31,7 +31,7 @@ export default class DataHourModel {
    * @param {*} data
    * @returns
    */
-  async save(data) {
+  async save(data, happenTime) {
     let tableName = getTableName();
     let insertData = {};
     for (let column of this.tableColumnArr) {
@@ -48,5 +48,19 @@ export default class DataHourModel {
     let id = _.get(insertResult, [0], 0);
 
     return id > 0;
+  }
+
+  /**
+   * 操作数据
+   * @param {*} data 
+   * @returns 
+   */
+  async updateData(data, whereData) {
+    let tableName = getTableName();
+    let updateResult = await Knex.from(tableName)
+      .update(data)
+      .where("happenTime", whereData.happenTime)
+      .andWhere("monitorAppId", whereData.monitorAppId);
+    return updateResult;
   }
 }
