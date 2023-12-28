@@ -67,7 +67,7 @@ export default class TaskManager extends Base {
    * 每5分钟启动一次
    */
   async registerTaskRepeatPer5Minute() {
-    schedule.scheduleJob("59 */4 * * * *", () => {
+    schedule.scheduleJob("59 4,9,14,19,24,29,34,39,44,49,54,59 * * * *", () => {
       const summaryCommandList = ["Data:Hour"];
       for (let summaryCommand of summaryCommandList) {
         this.dispatchParseCommand(summaryCommand);

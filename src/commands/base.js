@@ -88,13 +88,18 @@ class Base extends Command {
      * @param {*} endTime 
      */
     async dispatchParseCommand(commandName, startTime, endTime) {
-        this.log(`${commandName}任务开始, 处理时间 => ${startTime}, ${endTime}`)
-        this.execCommand(commandName,
-            [
-                startTime,
-                endTime
-            ]
-        )
+        if (startTime && endTime) {
+            this.log(`${commandName}任务开始, 处理时间 => ${startTime}, ${endTime}`)
+            this.execCommand(commandName,
+                [
+                    startTime,
+                    endTime
+                ]
+            )
+        } else {
+            this.execCommand(commandName)
+        }
+        
     }
 
     /**
