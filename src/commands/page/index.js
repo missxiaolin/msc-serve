@@ -97,12 +97,13 @@ class PageAnalysis extends Base {
       endTime,
       monitorAppId: item.monitorAppId
     });
+    const newUuid = uuIdList.map((item) => item.uuId)
     if (uuIdList.length == 0) {
       result.newUvCount = 0;
     } else {
       let oldUuidCount = await pageModel.getUuidCount({
         agoDay,
-        uuIds: uuIdList,
+        uuIds: newUuid,
         monitorAppId: item.monitorAppId
       });
       result.newUvCount = uuIdList.length - oldUuidCount;
