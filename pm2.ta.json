@@ -1,0 +1,8 @@
+
+
+[
+    {
+      "name": "montor-task",
+      "script": "npm run command Task:Manager"
+    }
+]
