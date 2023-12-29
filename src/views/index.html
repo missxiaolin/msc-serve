@@ -7,6 +7,11 @@
     <title>vue3-admin</title>
     <script src="http://www.missxiaolin.com/monitorSdk.js"></script>
     <script>
+      var baseURL = "http:msc-serve.missxiaolin.com";
+
+      if (window.location.href.indexOf("http://localhost") > -1) {
+        baseURL = "http://127.0.0.1:9001";
+      }
       new window.MonitorSdk({
         monitorAppId: "adm",
         watch: {
@@ -22,7 +27,7 @@
           fetch: true,
         },
         report: {
-          url: "http://127.0.0.1:9001/api/update", //错误上报地址
+          url: baseURL + "/api/update", //错误上报地址
           reportType: 1, // 1:fetch 2:img 3
           maxQueues: 100, // img 尽量限制在 10条
           beforeSend: (data) => data,
