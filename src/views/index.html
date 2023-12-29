@@ -14,6 +14,7 @@
       }
       new window.MonitorSdk({
         monitorAppId: "adm",
+        uuId: () => window.MUtils.monitorCookie("userId"),
         watch: {
           pageChange: true,
           jsError: true,
@@ -45,7 +46,7 @@
         },
       });
     </script>
-    <script type="module" crossorigin src="/static/index-1656c061.js"></script>
+    <script type="module" crossorigin src="/static/index-050b7b80.js"></script>
     <link rel="stylesheet" href="/static/index-c20df1e0.css">
   </head>
   <body>

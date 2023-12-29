@@ -64,6 +64,7 @@ export default class Index extends Base {
     let user = await admUser.getUser(data);
     if (user.id) {
       return this.send(res, {
+        userId: user.id,
         token: Token.encrypt({ id: user.id }),
         projectAll: await projectModel.getStatusAll(),
       });

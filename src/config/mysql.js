@@ -8,11 +8,11 @@ import env from './env'
 const development = {
     /* nomal */
     host: '127.0.0.1',
-    port: '3333',
-    // port: '3306',
+    // port: '3333',
+    port: '3306',
     user: 'root',
-    // password: 'root',
-    password: 'XiaohongshuMaterial',
+    password: 'root',
+    // password: 'XiaohongshuMaterial',
     database: 'msc_log'
 }
 // 测试环境配置

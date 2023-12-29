@@ -27,6 +27,7 @@ export default class ProjectModel {
       "watch",
       "status",
       "startTime",
+      "cookieUserKey",
       "updateTime",
     ];
   }
