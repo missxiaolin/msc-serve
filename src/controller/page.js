@@ -31,6 +31,16 @@ export default class PageIndex extends Base {
         },
       ];
     const monitorAppId = req.get("MonitorAppId") || "";
+
+    result.uvTotal = await pageModel.getIsUCount({
+      startTime: data.startTime,
+      endTime: data.endTime,
+      simpleUrl: data.simpleUrl || "",
+      monitorAppId,
+      isUv: true,
+      isIp: false,
+    })
+    
     let pvData = await pageModel.getHoursCountPv({
       startTime: data.startTime,
       endTime: data.endTime,
@@ -45,9 +55,6 @@ export default class PageIndex extends Base {
     });
     pvData.forEach((item) => {
       result.pvTotal = result.pvTotal + item.count;
-    });
-    uvData.forEach((item) => {
-      result.uvTotal = result.uvTotal + item.count;
     });
 
     result.axisData = betweenDateTimeAllHours(data.startTime, data.endTime);

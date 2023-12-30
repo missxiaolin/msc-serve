@@ -82,6 +82,7 @@ export default class PageModel {
       isUv = false,
       isIp = false,
       monitorAppId = "",
+      simpleUrl = ""
     } = params;
     let tableName = getTableName();
     let res = Knex.from(tableName)
@@ -90,6 +91,9 @@ export default class PageModel {
 
     if (monitorAppId) {
       res = res.andWhere("monitorAppId", monitorAppId);
+    }
+    if (simpleUrl) {
+      res = res.andWhere("simpleUrl", simpleUrl);
     }
     if (isUv) {
       res = await res.countDistinct("uuId as pageCount").catch((err) => {
