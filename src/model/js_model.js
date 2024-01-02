@@ -58,7 +58,7 @@ export default class JsModel {
     let tableName = getTableName();
     let insertData = {};
     for (let column of this.tableColumnArr) {
-      insertData[column] = data[column] || "";
+      insertData[column] = data[column];
     }
     let insertResult = await Knex.returning("id")
       .insert(insertData)

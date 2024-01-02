@@ -28,8 +28,8 @@ export default class ErrorSave {
       browserInfo: res.data.deviceInfo.browserInfo || "",
       device: res.data.deviceInfo.device || "",
       deviceModel: res.data.deviceInfo.deviceModel || "",
-      screenHeight: res.data.deviceInfo.screenHeight || "",
-      screenWidth: res.data.deviceInfo.screenWidth || "",
+      screenHeight: res.data.deviceInfo.screenHeight || 0,
+      screenWidth: res.data.deviceInfo.screenWidth || 0,
       language: res.data.deviceInfo.language || "",
       netWork: res.data.deviceInfo.netWork || "",
       country: res.cregion.country || "",
@@ -47,9 +47,9 @@ export default class ErrorSave {
           data.pageUrl = item.pageUrl || "";
           data.simpleUrl = item.simpleUrl || "";
           data.errorMsg = item.errorMsg || "";
-          data.line = item.line || "";
+          data.line = item.line || 0;
           data.type = item.type || "";
-          data.col = item.col || "";
+          data.col = item.col || 0;
           data.stackTraces = item.stackTraces ? JSON.stringify(item.stackTraces) : "";
           data.componentName = item.componentName || "";
           data.subType = item.subType || "";
