@@ -97,20 +97,24 @@ const startup = () => {
   // 支持前端History模式 => https://router.vuejs.org/zh/guide/essentials/history-mode.html#后端配置例子
   // 将所有404页面均返回index.html
   // 设置正确的 MIME 类型
-  app.use((req, res, next) => {
-    const ext = path.extname(req.url);
-    if (ext === ".js") {
-      res.type("application/javascript");
-    } else if (ext === ".css") {
-      res.type("text/css");
-    } else {
-      res.type("html");
-    }
-    next();
-  });
+  // app.use((req, res, next) => {
+  //   const ext = path.extname(req.url);
+  //   if (ext === ".js") {
+  //     res.type("application/javascript");
+  //   } else if (ext === ".css") {
+  //     res.type("text/css");
+  //   } else {
+  //     res.type("html");
+  //   }
+  //   next();
+  // });
   app.use("*", (req, res) => {
-    
-    res.render("index");
+    res.json({
+      success: false,
+      errorMessage: '接口不存在',
+      model: {}
+    })
+    // res.render("index");
     // res.sendFile(path.join(__dirname, 'dist/index.html'));
   });
   // app.use('*', (req, res) => {
