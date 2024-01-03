@@ -255,8 +255,8 @@ export default class PageIndex extends Base {
       result = {};
 
     const monitorAppId = req.get("MonitorAppId") || "";
-    result.list = await pageModel.getGroupPages(data);
     data.monitorAppId = monitorAppId
+    result.list = await pageModel.getGroupPages(data);
     result.count = await pageModel.getPagesGroupCount(data);
     result.pvCount = await pageModel.getIsUCount({
       ...data,

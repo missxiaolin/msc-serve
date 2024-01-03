@@ -225,12 +225,13 @@ export default class PageModel {
       .where("happenTime", "<", endTime)
       .andWhere("happenTime", ">", startTime);
 
-    if (monitorAppId) {
-      res = res.andWhere("monitorAppId", monitorAppId);
-    }
+    
 
     if (simpleUrl) {
       res = res.andWhere("simpleUrl", simpleUrl);
+    }
+    if (monitorAppId) {
+      res = res.andWhere("monitorAppId", monitorAppId);
     }
     res = await res
       .limit(pageSize)
@@ -249,13 +250,16 @@ export default class PageModel {
    * @returns
    */
   async getPagesGroupCount(params) {
-    let { startTime, endTime, simpleUrl = "" } = params;
+    let { startTime, endTime, simpleUrl = "", monitorAppId = "" } = params;
     let tableName = getTableName();
     let res = Knex.from(tableName)
       .where("happenTime", "<", endTime)
       .andWhere("happenTime", ">", startTime);
     if (simpleUrl) {
       res = res.andWhere("simpleUrl", simpleUrl);
+    }
+    if (monitorAppId) {
+      res = res.andWhere("monitorAppId", monitorAppId);
     }
     res = await res.countDistinct("simpleUrl as pageCount").catch(() => {
       return 0;
