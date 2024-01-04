@@ -1,8 +1,10 @@
 import Base from "./base";
 import _ from "lodash";
 import PerformanceModel from "../model/performance_model";
+import ProjectModel from "../model/project";
 
 const performanceModel = new PerformanceModel();
+const projectModel = new ProjectModel();
 
 /**
  * 首页
@@ -15,9 +17,12 @@ export default class Performance extends Base {
    */
   async list(req, res) {
     let data = req.body || {},
-      result = {};
+      result = {
+        
+      };
     const monitorAppId = req.get("MonitorAppId") || "";
     data.monitorAppId = monitorAppId;
+    result.project = await projectModel.getMonitorAppIdDetail(monitorAppId)
     let list = await performanceModel.getPages(data);
     let count = await performanceModel.getPagesCount(data);
     result.list = list;

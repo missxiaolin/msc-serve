@@ -125,6 +125,26 @@ export default class ProjectModel {
   }
 
   /**
+   * 获取详情
+   * @param {*} monitorAppId 
+   * @returns 
+   */
+  async getMonitorAppIdDetail(monitorAppId) {
+    let tableName = getTableName();
+    
+    let res = await Knex.select("*")
+      .from(tableName)
+      .where('monitorAppId', monitorAppId)
+      .first()
+      .catch((err) => {
+        console.log(err);
+        return [];
+      });
+
+    return res;
+  }
+
+  /**
    * 总数
    * @param {*} params 
    * @returns 
