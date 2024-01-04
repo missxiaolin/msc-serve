@@ -63,6 +63,7 @@ export default class Performance extends Base {
 
     const monitorAppId = req.get("MonitorAppId") || "";
     data.monitorAppId = monitorAppId;
+    result.project = await projectModel.getMonitorAppIdDetail(monitorAppId)
     let ntAvg = await performanceModel.getAvgNtTimeDataSql(data);
     let fpAvg = await performanceModel.getAvgFpTimeDataSql(data);
     let fcpAvg = await performanceModel.getAvgFpTimeDataSql(data);
