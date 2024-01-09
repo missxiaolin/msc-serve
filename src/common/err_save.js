@@ -6,6 +6,7 @@ import PageModel from "../model/page_model";
 import UserClickeModel from "../model/user_click_model";
 import HttpModel from "../model/http_model";
 import JsModel from "../model/js_model";
+import Util from "./utils";
 
 const performanceModel = new PerformanceModel();
 const resourceModel = new ResourceModel();
@@ -130,19 +131,17 @@ export default class ErrorSave {
           pageModel.save(data);
           break;
         case error.PERFORMANCE:
-          data.level = item.level || "";
-          data.category = item.category || "";
-          data.happenDate = item.happenDate || "";
-          data.pageUrl = item.pageUrl || "";
-          data.simpleUrl = item.simpleUrl || "";
-          data.happenTime = item.happenDate || "";
-          data.nt = item.NT ? JSON.stringify(item.NT) : "";
-          data.rf = item.RF ? JSON.stringify(item.RF) : "";
-          data.fcp = item.FCP ? JSON.stringify(item.FCP) : "";
-          data.fp = item.FP ? JSON.stringify(item.FP) : "";
-          data.fmp = item.FMP ? JSON.stringify(item.FMP) : "";
-          data.lcp = item.LCP ? JSON.stringify(item.LCP) : "";
-          performanceModel.save(data);
+          for (let key in item.metrics) {
+            performanceModel.save({
+              monitorAppId: data.monitorAppId,
+              uuId: data.uuId,
+              key,
+              score: item.metrics[key].score || 0,
+              numValue: Util.getInstance().isType().isNumeric(item.metrics[key].value) && item.metrics[key].value ? item.metrics[key].value : 0,
+              textValue: Util.getInstance().isType().isPlainObject(item.metrics[key].value) && item.metrics[key].value ? JSON.stringify(item.metrics[key].value) : '',
+              happenTime: item.happenDate
+            });
+          }
           break;
         default:
       }
