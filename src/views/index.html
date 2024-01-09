@@ -5,16 +5,16 @@
     <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>msc</title>
-    <script src="http://www.missxiaolin.com/monitorSdk.js"></script>
+    <script src="http://www.missxiaolin.com/sdk/web.min.js"></script>
     <script>
       var baseURL = "http://msc-serve.missxiaolin.com";
 
       if (window.location.href.indexOf("http://localhost") > -1) {
         baseURL = "http://127.0.0.1:9001";
       }
-      new window.MonitorSdk({
+      MITO.init({
         monitorAppId: "adm",
-        uuId: () => window.MUtils.monitorCookie("userId"),
+        uuId: () => MITO.getCookie("userId"),
         watch: {
           pageChange: true,
           jsError: true,
@@ -34,10 +34,6 @@
           encryption: 0,
           delay: 30000,
         },
-        behavior: {
-          click: true,
-          pageChange: true,
-        },
         customInfo: {
           getDynamic: () => {
             //获取动态传参  1.4.5版本及以后支持该方式
@@ -45,8 +41,8 @@
         },
       });
     </script>
-    <script type="module" crossorigin src="/static/index-9489d45e.js"></script>
-    <link rel="stylesheet" href="/static/index-c20df1e0.css">
+    <script type="module" crossorigin src="/static/index-a9cc547b.js"></script>
+    <link rel="stylesheet" href="/static/index-afdfd899.css">
   </head>
   <body>
     <div id="app"></div>
