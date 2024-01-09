@@ -17,12 +17,10 @@ export default class Performance extends Base {
    */
   async list(req, res) {
     let data = req.body || {},
-      result = {
-        
-      };
+      result = {};
     const monitorAppId = req.get("MonitorAppId") || "";
     data.monitorAppId = monitorAppId;
-    result.project = await projectModel.getMonitorAppIdDetail(monitorAppId)
+    result.project = await projectModel.getMonitorAppIdDetail(monitorAppId);
     let list = await performanceModel.getPages(data);
     let count = await performanceModel.getPagesCount(data);
     result.list = list;
@@ -38,55 +36,63 @@ export default class Performance extends Base {
    */
   async pageAvgDetail(req, res) {
     let data = req.body || {},
-      result = {
-        NT: {
-          // FP: 112.73581351156976,
-          // TTI: 659.8831901984818,
-          // DomReady: 660.1176923116576,
-          // Load: 899.733389456246,
-          // FirseByte: 104.0733477525911,
-          // DNS: 0.021755225993362964,
-          // TCP: 2.9860884567463306,
-          // SSL: 2.9713077955348317,
-          // TTFB: 94.93051951485415,
-          // Trans: 8.596136853923412,
-          // DomParse: 239.8066455571626,
-          // Res: 239.6070929860476,
-        },
-        FP: {
-          // startTime: 362.73965088893215,
-        },
-        FCP: {
-          // startTime: 1280.0842817435969,
-        },
-      };
+      result = {};
 
     const monitorAppId = req.get("MonitorAppId") || "";
     data.monitorAppId = monitorAppId;
-    result.project = await projectModel.getMonitorAppIdDetail(monitorAppId)
+    result.project = await projectModel.getMonitorAppIdDetail(monitorAppId);
     if (result.project.projectType == 1) {
-      let ntAvg = await performanceModel.getAvgNtTimeDataSql(data);
-      result.NT = ntAvg[0] || {};
-    } else if (result.project.projectType == 2) {
-      const appLaunch = await performanceModel.getWxAvgNtTimeDataSql(data, 'appLaunch');
-      const route = await performanceModel.getWxAvgNtTimeDataSql(data, 'route');
-      const firstRender = await performanceModel.getWxAvgNtTimeDataSql(data, 'firstRender');
-      const script = await performanceModel.getWxAvgNtTimeDataSql(data, 'script');
-      const loadPackage = await performanceModel.getWxAvgNtTimeDataSql(data, 'loadPackage');
-      result.NT = {
-        appLaunch: appLaunch[0].avgNum,
-        route: route[0].avgNum || 0,
-        firstRender: firstRender[0].avgNum,
-        script: script[0].avgNum,
-        loadPackage: loadPackage[0].avgNum
+      let sItems = await performanceModel.getSessionIds({
+        ...data,
+        key: "page-information",
+      });
+      let sessionIds = sItems.map((item) => item.sessionId);
+      if (sessionIds.length != 0) {
+        let nt = await performanceModel.getWxAvgNtTimeDataSql({
+          ...data,
+          sessionIds,
+        });
+        result.nt = nt[0];
+      } else {
+        result.nt = {
+          dnsLookup: 0,
+          initialConnection: 0,
+          ssl: 0,
+          ttfb: 0,
+          contentDownload: 0,
+          domParse: 0,
+          deferExecuteDuration: 0,
+          domContentLoadedCallback: 0,
+          resourceLoad: 0,
+          domReady: 0,
+          pageLoad: 0,
+        };
       }
     }
-    
-    let fpAvg = await performanceModel.getAvgFpTimeDataSql(data);
-    let fcpAvg = await performanceModel.getAvgFpTimeDataSql(data);
-    
-    result.FP = fpAvg[0] || {};
-    result.FCP = fcpAvg[0] || {};
+
+    // if (result.project.projectType == 1) {
+    //   let ntAvg = await performanceModel.getAvgNtTimeDataSql(data);
+    //   result.NT = ntAvg[0] || {};
+    // } else if (result.project.projectType == 2) {
+    //   const appLaunch = await performanceModel.getWxAvgNtTimeDataSql(data, 'appLaunch');
+    //   const route = await performanceModel.getWxAvgNtTimeDataSql(data, 'route');
+    //   const firstRender = await performanceModel.getWxAvgNtTimeDataSql(data, 'firstRender');
+    //   const script = await performanceModel.getWxAvgNtTimeDataSql(data, 'script');
+    //   const loadPackage = await performanceModel.getWxAvgNtTimeDataSql(data, 'loadPackage');
+    //   result.NT = {
+    //     appLaunch: appLaunch[0].avgNum,
+    //     route: route[0].avgNum || 0,
+    //     firstRender: firstRender[0].avgNum,
+    //     script: script[0].avgNum,
+    //     loadPackage: loadPackage[0].avgNum
+    //   }
+    // }
+
+    // let fpAvg = await performanceModel.getAvgFpTimeDataSql(data);
+    // let fcpAvg = await performanceModel.getAvgFpTimeDataSql(data);
+
+    // result.FP = fpAvg[0] || {};
+    // result.FCP = fcpAvg[0] || {};
 
     return this.send(res, result);
   }
