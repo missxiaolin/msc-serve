@@ -17,6 +17,7 @@ export default class PerformanceModel {
       "monitorAppId",
       "uuId",
       "key",
+      "sessionId",
       "score",
       "textValue",
       "numValue",

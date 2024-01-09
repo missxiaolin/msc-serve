@@ -131,14 +131,16 @@ export default class ErrorSave {
           pageModel.save(data);
           break;
         case error.PERFORMANCE:
-          for (let key in item.metrics) {
+          const sessionId = item.metrics.sessionId || "";
+          for (let key in item.metrics.objs) {
             performanceModel.save({
               monitorAppId: data.monitorAppId,
               uuId: data.uuId,
               key,
-              score: item.metrics[key].score || 0,
-              numValue: Util.getInstance().isType().isNumeric(item.metrics[key].value) && item.metrics[key].value ? item.metrics[key].value : 0,
-              textValue: (Util.getInstance().isType().isPlainObject(item.metrics[key].value) || Util.getInstance().isType().isArray(item.metrics[key].value)) && item.metrics[key].value ? JSON.stringify(item.metrics[key].value) : '',
+              sessionId,
+              score: item.metrics.objs[key].score || 0,
+              numValue: Util.getInstance().isType().isNumeric(item.metrics.objs[key].value) && item.metrics.objs[key].value ? item.metrics.objs[key].value : 0,
+              textValue: (Util.getInstance().isType().isPlainObject(item.metrics.objs[key].value) || Util.getInstance().isType().isArray(item.metrics.objs[key].value)) && item.metrics.objs[key].value ? JSON.stringify(item.metrics.objs[key].value) : '',
               happenTime: item.happenDate
             });
           }
