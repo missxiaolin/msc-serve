@@ -94,7 +94,7 @@ export default class PerformanceModel {
         if (i == sessionIds.length - 1) {
           str = `'${sessionIds[i]}'` + str
         } else {
-          str = `'${sessionIds[i]}', ` + str
+          str = `,'${sessionIds[i]}'` + str
         }
       }
       sql = `${sql} and sessionId in (${str})`;
