@@ -91,7 +91,7 @@ export default class PerformanceModel {
     if (sessionIds) {
       let str = ''
       for(let i = 0; i < sessionIds.length; i++) {
-        if (i < sessionIds.length - 1) {
+        if (i == sessionIds.length - 1) {
           str = `'${sessionIds[i]}'` + str
         } else {
           str = `'${sessionIds[i]}', ` + str

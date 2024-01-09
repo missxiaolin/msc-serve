@@ -12,6 +12,11 @@ const development = {
     user: 'root',
     password: 'root',
     database: 'msc_log'
+    // host: '106.15.43.125',
+    // port: '3303',
+    // user: 'root',
+    // password: 'XiaohongshuMaterial',
+    // database: 'msc_log'
 }
 // 测试环境配置
 const testing = development
