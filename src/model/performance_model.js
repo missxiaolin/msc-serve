@@ -12,6 +12,21 @@ function getTableName() {
 }
 
 export default class PerformanceModel {
+  /* performance metrics */
+  // NT = 'navigation-timing',
+  // FP = 'first-paint',
+  // FCP = 'first-contentful-paint',
+  // LCP = 'largest-contentful-paint',
+  // CCP = 'custom-contentful-paint',
+  // FID = 'first-input-delay',
+  // RL = 'resource-flow',
+  // CLS = 'cumulative-layout-shift',
+  // FPS = 'fps',
+  // ACT = 'api-complete-time',
+  // /* information */
+  // DI = 'device-information',
+  // NI = 'network-information',
+  // PI = 'page-information'
   constructor() {
     this.tableColumnArr = [
       "monitorAppId",
@@ -23,6 +38,18 @@ export default class PerformanceModel {
       "numValue",
       "simpleUrl",
       "happenTime",
+    ];
+    this.performanceKye = [
+      "navigation-timing",
+      "first-paint",
+      "first-contentful-paint",
+      "largest-contentful-paint",
+      "custom-contentful-paint",
+      "first-input-delay",
+      "resource-flow",
+      "cumulative-layout-shift",
+      "fps",
+      "api-complete-time",
     ];
   }
 
@@ -51,13 +78,100 @@ export default class PerformanceModel {
   }
 
   /**
+   * page
+   * @param {*} params
+   * @returns
+   */
+  async getPages(params) {
+    let {
+      simpleUrl = "",
+      key = "",
+      startTime = "",
+      endTime = "",
+      monitorAppId = "",
+      pageSize = 10,
+      page = 1,
+    } = params;
+    let tableName = getTableName();
+    let res = Knex.select(this.tableColumnArr)
+      .from(tableName)
+      .where("happenTime", "<", endTime)
+      .andWhere("happenTime", ">", startTime);
+    if (monitorAppId) {
+      res = res.andWhere("monitorAppId", monitorAppId);
+    }
+    if (simpleUrl) {
+      res = res.andWhere("simpleUrl", simpleUrl);
+    }
+    if (key) {
+      res = res.andWhere("key", key);
+    }
+    res = await res
+      .orderBy("happenTime", "desc")
+      .limit(pageSize)
+      .offset(page * pageSize - pageSize)
+      .catch((err) => {
+        console.log(err);
+        return [];
+      });
+
+    return res;
+  }
+
+  /**
+   * @param {*} params
+   * @returns
+   */
+  async getPagesCount(params) {
+    let {
+      simpleUrl = "",
+      key = "",
+      startTime = "",
+      endTime = "",
+      monitorAppId = "",
+    } = params;
+    let tableName = getTableName();
+    let res = Knex.from(tableName)
+      .where("happenTime", "<", endTime)
+      .andWhere("happenTime", ">", startTime);
+    if (monitorAppId) {
+      res = res.andWhere("monitorAppId", monitorAppId);
+    }
+    if (simpleUrl) {
+      res = res.andWhere("simpleUrl", simpleUrl);
+    }
+    if (key) {
+      res = res.andWhere("key", key);
+    }
+    res = await res.count("* as performanceCount").catch((err) => {
+      console.log(err);
+      return 0;
+    });
+
+    return res[0].performanceCount;
+  }
+
+  /**
+   * @param {*} sessionIds
+   * @returns
+   */
+  async getPerformances(sessionIds) {
+    let tableName = getTableName();
+    let res = await Knex.select(this.tableColumnArr)
+      .from(tableName)
+      .where("sessionId", "in", sessionIds)
+      .andWhere("key", "in", this.performanceKye);
+    return res;
+  }
+
+  /**
    * 获取sessionId
-   * @param {*} params 
+   * @param {*} params
    */
   async getSessionIds(params) {
-    let { monitorAppId, simpleUrl, startTime, endTime, key } = params
+    let { monitorAppId, simpleUrl, startTime, endTime, key } = params;
     let tableName = getTableName();
-    let res = Knex.select('sessionId')
+    let res = Knex.select("sessionId")
       .from(tableName)
       .where("happenTime", "<", endTime)
       .andWhere("happenTime", ">", startTime);
@@ -68,35 +182,38 @@ export default class PerformanceModel {
       res = res.andWhere("key", key);
     }
     if (simpleUrl) {
-      // res = res.andWhere("textValue", 'like', `%${simpleUrl}%`);
       res = res.andWhere("simpleUrl", simpleUrl);
     }
-    res = await res.groupBy('sessionId')
-      .catch((err) => {
-        console.log(err);
-        return [];
-      });
+    res = await res.groupBy("sessionId").catch((err) => {
+      console.log(err);
+      return [];
+    });
 
     return res;
   }
 
   /**
-   * @param {*} params 
-   * @returns 
+   * @param {*} params
+   * @returns
    */
-  async getWxAvgNtTimeDataSql(params) {
-    let { startTime = "", endTime = "", monitorAppId = "", sessionIds = [] } = params;
+  async getAvgNtTimeDataSql(params) {
+    let {
+      startTime = "",
+      endTime = "",
+      monitorAppId = "",
+      sessionIds = [],
+    } = params;
     let sql = `select avg(JSON_EXTRACT(textValue,'$.dnsLookup')) as "dnsLookup", avg(JSON_EXTRACT(textValue,'$.initialConnection')) as "initialConnection", avg(JSON_EXTRACT(textValue,'$.ssl')) as "ssl", avg(JSON_EXTRACT(textValue,'$.ttfb')) as "ttfb", avg(JSON_EXTRACT(textValue,'$.contentDownload')) as "contentDownload", avg(JSON_EXTRACT(textValue,'$.domParse')) as "domParse", avg(JSON_EXTRACT(textValue,'$.deferExecuteDuration')) as "deferExecuteDuration", avg(JSON_EXTRACT(textValue,'$.domContentLoadedCallback')) as "domContentLoadedCallback", avg(JSON_EXTRACT(textValue,'$.resourceLoad')) as "resourceLoad", avg(JSON_EXTRACT(textValue,'$.domReady')) as "domReady", avg(JSON_EXTRACT(textValue,'$.pageLoad')) as "pageLoad" from performance where happenTime > "${startTime}" and happenTime < "${endTime}" and textValue != ''`;
     if (monitorAppId) {
       sql = `${sql} and monitorAppId = "${monitorAppId}"`;
     }
     if (sessionIds) {
-      let str = ''
-      for(let i = 0; i < sessionIds.length; i++) {
+      let str = "";
+      for (let i = 0; i < sessionIds.length; i++) {
         if (i == sessionIds.length - 1) {
-          str = `'${sessionIds[i]}'` + str
+          str = `'${sessionIds[i]}'` + str;
         } else {
-          str = `,'${sessionIds[i]}'` + str
+          str = `,'${sessionIds[i]}'` + str;
         }
       }
       sql = `${sql} and sessionId in (${str})`;
@@ -107,5 +224,35 @@ export default class PerformanceModel {
     }
 
     return {};
+  }
+
+  async getAvgKey(params) {
+    let {
+      startTime = "",
+      endTime = "",
+      monitorAppId = "",
+      simpleUrl = "",
+      sessionIds = [],
+      key,
+    } = params;
+    let tableName = getTableName();
+    let res = Knex.from(tableName)
+      .avg("numValue as numValue")
+      .where("happenTime", "<", endTime)
+      .andWhere("happenTime", ">", startTime);
+    if (monitorAppId) {
+      res = res.andWhere("monitorAppId", monitorAppId);
+    }
+    if (simpleUrl) {
+      res = res.andWhere("simpleUrl", simpleUrl);
+    }
+    if (key) {
+      res = res.andWhere("key", key);
+    }
+    if (sessionIds && sessionIds.length > 0) {
+      res = res.andWhere("sessionId", "in", sessionIds)
+    }
+
+    return await res
   }
 }
