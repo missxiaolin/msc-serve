@@ -75,7 +75,6 @@ export default class ErrorSave {
           break;
         case error.HTTP_LOG:
           data.level = item.level || "";
-          data.category = item.category || "";
           data.happenDate = item.happenDate || "";
           data.happenTime = item.happenDate || "";
           data.pageUrl = item.pageUrl || "";
@@ -105,9 +104,7 @@ export default class ErrorSave {
           data.left = item.left || "";
           data.eventType = item.eventType || "";
           data.pageHeight = item.pageHeight || "";
-          data.scrollTop = item.scrollTop || "";
           data.subType = item.subType || "";
-          data.paths = item.paths || "";
           data.startTime = item.startTime || "";
           data.innerHTML = item.innerHTML || "";
           data.viewport = item.viewport ? JSON.stringify(item.viewport) : "";
