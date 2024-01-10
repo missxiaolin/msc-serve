@@ -99,7 +99,6 @@ export default class PerformanceModel {
       }
       sql = `${sql} and sessionId in (${str})`;
     }
-    console.log(sql)
     let res = await Knex.raw(sql);
     if (res.length > 0) {
       return res[0];
