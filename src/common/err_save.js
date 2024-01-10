@@ -6,6 +6,7 @@ import PageModel from "../model/page_model";
 import UserClickeModel from "../model/user_click_model";
 import HttpModel from "../model/http_model";
 import JsModel from "../model/js_model";
+import PromiseLog from "../model/promise_log";
 import Util from "./utils";
 
 const performanceModel = new PerformanceModel();
@@ -14,6 +15,7 @@ const pageModel = new PageModel();
 const userClickeModel = new UserClickeModel();
 const httpModel = new HttpModel();
 const js_model = new JsModel();
+const promise_log = new PromiseLog()
 
 export default class ErrorSave {
   constructor() {}
@@ -143,6 +145,17 @@ export default class ErrorSave {
             });
           }
           break;
+        case error.PROMISE_ERROR:
+          data.level = item.level || "";
+          data.category = item.category || "";
+          data.happenDate = item.happenDate || "";
+          data.happenTime = item.happenDate || "";
+          data.pageUrl = item.pageUrl || "";
+          data.simpleUrl = item.simpleUrl || "";
+          data.errorMsg = item.errorMsg || "";
+          data.startTime = item.startTime || "";
+          promise_log.save(data)
+          break
         default:
       }
     });
