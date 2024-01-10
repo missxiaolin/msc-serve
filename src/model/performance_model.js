@@ -21,6 +21,7 @@ export default class PerformanceModel {
       "score",
       "textValue",
       "numValue",
+      "simpleUrl",
       "happenTime",
     ];
   }
@@ -67,7 +68,8 @@ export default class PerformanceModel {
       res = res.andWhere("key", key);
     }
     if (simpleUrl) {
-      res = res.andWhere("textValue", 'like', `%${simpleUrl}%`);
+      // res = res.andWhere("textValue", 'like', `%${simpleUrl}%`);
+      res = res.andWhere("simpleUrl", simpleUrl);
     }
     res = await res.groupBy('sessionId')
       .catch((err) => {
