@@ -60,6 +60,17 @@ export default class UserClickeModel {
     return id;
   }
 
+  async getIds(ids) {
+    let select = this.tableColumnArr
+    select.push('id')
+    let tableName = getTableName();
+    let res = await Knex.select(this.tableColumnArr)
+      .from(tableName)
+      .select(select)
+      .where("id", "in", ids);
+    return res;
+  }
+
   /**
    * 分页
    * @param {*} data

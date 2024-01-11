@@ -7,8 +7,8 @@ const BASE_TABLE_NAME = "user_behavior";
 const TABLE_COLUMN = [];
 
 const DISOLAYT_TABLE_COLUMN = [];
-export const PROJECT_OPEN = 1
-export const PROJECT_CLOSE = 2
+export const PROJECT_OPEN = 1;
+export const PROJECT_CLOSE = 2;
 
 function getTableName() {
   return BASE_TABLE_NAME;
@@ -47,5 +47,69 @@ export default class UserBehaviorModel {
     let id = _.get(insertResult, [0], 0);
 
     return id > 0;
+  }
+
+  /**
+   * 分页
+   * @param {*} params
+   * @returns
+   */
+  async getPages(params) {
+    let {
+      pageSize = 10,
+      page = 1,
+      startTime = "",
+      endTime = "",
+      uuId = "",
+      monitorAppId = "",
+    } = params;
+    let tableName = getTableName();
+    let res = Knex.select("*")
+      .from(tableName)
+      .where("createTime", "<", endTime)
+      .andWhere("createTime", ">", startTime);
+
+    if (monitorAppId) {
+      res = res.andWhere("monitorAppId", monitorAppId);
+    }
+    if (uuId) {
+      res = res.andWhere("uuId", uuId);
+    }
+
+    res = await res
+      .orderBy("createTime", "desc")
+      .limit(pageSize)
+      .offset(page * pageSize - pageSize)
+      .catch((err) => {
+        console.log(err);
+        return [];
+      });
+
+    return res;
+  }
+
+  /**
+   * @param {*} params 
+   * @returns 
+   */
+  async getPagesCount(params) {
+    let { startTime = "", endTime = "", uuId = "", monitorAppId = "" } = params;
+    let tableName = getTableName();
+    let res = Knex.from(tableName)
+      .where("createTime", "<", endTime)
+      .andWhere("createTime", ">", startTime);
+
+    if (monitorAppId) {
+      res = res.andWhere("monitorAppId", monitorAppId);
+    }
+    if (uuId) {
+      res = res.andWhere("uuId", uuId);
+    }
+    res = await res.count("* as projectCount").catch((err) => {
+      console.log(err);
+      return 0;
+    });
+
+    return res[0].projectCount;
   }
 }

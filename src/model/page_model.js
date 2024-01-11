@@ -70,6 +70,47 @@ export default class PageModel {
     return id;
   }
 
+  async getIds(ids) {
+    let select = this.tableColumnArr
+    select.push('id')
+    let tableName = getTableName();
+    let res = await Knex.select(this.tableColumnArr)
+      .from(tableName)
+      .select(select)
+      .where("id", "in", ids);
+    return res;
+  }
+
+  /**
+   * 获取单个详情
+   * @param {*} params 
+   * @returns 
+   */
+  async getPageDetail(params) {
+    let {
+      startTime,
+      endTime,
+      monitorAppId = "",
+      simpleUrl = "",
+      uuId = ''
+    } = params;
+    let tableName = getTableName();
+    let res = Knex.from(tableName)
+      .select(this.tableColumnArr)
+      .where("happenTime", "<=", endTime)
+      .andWhere("happenTime", ">=", startTime);
+    if (monitorAppId) {
+      res = res.andWhere("monitorAppId", monitorAppId);
+    }
+    if (simpleUrl) {
+      res = res.andWhere("simpleUrl", simpleUrl);
+    }
+    if (uuId) {
+      res = res.andWhere("uuId", uuId);
+    }
+    return await res.first();
+  }
+
   /**
    * uv pv
    * @param {*} params
@@ -82,7 +123,7 @@ export default class PageModel {
       isUv = false,
       isIp = false,
       monitorAppId = "",
-      simpleUrl = ""
+      simpleUrl = "",
     } = params;
     let tableName = getTableName();
     let res = Knex.from(tableName)
@@ -224,8 +265,6 @@ export default class PageModel {
       .count("* as pageCount")
       .where("happenTime", "<", endTime)
       .andWhere("happenTime", ">", startTime);
-
-    
 
     if (simpleUrl) {
       res = res.andWhere("simpleUrl", simpleUrl);

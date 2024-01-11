@@ -6,6 +6,7 @@ import page from './page/index'
 import js from './js/index'
 import request from './request/index'
 import project from './project'
+import userBehavior from './userBehavior'
 
 export default {
     ...index,
@@ -15,5 +16,6 @@ export default {
     ...page,
     ...js,
     ...request,
-    ...project
+    ...project,
+    ...userBehavior
 }
