@@ -62,6 +62,7 @@ export default class UserBehaviorModel {
       endTime = "",
       uuId = "",
       monitorAppId = "",
+      categorys = []
     } = params;
     let tableName = getTableName();
     let res = Knex.select("*")
@@ -75,7 +76,10 @@ export default class UserBehaviorModel {
     if (uuId) {
       res = res.andWhere("uuId", uuId);
     }
-
+    if (categorys && categorys.length > 0) {
+      res = res.andWhere("category", 'in', categorys);
+    }
+    
     res = await res
       .orderBy("createTime", "desc")
       .limit(pageSize)
@@ -93,7 +97,7 @@ export default class UserBehaviorModel {
    * @returns 
    */
   async getPagesCount(params) {
-    let { startTime = "", endTime = "", uuId = "", monitorAppId = "" } = params;
+    let { startTime = "", endTime = "", uuId = "", monitorAppId = "", categorys = [] } = params;
     let tableName = getTableName();
     let res = Knex.from(tableName)
       .where("createTime", "<", endTime)
@@ -104,6 +108,9 @@ export default class UserBehaviorModel {
     }
     if (uuId) {
       res = res.andWhere("uuId", uuId);
+    }
+    if (categorys && categorys.length > 0) {
+      res = res.andWhere("category", 'in', categorys);
     }
     res = await res.count("* as projectCount").catch((err) => {
       console.log(err);
