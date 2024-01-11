@@ -7,7 +7,7 @@
 #
 # Host: 127.0.0.1 (MySQL 5.7.44)
 # Database: msc_log
-# Generation Time: 2024-01-10 07:44:15 +0000
+# Generation Time: 2024-01-11 06:34:01 +0000
 # ************************************************************
 
 
@@ -41,6 +41,24 @@ VALUES
 
 /*!40000 ALTER TABLE `adm_user` ENABLE KEYS */;
 UNLOCK TABLES;
+
+
+# Dump of table user_behavior
+# ------------------------------------------------------------
+
+DROP TABLE IF EXISTS `user_behavior`;
+
+CREATE TABLE `user_behavior` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `monitorAppId` varchar(100) NOT NULL DEFAULT '' COMMENT '项目',
+  `uuId` varchar(100) NOT NULL DEFAULT '' COMMENT '用户ID',
+  `category` varchar(30) NOT NULL DEFAULT '' COMMENT '类别',
+  `tb_id` int(11) NOT NULL COMMENT '联表id',
+  `createTime` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '时间',
+  PRIMARY KEY (`id`),
+  KEY `monitorAppId` (`monitorAppId`,`createTime`,`uuId`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
 
 
 # Dump of table click_log
@@ -248,10 +266,10 @@ CREATE TABLE `performance` (
   `uuId` varchar(100) NOT NULL DEFAULT '' COMMENT '用户ID',
   `key` varchar(300) NOT NULL DEFAULT '' COMMENT '名称',
   `score` int(100) NOT NULL COMMENT '分数',
-  `textValue` varchar(20000) NOT NULL DEFAULT '' COMMENT '数据',
+  `textValue` text NOT NULL COMMENT '数据',
   `numValue` int(100) NOT NULL COMMENT '数据',
   `happenTime` varchar(30) NOT NULL DEFAULT '' COMMENT '时间',
-  `simpleUrl` varchar(300) DEFAULT '',
+  `simpleUrl` varchar(300) NOT NULL DEFAULT '',
   PRIMARY KEY (`id`),
   KEY `m_id_time` (`monitorAppId`,`happenTime`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
@@ -303,7 +321,6 @@ CREATE TABLE `promise_log` (
   `userAgent` varchar(500) NOT NULL DEFAULT '' COMMENT 'UA',
   `uuId` varchar(100) NOT NULL DEFAULT '' COMMENT '用户标识',
   `level` varchar(10) NOT NULL DEFAULT '' COMMENT '级别',
-  `category` varchar(30) NOT NULL DEFAULT '' COMMENT '上报类别',
   `happenTime` varchar(30) NOT NULL DEFAULT '' COMMENT '上报时间',
   `deviceType` varchar(100) NOT NULL DEFAULT '' COMMENT '设备',
   `os` varchar(100) NOT NULL DEFAULT '' COMMENT '设备',
@@ -320,7 +337,7 @@ CREATE TABLE `promise_log` (
   `city` varchar(10) NOT NULL DEFAULT '' COMMENT '区',
   `pageUrl` varchar(1000) NOT NULL DEFAULT '' COMMENT '页面链接',
   `simpleUrl` varchar(1000) NOT NULL DEFAULT '' COMMENT '页面带*链接',
-  `errorMsg` varchar(300) NOT NULL DEFAULT '' COMMENT '错误信息',
+  `errorMsg` text NOT NULL COMMENT '错误信息',
   `startTime` varchar(300) NOT NULL DEFAULT '' COMMENT '页面加载后 至 发生错误时间,',
   PRIMARY KEY (`id`),
   KEY `m_id_time` (`monitorAppId`,`happenTime`)
@@ -339,7 +356,6 @@ CREATE TABLE `resource_log` (
   `userAgent` varchar(500) NOT NULL DEFAULT '' COMMENT 'UA',
   `uuId` varchar(100) NOT NULL DEFAULT '' COMMENT '用户标识',
   `level` varchar(10) NOT NULL DEFAULT '' COMMENT '级别',
-  `category` varchar(30) NOT NULL DEFAULT '' COMMENT '上报类别',
   `happenTime` varchar(30) NOT NULL DEFAULT '' COMMENT '上报时间',
   `deviceType` varchar(100) NOT NULL DEFAULT '' COMMENT '设备',
   `os` varchar(100) NOT NULL DEFAULT '' COMMENT '设备',
