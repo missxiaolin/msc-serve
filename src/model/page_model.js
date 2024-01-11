@@ -67,7 +67,7 @@ export default class PageModel {
       });
     let id = _.get(insertResult, [0], 0);
 
-    return id > 0;
+    return id;
   }
 
   /**

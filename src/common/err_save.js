@@ -7,7 +7,10 @@ import UserClickeModel from "../model/user_click_model";
 import HttpModel from "../model/http_model";
 import JsModel from "../model/js_model";
 import PromiseLog from "../model/promise_log";
+import UserBehaviorModel from '../model/user_behavior'
 import Util from "./utils";
+import DATE_FORMAT from "../constants/date_format";
+import moment from "moment";
 
 const performanceModel = new PerformanceModel();
 const resourceModel = new ResourceModel();
@@ -16,10 +19,15 @@ const userClickeModel = new UserClickeModel();
 const httpModel = new HttpModel();
 const js_model = new JsModel();
 const promise_log = new PromiseLog()
+const userBehaviorModel = new UserBehaviorModel();
 
 export default class ErrorSave {
   constructor() {}
 
+  /**
+   * 分类数据
+   * @param {*} res 
+   */
   save(res) {
     let useData = res.data.lists;
     let data = {
@@ -40,7 +48,7 @@ export default class ErrorSave {
       city: res.cregion.city || "",
       ip: res.monitorIp || "",
     };
-    useData.forEach((item) => {
+    useData.forEach(async (item) => {
       switch (item.category) {
         case error.JS_ERROR:
           data.level = item.level || "";
@@ -59,7 +67,8 @@ export default class ErrorSave {
           data.propsData = item.propsData || "";
           data.hook = item.hook || "";
           data.componentNameTrace = item.componentNameTrace || "";
-          js_model.save(data);
+          const jsId = await js_model.save(data);
+          this.userBehaviorSave(data, jsId)
           break;
         case error.RESOURCE_ERROR:
           data.level = item.level || "";
@@ -77,6 +86,7 @@ export default class ErrorSave {
           break;
         case error.HTTP_LOG:
           data.level = item.level || "";
+          data.category = item.category || "";
           data.happenDate = item.happenDate || "";
           data.happenTime = item.happenDate || "";
           data.pageUrl = item.pageUrl || "";
@@ -92,7 +102,8 @@ export default class ErrorSave {
           data.statusText = item.statusText || "";
           data.type = item.type || "";
           data.eventType = item.eventType || "";
-          httpModel.save(data)
+          const httpId = await httpModel.save(data)
+          this.userBehaviorSave(data, httpId)
           break;
         case error.USER_CLICK:
           data.level = item.level || "";
@@ -111,7 +122,8 @@ export default class ErrorSave {
           data.innerHTML = item.innerHTML || "";
           data.viewport = item.viewport ? JSON.stringify(item.viewport) : "";
           data.targetInfo = item.targetInfo ? JSON.stringify(item.targetInfo)  : "";
-          userClickeModel.save(data);
+          const clickId = await userClickeModel.save(data);
+          this.userBehaviorSave(data, clickId)
           break;
         case error.PAGE_PV:
           data.level = item.level || "";
@@ -127,7 +139,8 @@ export default class ErrorSave {
           data.startTime = item.startTime || "";
           data.referrer = item.referrer || "";
           data.type = item.type || "";
-          pageModel.save(data);
+          const pageId = await pageModel.save(data);
+          this.userBehaviorSave(data, pageId);
           break;
         case error.PERFORMANCE:
           const sessionId = item.metrics.sessionId || "";
@@ -159,5 +172,20 @@ export default class ErrorSave {
         default:
       }
     });
+  }
+
+  /**
+   * 记录用户行为数据
+   * @param {*} data 
+   * @param {*} id 
+   */
+  userBehaviorSave(data, id) {
+    userBehaviorModel.save({
+      monitorAppId: data.monitorAppId || '',
+      uuId: data.uuId || '',
+      category: data.category || '',
+      tb_id: id,
+      createTime: moment().format(DATE_FORMAT.DISPLAY_BY_MILLSECOND)
+    })
   }
 }

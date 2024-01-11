@@ -19,7 +19,6 @@ export default class ResourceModel {
       "userAgent",
       "uuId",
       "level",
-      "category",
       "happenTime",
       "deviceType",
       "os",

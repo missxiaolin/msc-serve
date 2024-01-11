@@ -3,36 +3,25 @@ import _ from "lodash";
 import Logger from "../library/logger";
 import * as config from "../config/err";
 
-const BASE_TABLE_NAME = "click_log";
+const BASE_TABLE_NAME = "user_behavior";
 const TABLE_COLUMN = [];
 
 const DISOLAYT_TABLE_COLUMN = [];
+export const PROJECT_OPEN = 1
+export const PROJECT_CLOSE = 2
 
 function getTableName() {
   return BASE_TABLE_NAME;
 }
 
-export default class UserClickeModel {
+export default class UserBehaviorModel {
   constructor() {
     this.tableColumnArr = [
       "monitorAppId",
       "uuId",
-      "level",
-      "happenTime",
-      "screenHeight",
-      "screenWidth",
-      "pageUrl",
-      "simpleUrl",
-      "tagName",
-      "top",
-      "left",
-      "eventType",
-      "pageHeight",
-      "subType",
-      "startTime",
-      "innerHTML",
-      "viewport",
-      "targetInfo",
+      "category",
+      "tb_id",
+      "createTime",
     ];
   }
 
@@ -52,19 +41,11 @@ export default class UserClickeModel {
       .into(tableName)
       .catch((err) => {
         console.log(err);
-        Logger.log(err.message, "UserClickModel    add   出错");
+        Logger.log(err.message, "UserBehaviorModel    add   出错");
         return [];
       });
     let id = _.get(insertResult, [0], 0);
 
-    return id;
+    return id > 0;
   }
-
-  /**
-   * 分页
-   * @param {*} data
-   * @returns
-   */
-  async getPages(params) {}
-
 }
