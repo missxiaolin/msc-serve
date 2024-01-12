@@ -7,6 +7,7 @@ import js from './js/index'
 import request from './request/index'
 import project from './project'
 import userBehavior from './userBehavior'
+import alert from './alert'
 
 export default {
     ...index,
@@ -17,5 +18,6 @@ export default {
     ...js,
     ...request,
     ...project,
-    ...userBehavior
+    ...userBehavior,
+    ...alert
 }
