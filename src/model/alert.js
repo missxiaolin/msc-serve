@@ -7,8 +7,8 @@ const BASE_TABLE_NAME = "alarm_config";
 const TABLE_COLUMN = [];
 
 const DISOLAYT_TABLE_COLUMN = [];
-export const ALERT_OPEN = 1
-export const ALERT_CLOSE = 2
+export const ALERT_OPEN = 1;
+export const ALERT_CLOSE = 2;
 
 function getTableName() {
   return BASE_TABLE_NAME;
@@ -29,7 +29,7 @@ export default class AlertModel {
       "endHour",
       "alertType",
       "startTime",
-      "updateTime"
+      "updateTime",
     ];
   }
 
@@ -59,26 +59,25 @@ export default class AlertModel {
 
   /**
    * 修改
-   * @param {*} data 
-   * @param {*} id 
-   * @returns 
+   * @param {*} data
+   * @param {*} id
+   * @returns
    */
   async update(data, id) {
     let tableName = getTableName();
-    let updateResult = await Knex.from(tableName).update(data).where('id', id)
-    return updateResult
+    let updateResult = await Knex.from(tableName).update(data).where("id", id);
+    return updateResult;
   }
 
-
   /**
-   * 获取所有开启的项目
-   * @returns 
+   * 获取所有开启的告警
+   * @returns
    */
   async getStatusAll() {
     let tableName = getTableName();
     let res = await Knex.select("*")
       .from(tableName)
-      .where("is_enable", ALERT_OPEN)
+      .where("is_enable", ALERT_OPEN);
 
     return res;
   }
@@ -91,10 +90,11 @@ export default class AlertModel {
   async getPages(params) {
     let { pageSize = 10, page = 1 } = params;
     let tableName = getTableName();
-    
-    let res = await Knex.select("*")
+
+    let res = await Knex.select("alarm_config.*", 'projects.name')
       .from(tableName)
-      .orderBy("updateTime", "desc")
+      .join("projects", "alarm_config.project_id", "=", "projects.id")
+      .orderBy("projects.updateTime", "desc")
       .limit(pageSize)
       .offset(page * pageSize - pageSize)
       .catch((err) => {
@@ -106,39 +106,19 @@ export default class AlertModel {
   }
 
   /**
-   * 获取详情
-   * @param {*} monitorAppId 
-   * @returns 
-   */
-  async getMonitorAppIdDetail(monitorAppId) {
-    let tableName = getTableName();
-    
-    let res = await Knex.select("*")
-      .from(tableName)
-      .where('monitorAppId', monitorAppId)
-      .first()
-      .catch((err) => {
-        console.log(err);
-        return [];
-      });
-
-    return res;
-  }
-
-  /**
    * 总数
-   * @param {*} params 
-   * @returns 
+   * @param {*} params
+   * @returns
    */
   async getPagesCount(params) {
     let tableName = getTableName();
     let res = Knex.from(tableName);
 
-    res = await res.count("* as projectCount").catch((err) => {
+    res = await res.count("* as alertCount").catch((err) => {
       console.log(err);
       return 0;
     });
 
-    return res[0].projectCount;
+    return res[0].alertCount;
   }
 }

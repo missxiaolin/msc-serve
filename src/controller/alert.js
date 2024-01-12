@@ -28,10 +28,26 @@ export default class AlertController extends Base {
         updateTime: time,
         alertType: data.alertType && data.alertType.length > 0 ? JSON.stringify(data.alertType) : JSON.stringify([])
       };
-      result = await projectModel.update(param, param.id);
+      result = await aleryModel.update(param, param.id);
     }
     return this.send(res, result);
   }
 
-  async alertList(req, res) {}
+  /**
+   * 列表
+   * @param {*} req 
+   * @param {*} res 
+   * @returns 
+   */
+  async alertList(req, res) {
+    let data = req.body || {},
+      result = {};
+
+    result.list = await aleryModel.getPages(data);
+    result.count = await aleryModel.getPagesCount(data);
+    result.list.forEach(item => {
+        item.alertType = item.alertType ? JSON.parse(item.alertType) : []
+    })
+    return this.send(res, result);
+  }
 }
