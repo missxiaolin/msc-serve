@@ -117,7 +117,7 @@ class PageAnalysis extends Base {
    * @param {*} data
    */
   async handleSavePage(data) {
-    let res = await pageDataAnalysisModel.getTimeData(data.happenTime);
+    let res = await pageDataAnalysisModel.getTimeMData(data.happenTime, data.monitorAppId);
     if (res && res.id) {
       // 修改
       await pageDataAnalysisModel.updateData(data, res.id);

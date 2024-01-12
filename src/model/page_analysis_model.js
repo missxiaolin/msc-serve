@@ -67,11 +67,12 @@ export default class PageDataAnalysisModel {
    * @param {*} happenTime
    * @returns
    */
-  async getTimeData(happenTime) {
+  async getTimeMData(happenTime, monitorAppId) {
     let tableName = getTableName();
     let res = await Knex.select("*")
       .from(tableName)
       .where("happenTime", happenTime)
+      .andWhere("monitorAppId", monitorAppId)
       .first();
 
     return res;
