@@ -17,7 +17,8 @@ function getTableName() {
 export default class AlertModel {
   constructor() {
     this.tableColumnArr = [
-      "project_id",
+      "monitorAppId",
+      "serviceType",
       "error_type",
       "error_name",
       "time_range_s",
@@ -93,7 +94,7 @@ export default class AlertModel {
 
     let res = await Knex.select("alarm_config.*", 'projects.name')
       .from(tableName)
-      .join("projects", "alarm_config.project_id", "=", "projects.id")
+      .join("projects", "alarm_config.monitorAppId", "=", "projects.monitorAppId")
       .orderBy("projects.updateTime", "desc")
       .limit(pageSize)
       .offset(page * pageSize - pageSize)
