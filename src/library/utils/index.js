@@ -1,5 +1,5 @@
 import LIpip from "../ipip";
-import moment from 'moment'
+import moment from "moment";
 /**
  * URL 参数解析
  * @param {String} url
@@ -109,19 +109,38 @@ const { ip2Locate } = LIpip;
  *
  * @example betweenDateTimeAllHours('2023-06-03 00:50:00', '2023-06-03 12:30:00', 3)
  */
-export const betweenDateTimeAllHours = (startDateTime, endDateTime, spacing = 1) => {
-	let hourList = [];
-	endDateTime = endDateTime || moment().format("YYYY-MM-DD HH:mm:ss");
-	const start = moment(startDateTime);
-	const end = moment(endDateTime);
-	let hoursLen = end.diff(start, "hours");
-	hoursLen = Math.round(hoursLen / spacing); // 时间区间 四舍五入
-	hourList.push(start.format("YYYY-MM-DD HH:mm:ss"));
-	for (let i = 1; i <= hoursLen; i++) {
-		const newTime = start.add(spacing, "hours").format("YYYY-MM-DD HH:mm:ss");
-    hourList.push(newTime)
-	}
-	return hourList;
+export const betweenDateTimeAllHours = (
+  startDateTime,
+  endDateTime,
+  spacing = 1
+) => {
+  let hourList = [];
+  endDateTime = endDateTime || moment().format("YYYY-MM-DD HH:mm:ss");
+  const start = moment(startDateTime);
+  const end = moment(endDateTime);
+  let hoursLen = end.diff(start, "hours");
+  hoursLen = Math.round(hoursLen / spacing); // 时间区间 四舍五入
+  hourList.push(start.format("YYYY-MM-DD HH:mm:ss"));
+  for (let i = 1; i <= hoursLen; i++) {
+    const newTime = start.add(spacing, "hours").format("YYYY-MM-DD HH:mm:ss");
+    hourList.push(newTime);
+  }
+  return hourList;
+};
+
+/**
+ * 判断是否在该时间段
+ * @param {*} currentTime 
+ * @param {*} startTime 
+ * @param {*} endTime 
+ */
+export const isHourSlot = (currentTime, startTime, endTime) => {
+  // 判断当前时间是否在时间段内
+  if (currentTime >= startTime && currentTime <= endTime) {
+    return true;
+  } else {
+    return false;
+  }
 };
 
 export default {

@@ -9,7 +9,8 @@
     "serve": "NODE_ENV=production node-dev ./dist/app.js",
     "watch": "babel src --copy-files --watch --out-dir dist  --ignore src/public --verbose --source-maps",
     "build": "babel src --copy-files -d dist --verbose",
-    "command": "NODE_ENV=production node dist/command.js"
+    "command": "NODE_ENV=production node dist/command.js",
+    "command:dev": "NODE_ENV=development node dist/command.js"
   },
   "dependencies": {
     "@adonisjs/ace": "^5.0.8",

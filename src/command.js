@@ -16,6 +16,7 @@ const registedCommandList = [
     './commands/page/index', // page 分析
     './commands/dataHour/dataInit.js', // dataHour表初始化
     './commands/dataHour/index.js', // 分析数据插入
+    './commands/watch_dog/alarm.js', // 监控发送
 ]
 
 

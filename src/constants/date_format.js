@@ -17,6 +17,8 @@ const DISPLAY_BY_MINUTE = 'YYYY-MM-DD HH:mm'
 const DISPLAY_BY_SECOND = 'YYYY-MM-DD HH:mm:ss'
 const DISPLAY_BY_MILLSECOND = 'YYYY-MM-DD HH:mm:ss.SSS'
 
+const TIME_BY_SECOND = 'HH:mm:ss'
+
 export default {
 
     DISPLAY_BY_YEAR,
@@ -26,6 +28,7 @@ export default {
     DISPLAY_BY_MINUTE,
     DISPLAY_BY_SECOND,
     DISPLAY_BY_MILLSECOND,
+    TIME_BY_SECOND,
 
     UNIT,
 }

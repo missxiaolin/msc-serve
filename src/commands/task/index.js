@@ -60,6 +60,7 @@ export default class TaskManager extends Base {
   async registerTaskRepeatPer1Minute() {
     schedule.scheduleJob("0 */1 * * * *", () => {
       console.log('每分钟任务')
+      this.execCommand('WatchDog:Alarm', [])
     });
   }
 

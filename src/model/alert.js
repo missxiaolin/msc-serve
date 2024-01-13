@@ -1,7 +1,7 @@
 import Knex from "../library/mysql";
 import _ from "lodash";
 import Logger from "../library/logger";
-import * as config from "../config/err";
+import * as config from "../constants/err";
 
 const BASE_TABLE_NAME = "alarm_config";
 const TABLE_COLUMN = [];
@@ -73,7 +73,7 @@ export default class AlertModel {
    * 获取所有开启的告警
    * @returns
    */
-  async getStatusAll() {
+  async getAllEnabled() {
     let tableName = getTableName();
     let res = await Knex.select("*")
       .from(tableName)
