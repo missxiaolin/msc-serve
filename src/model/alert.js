@@ -89,12 +89,18 @@ export default class AlertModel {
    * @returns
    */
   async getPages(params) {
-    let { pageSize = 10, page = 1 } = params;
+    let { pageSize = 10, page = 1, monitorAppId = "" } = params;
     let tableName = getTableName();
 
-    let res = await Knex.select("alarm_config.*", 'projects.name')
+    let res = await Knex.select("alarm_config.*", "projects.name")
       .from(tableName)
-      .join("projects", "alarm_config.monitorAppId", "=", "projects.monitorAppId")
+      .join(
+        "projects",
+        "alarm_config.monitorAppId",
+        "=",
+        "projects.monitorAppId"
+      )
+      .where("alarm_config.monitorAppId", monitorAppId)
       .orderBy("projects.updateTime", "desc")
       .limit(pageSize)
       .offset(page * pageSize - pageSize)
@@ -112,13 +118,17 @@ export default class AlertModel {
    * @returns
    */
   async getPagesCount(params) {
+    const { monitorAppId = '' } = params;
     let tableName = getTableName();
     let res = Knex.from(tableName);
 
-    res = await res.count("* as alertCount").catch((err) => {
-      console.log(err);
-      return 0;
-    });
+    res = await res
+      .count("* as alertCount")
+      .where("monitorAppId", monitorAppId)
+      .catch((err) => {
+        console.log(err);
+        return 0;
+      });
 
     return res[0].alertCount;
   }
