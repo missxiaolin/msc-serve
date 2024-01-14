@@ -76,9 +76,15 @@ export default class AlertModel {
    */
   async getAllEnabled() {
     let tableName = getTableName();
-    let res = await Knex.select("*")
+    let res = await Knex.select("alarm_config.*", "projects.name")
       .from(tableName)
-      .where("isEnable", ALERT_OPEN);
+      .join(
+        "projects",
+        "alarm_config.monitorAppId",
+        "=",
+        "projects.monitorAppId"
+      )
+      .where("alarm_config.isEnable", ALERT_OPEN);
 
     return res;
   }
@@ -118,7 +124,7 @@ export default class AlertModel {
    * @returns
    */
   async getPagesCount(params) {
-    const { monitorAppId = '' } = params;
+    const { monitorAppId = "" } = params;
     let tableName = getTableName();
     let res = Knex.from(tableName);
 

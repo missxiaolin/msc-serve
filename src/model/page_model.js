@@ -136,6 +136,7 @@ export default class PageModel {
       res = res.andWhere("simpleUrl", simpleUrl);
     }
     if (isUv) {
+      res = res.andWhere('uuId', '!=', '')
       res = await res.countDistinct("uuId as pageCount").catch((err) => {
         console.log(err);
         return [];

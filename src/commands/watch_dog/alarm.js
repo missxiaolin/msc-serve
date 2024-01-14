@@ -48,12 +48,8 @@ class WatchAlarm extends Base {
       const {
         id,
         monitorAppId,
-        errorType, // 错误类型
         errorName, // 要报警错误名字
         timerangeS: timeRange, // 报警时间范围_秒
-        maxErrorCount: maxErrorCount, // 报警错误数阈值
-        alarmIntervalS: alarmInterval, // 报警时间间隔_秒
-        note,
         startHour,
         endHour,
       } = alarmConfig;
@@ -78,15 +74,8 @@ class WatchAlarm extends Base {
           if (this.currentQueryCounter < MAX_QUERY_COUNT) {
             // 查询
             this.autoAlarm(
-              monitorAppId,
-              errorType,
-              errorName,
-              timeRange,
-              maxErrorCount,
-              alarmInterval,
-              redisKey,
-              note,
-              id
+              alarmConfig,
+              redisKey
             )
               .then(() => {
                 this.currentQueryCounter = this.currentQueryCounter - 1;
@@ -113,32 +102,53 @@ class WatchAlarm extends Base {
   }
 
   /**
+   * 对比数据
+   * @param {*} maxErrorCount 阈值
+   * @param {*} serviceType = > <
+   * @param {*} currentData 当前数据
+   */
+  contrastData(maxErrorCount,serviceType, currentData) {
+    switch(serviceType) {
+      case '=':
+        return maxErrorCount == currentData
+        break;
+      case '>':
+        return maxErrorCount < currentData
+        break;
+      case '<':
+        return maxErrorCount > currentData
+        break;
+      default:
+        return ''
+    }
+  }
+
+  /**
    * 报警
-   * @param {*} monitorAppId
-   * @param {*} errorType
-   * @param {*} errorName
-   * @param {*} timeRange
-   * @param {*} maxErrorCount
-   * @param {*} alarmInterval
+   * @param {*} alarmConfig
    * @param {*} redisKey
-   * @param {*} note
-   * @param {*} configId
    */
   async autoAlarm(
-    monitorAppId,
-    errorType,
-    errorName,
-    timeRange,
-    maxErrorCount,
-    alarmInterval,
-    redisKey,
-    note,
-    configId
+    alarmConfig,
+    redisKey
   ) {
-    let endTime = moment().format(DATE_FORMAT.DISPLAY_BY_SECOND);
+    const {
+      id,
+      name: projectName,
+      monitorAppId,
+      errorType, // 错误类型
+      errorName, // 要报警错误名字
+      timerangeS: timeRange, // 报警时间范围_秒
+      alarmIntervalS: alarmInterval,// 报警时间间隔_秒
+      maxErrorCount, // 报警错误数阈值
+      note,
+      serviceType
+    } = alarmConfig;
+    const endTime = moment().format(DATE_FORMAT.DISPLAY_BY_SECOND);
     const startTime = moment(endTime, "YYYY-MM-DD HH:mm:ss").subtract(timeRange, 'seconds').format(DATE_FORMAT.DISPLAY_BY_SECOND);
+    let alarmMsg = ''
     switch (errorType) {
-      case alertEum.ALERT_PAGE_PV:
+      case alertEum.ALERT_PAGE_PV: // pv
         const pvCount = await pageModel.getIsUCount({
           startTime,
           endTime,
@@ -146,8 +156,16 @@ class WatchAlarm extends Base {
           isIp: false,
           monitorAppId
         })
+        if (this.contrastData(maxErrorCount, serviceType, pvCount) == true) {
+          alarmMsg = `项目【${projectName}】监控的【${errorName}】错误， 最近【${timeRange}】秒内错误数【${pvCount}】, 达到阈值【${maxErrorCount}】,触发报警, 报警备注【${note}】。`
+          await this.sendAlert({
+            redisKey,
+            alarmInterval,
+            alarmMsg
+          })
+        }
         break;
-      case alertEum.ALERT_PAGE_UV:
+      case alertEum.ALERT_PAGE_UV: // uv
         const uvCount = await pageModel.getIsUCount({
           startTime,
           endTime,
@@ -155,6 +173,14 @@ class WatchAlarm extends Base {
           isIp: false,
           monitorAppId
         })
+        if (this.contrastData(maxErrorCount, serviceType, uvCount) == true) {
+          alarmMsg = `项目【${projectName}】监控的【${errorName}】错误， 最近【${timeRange}】秒内错误数【${uvCount}】, 达到阈值【${maxErrorCount}】,触发报警, 报警备注【${note}】。`
+          await this.sendAlert({
+            redisKey,
+            alarmInterval,
+            alarmMsg
+          })
+        }
         break;
       case ALERT_JS_ERROR:
         break;
@@ -166,9 +192,7 @@ class WatchAlarm extends Base {
         break;
       default:
     }
-    // const errorCount = await MMonitor.getErrorCountForAlarm(projectId, errorName, timeAgoAt, nowAt)
-
-    // await redis.asyncSetex(redisKey, alarmInterval, 1);
+    
   }
 
   /**
@@ -176,8 +200,12 @@ class WatchAlarm extends Base {
    * @param {*} ucidList 
    * @param {*} message 
    */
-  async sendAlert (ucidList, message) {
+  async sendAlert (data) {
+    const { alarmMsg, redisKey, alarmInterval } = data
+    // TODO: 发送告警
 
+    // redis 记录
+    await redis.asyncSetex(redisKey, alarmInterval, 1);
   }
 }
 
