@@ -19,12 +19,12 @@ export default class AlertModel {
     this.tableColumnArr = [
       "monitorAppId",
       "serviceType",
-      "error_type",
-      "error_name",
-      "time_range_s",
-      "max_error_count",
-      "alarm_interval_s",
-      "is_enable",
+      "errorType",
+      "errorName",
+      "timeRangeS",
+      "maxErrorCount",
+      "alarmIntervalS",
+      "isEnable",
       "note",
       "startHour",
       "endHour",
@@ -78,7 +78,7 @@ export default class AlertModel {
     let tableName = getTableName();
     let res = await Knex.select("*")
       .from(tableName)
-      .where("is_enable", ALERT_OPEN);
+      .where("isEnable", ALERT_OPEN);
 
     return res;
   }

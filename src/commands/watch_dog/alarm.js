@@ -48,11 +48,11 @@ class WatchAlarm extends Base {
       const {
         id,
         monitorAppId,
-        error_type: errorType, // 错误类型
-        error_name: errorName, // 要报警错误名字
-        time_range_s: timeRange, // 报警时间范围_秒
-        max_error_count: maxErrorCount, // 报警错误数阈值
-        alarm_interval_s: alarmInterval, // 报警时间间隔_秒
+        errorType, // 错误类型
+        errorName, // 要报警错误名字
+        timerangeS: timeRange, // 报警时间范围_秒
+        maxErrorCount: maxErrorCount, // 报警错误数阈值
+        alarmIntervalS: alarmInterval, // 报警时间间隔_秒
         note,
         startHour,
         endHour,
@@ -135,14 +135,26 @@ class WatchAlarm extends Base {
     note,
     configId
   ) {
-    const nowAt = moment().unix();
-    const timeAgoAt = nowAt - timeRange;
-    console.log(timeAgoAt)
+    let endTime = moment().format(DATE_FORMAT.DISPLAY_BY_SECOND);
+    const startTime = moment(endTime, "YYYY-MM-DD HH:mm:ss").subtract(timeRange, 'seconds').format(DATE_FORMAT.DISPLAY_BY_SECOND);
     switch (errorType) {
       case alertEum.ALERT_PAGE_PV:
-        const pvCount = await pageModel.getIsUCount()
+        const pvCount = await pageModel.getIsUCount({
+          startTime,
+          endTime,
+          isUv: false,
+          isIp: false,
+          monitorAppId
+        })
         break;
       case alertEum.ALERT_PAGE_UV:
+        const uvCount = await pageModel.getIsUCount({
+          startTime,
+          endTime,
+          isUv: true,
+          isIp: false,
+          monitorAppId
+        })
         break;
       case ALERT_JS_ERROR:
         break;
