@@ -3,9 +3,13 @@ import Base from "../base";
 import AlertModel from "../../model/alert";
 import DATE_FORMAT from "../../constants/date_format";
 import utils, { isHourSlot } from "../../library/utils";
+import PageModel from '../../model/page_model'
+import * as alertEum from "../../constants/err";
+
 import redis from "../../library/redis";
 
 const alertModel = new AlertModel();
+const pageModel = new PageModel();
 const BASE_REDIS_KEY = "plat_fe_fee_watch_alarm_";
 const MAX_QUERY_COUNT = 10;
 const MAX_SLEEP_COUNT = 60;
@@ -43,11 +47,12 @@ class WatchAlarm extends Base {
     for (let alarmConfig of alarmConfigList) {
       const {
         id,
-        project_id: projectId,
-        error_name: errorName,
-        time_range_s: timeRange,
-        max_error_count: maxErrorCount,
-        alarm_interval_s: alarmInterval,
+        monitorAppId,
+        error_type: errorType, // 错误类型
+        error_name: errorName, // 要报警错误名字
+        time_range_s: timeRange, // 报警时间范围_秒
+        max_error_count: maxErrorCount, // 报警错误数阈值
+        alarm_interval_s: alarmInterval, // 报警时间间隔_秒
         note,
         startHour,
         endHour,
@@ -58,12 +63,13 @@ class WatchAlarm extends Base {
       if (!isHourSlot(timeHourSecond, startHour, endHour)) {
         // 不在当前时间段就停止往下运行
         console.log(
-          `项目${projectId}，${errorName}监听的不在时间段${startHour}-${endHour}，自动跳过`
+          `项目${monitorAppId}，${errorName}监听的不在时间段${startHour}-${endHour}，自动跳过`
         );
       } else if (hasAlertInAlarmInterval) {
+        // 之前报警过的静默
         // 静默时间
         console.log(
-          `项目${projectId}监听的${errorName}错误在${timeRange}秒内报警过，自动跳过`
+          `项目${monitorAppId}监听的${errorName}错误在${timeRange}秒内报警过，自动跳过`
         );
       } else {
         let waitForDispatch = true;
@@ -72,7 +78,8 @@ class WatchAlarm extends Base {
           if (this.currentQueryCounter < MAX_QUERY_COUNT) {
             // 查询
             this.autoAlarm(
-              projectId,
+              monitorAppId,
+              errorType,
               errorName,
               timeRange,
               maxErrorCount,
@@ -82,7 +89,7 @@ class WatchAlarm extends Base {
               id
             )
               .then(() => {
-                this.currentQueryCounter = this.currentQueryCounter - 1
+                this.currentQueryCounter = this.currentQueryCounter - 1;
               })
               .catch(() => {
                 this.currentQueryCounter = this.currentQueryCounter - 1;
@@ -107,22 +114,58 @@ class WatchAlarm extends Base {
 
   /**
    * 报警
-   * @param {*} projectId 
-   * @param {*} errorName 
-   * @param {*} timeRange 
-   * @param {*} maxErrorCount 
-   * @param {*} alarmInterval 
-   * @param {*} redisKey 
-   * @param {*} note 
-   * @param {*} configId 
+   * @param {*} monitorAppId
+   * @param {*} errorType
+   * @param {*} errorName
+   * @param {*} timeRange
+   * @param {*} maxErrorCount
+   * @param {*} alarmInterval
+   * @param {*} redisKey
+   * @param {*} note
+   * @param {*} configId
    */
-  async autoAlarm (projectId, errorName, timeRange, maxErrorCount, alarmInterval, redisKey, note, configId) {
-    const nowAt = moment().unix()
-    const timeAgoAt = nowAt - timeRange
+  async autoAlarm(
+    monitorAppId,
+    errorType,
+    errorName,
+    timeRange,
+    maxErrorCount,
+    alarmInterval,
+    redisKey,
+    note,
+    configId
+  ) {
+    const nowAt = moment().unix();
+    const timeAgoAt = nowAt - timeRange;
+    console.log(timeAgoAt)
+    switch (errorType) {
+      case alertEum.ALERT_PAGE_PV:
+        const pvCount = await pageModel.getIsUCount()
+        break;
+      case alertEum.ALERT_PAGE_UV:
+        break;
+      case ALERT_JS_ERROR:
+        break;
+      case ALERT_RESOURCE_ERROR:
+        break;
+      case ALERT_HTTP_LOG:
+        break;
+      case ALERT_PROMISE_ERROR:
+        break;
+      default:
+    }
     // const errorCount = await MMonitor.getErrorCountForAlarm(projectId, errorName, timeAgoAt, nowAt)
 
+    // await redis.asyncSetex(redisKey, alarmInterval, 1);
+  }
 
-    await redis.asyncSetex(redisKey, alarmInterval, 1)
+  /**
+   * 发送报警
+   * @param {*} ucidList 
+   * @param {*} message 
+   */
+  async sendAlert (ucidList, message) {
+
   }
 }
 

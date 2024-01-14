@@ -1,5 +1,5 @@
 import Logger from "../library/logger";
-import * as error from "../config/err";
+import * as error from "../constants/err";
 import PerformanceModel from "../model/performance_model";
 import ResourceModel from "../model/resource_model";
 import PageModel from "../model/page_model";

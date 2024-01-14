@@ -1,7 +1,6 @@
 import Knex from "../library/mysql";
 import _ from "lodash";
 import Logger from "../library/logger";
-import * as config from "../config/err";
 
 const BASE_TABLE_NAME = "http_log";
 const TABLE_COLUMN = [];
