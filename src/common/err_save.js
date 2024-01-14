@@ -165,7 +165,7 @@ export default class ErrorSave {
           data.happenTime = item.happenDate || "";
           data.pageUrl = item.pageUrl || "";
           data.simpleUrl = item.simpleUrl || "";
-          data.errorMsg = Util.getInstance().isType().isPlainObject(item.errorMsg) ? JSON.stringify(item.errorMsg) : "";
+          data.errorMsg = Util.getInstance().isType().isPlainObject(item.errorMsg) && item.errorMsg.message ? item.errorMsg.message : Util.getInstance().isType().isString(item.errorMsg) && item.errorMsg ? item.errorMsg : '';
           data.startTime = item.startTime || "";
           promise_log.save(data)
           break
