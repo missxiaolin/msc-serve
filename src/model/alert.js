@@ -19,6 +19,7 @@ export default class AlertModel {
     this.tableColumnArr = [
       "monitorAppId",
       "serviceType",
+      "whereType",
       "errorType",
       "errorName",
       "timeRangeS",
