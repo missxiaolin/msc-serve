@@ -7,7 +7,7 @@
 #
 # Host: 127.0.0.1 (MySQL 5.7.44)
 # Database: msc_log
-# Generation Time: 2024-01-11 06:34:01 +0000
+# Generation Time: 2024-01-15 02:49:53 +0000
 # ************************************************************
 
 
@@ -43,22 +43,41 @@ VALUES
 UNLOCK TABLES;
 
 
-# Dump of table user_behavior
+# Dump of table alarm_config
 # ------------------------------------------------------------
 
-DROP TABLE IF EXISTS `user_behavior`;
+DROP TABLE IF EXISTS `alarm_config`;
 
-CREATE TABLE `user_behavior` (
+CREATE TABLE `alarm_config` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
-  `monitorAppId` varchar(100) NOT NULL DEFAULT '' COMMENT '项目',
-  `uuId` varchar(100) NOT NULL DEFAULT '' COMMENT '用户ID',
-  `category` varchar(30) NOT NULL DEFAULT '' COMMENT '类别',
-  `tb_id` int(11) NOT NULL COMMENT '联表id',
-  `createTime` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '时间',
-  PRIMARY KEY (`id`),
-  KEY `monitorAppId` (`monitorAppId`,`createTime`,`uuId`)
+  `monitorAppId` varchar(300) NOT NULL DEFAULT '' COMMENT '项目所属',
+  `errorType` varchar(50) NOT NULL DEFAULT '' COMMENT '错误类型',
+  `errorName` varchar(255) NOT NULL DEFAULT '' COMMENT '要报警错误名字',
+  `timeRangeS` int(20) NOT NULL COMMENT '报警时间范围_秒',
+  `maxErrorCount` int(20) NOT NULL COMMENT '报警错误数阈值',
+  `alarmIntervalS` int(11) NOT NULL COMMENT '报警时间间隔_秒',
+  `isEnable` tinyint(2) NOT NULL COMMENT '是否开启本条报警配置1：是0：否',
+  `alertType` varchar(50) NOT NULL DEFAULT '' COMMENT '告警方式 1 钉钉',
+  `note` varchar(300) NOT NULL DEFAULT '' COMMENT '配置说明',
+  `serviceType` varchar(10) NOT NULL DEFAULT '' COMMENT '参数 = < >',
+  `whereType` varchar(10) NOT NULL DEFAULT '' COMMENT '求和 where 平均 avg',
+  `startHour` varchar(20) NOT NULL DEFAULT '' COMMENT '告警时间点',
+  `endHour` varchar(20) NOT NULL DEFAULT '' COMMENT '告警时间点',
+  `startTime` datetime NOT NULL,
+  `updateTime` datetime NOT NULL,
+  PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
+LOCK TABLES `alarm_config` WRITE;
+/*!40000 ALTER TABLE `alarm_config` DISABLE KEYS */;
+
+INSERT INTO `alarm_config` (`id`, `monitorAppId`, `errorType`, `errorName`, `timeRangeS`, `maxErrorCount`, `alarmIntervalS`, `isEnable`, `alertType`, `note`, `serviceType`, `whereType`, `startHour`, `endHour`, `startTime`, `updateTime`)
+VALUES
+	(1,'adm','JS_ERROR','js错误',3600,2,60,1,'[1]','js','>','single','00:00:06','23:59:59','2024-01-13 09:46:56','2024-01-14 20:19:19'),
+	(2,'adm','PAGE_PV','PV告警',3600,3,30,0,'[1]','','>','sum','00:00:00','23:59:59','2024-01-13 10:00:30','2024-01-14 20:24:43');
+
+/*!40000 ALTER TABLE `alarm_config` ENABLE KEYS */;
+UNLOCK TABLES;
 
 
 # Dump of table click_log
@@ -295,7 +314,8 @@ CREATE TABLE `projects` (
   `status` tinyint(2) DEFAULT NULL COMMENT '0 禁用 1 启用',
   `startTime` varchar(30) NOT NULL DEFAULT '' COMMENT '创建时间',
   `updateTime` varchar(30) NOT NULL DEFAULT '' COMMENT '修改时间',
-  PRIMARY KEY (`id`)
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `name` (`name`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 LOCK TABLES `projects` WRITE;
@@ -337,7 +357,7 @@ CREATE TABLE `promise_log` (
   `city` varchar(10) NOT NULL DEFAULT '' COMMENT '区',
   `pageUrl` varchar(1000) NOT NULL DEFAULT '' COMMENT '页面链接',
   `simpleUrl` varchar(1000) NOT NULL DEFAULT '' COMMENT '页面带*链接',
-  `errorMsg` text NOT NULL COMMENT '错误信息',
+  `errorMsg` varchar(3000) NOT NULL DEFAULT '' COMMENT '错误信息',
   `startTime` varchar(300) NOT NULL DEFAULT '' COMMENT '页面加载后 至 发生错误时间,',
   PRIMARY KEY (`id`),
   KEY `m_id_time` (`monitorAppId`,`happenTime`)
@@ -379,6 +399,24 @@ CREATE TABLE `resource_log` (
   `paths` varchar(3000) NOT NULL DEFAULT '',
   PRIMARY KEY (`id`),
   KEY `m_id_time` (`monitorAppId`,`happenTime`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+
+
+# Dump of table user_behavior
+# ------------------------------------------------------------
+
+DROP TABLE IF EXISTS `user_behavior`;
+
+CREATE TABLE `user_behavior` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `monitorAppId` varchar(100) NOT NULL DEFAULT '' COMMENT '项目',
+  `uuId` varchar(100) NOT NULL DEFAULT '' COMMENT '用户ID',
+  `category` varchar(30) NOT NULL DEFAULT '' COMMENT '类别',
+  `tb_id` int(11) NOT NULL COMMENT '联表id',
+  `createTime` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '时间',
+  PRIMARY KEY (`id`),
+  KEY `monitorAppId` (`monitorAppId`,`createTime`,`uuId`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 
