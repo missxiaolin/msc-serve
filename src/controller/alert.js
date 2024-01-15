@@ -1,8 +1,10 @@
 import Base from "./base";
 import moment from "moment";
 import AlertModel from "../model/alert";
+import AlarmHistoryModel from '../model/alarm_history_model'
 
 const aleryModel = new AlertModel();
+const aleryHistoryModel = new AlarmHistoryModel();
 
 export default class AlertController extends Base {
   /**
@@ -60,6 +62,20 @@ export default class AlertController extends Base {
     result.list.forEach((item) => {
       item.alertType = item.alertType ? JSON.parse(item.alertType) : [];
     });
+    return this.send(res, result);
+  }
+
+  /**
+   * 获取历史告警记录
+   * @param {*} req 
+   * @param {*} res 
+   * @returns 
+   */
+  async alertHistory(req, res) {
+    let data = req.body || {},
+    result = {};
+    result.list = await aleryHistoryModel.getPages(data)
+    result.count = await aleryHistoryModel.getPagesCount(data)
     return this.send(res, result);
   }
 }

@@ -24,7 +24,18 @@ const alerySave = RouterConfigBuilder.routerConfigBuilder(
   true
 );
 
+// 告警历史
+const aleryHistory = RouterConfigBuilder.routerConfigBuilder(
+  "/adm/alert/history/list",
+  RouterConfigBuilder.METHOD_TYPE_POST,
+  (req, res) => {
+    return alertController.alertHistory(req, res);
+  },
+  true
+);
+
 export default {
   ...alertList,
   ...alerySave,
+  ...aleryHistory,
 };

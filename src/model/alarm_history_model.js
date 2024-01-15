@@ -1,6 +1,8 @@
 import Knex from "../library/mysql";
 import _ from "lodash";
 import Logger from "../library/logger";
+import moment from "moment/moment";
+import DATE_FORMAT from "../constants/date_format";
 
 const BASE_TABLE_NAME = "alarm_history";
 const TABLE_COLUMN = [];
@@ -19,7 +21,8 @@ export default class AlarmHistoryModel {
       "alarmId",
       "errorMsg",
       "isSuccess",
-      "updateTime"
+      "updateTime",
+      "sendContent",
     ];
   }
 
@@ -47,4 +50,50 @@ export default class AlarmHistoryModel {
     return id > 0;
   }
 
+  /**
+   * 分页
+   * @param {*} params
+   * @returns
+   */
+  async getPages(params) {
+    let { pageSize = 10, page = 1, alarmId = "" } = params;
+    let tableName = getTableName();
+
+    let res = await Knex.from(tableName)
+      .where("alarmId", alarmId)
+      .orderBy("updateTime", "desc")
+      .limit(pageSize)
+      .offset(page * pageSize - pageSize)
+      .catch((err) => {
+        console.log(err);
+        return [];
+      });
+
+    res.forEach((item) => {
+      item.updateTime = moment().format(DATE_FORMAT.DISPLAY_BY_SECOND)
+    });
+
+    return res;
+  }
+
+  /**
+   * 总数
+   * @param {*} params
+   * @returns
+   */
+  async getPagesCount(params) {
+    const { alarmId = "" } = params;
+    let tableName = getTableName();
+    let res = Knex.from(tableName);
+
+    res = await res
+      .count("* as alertHistoryCount")
+      .where("alarmId", alarmId)
+      .catch((err) => {
+        console.log(err);
+        return 0;
+      });
+
+    return res[0].alertHistoryCount;
+  }
 }

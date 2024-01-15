@@ -380,6 +380,7 @@ class WatchAlarm extends Base {
         // 记录当前错误到数据库，后续检查报警用
         await alarmHistoryModel.save({
           alarmId: alarmConfig.id,
+          sendContent: alarmMsg,
           errorMsg: utils.isType().isString(dingRes) && dingRes ? dingRes : '',
           isSuccess: dingRes == true ? 1 : 0,
           updateTime: moment().format(DATE_FORMAT.DISPLAY_BY_SECOND)
