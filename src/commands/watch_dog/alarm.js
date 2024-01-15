@@ -60,10 +60,8 @@ class WatchAlarm extends Base {
     const alarmConfigList = await alertModel.getAllEnabled();
     for (let alarmConfig of alarmConfigList) {
       const {
-        id,
         monitorAppId,
         errorName, // 要报警错误名字
-        timerangeS: timeRange, // 报警时间范围_秒
         startHour,
         endHour,
       } = alarmConfig;
@@ -146,11 +144,6 @@ class WatchAlarm extends Base {
       endTime,
       monitorAppId,
     };
-    const redisKey = getRedisKey(id);
-    // 如果是算总数的 报警过久直接return掉
-    if (!redisConfig.isOpen || alarmConfig.whereType == 'sum' && await redis.asyncGet(redisKey)) {
-      return
-    }
     switch (errorType) {
       case alertEum.ALERT_PAGE_PV: // pv
         const pvCount = await pageModel.getIsUCount({
@@ -190,7 +183,6 @@ class WatchAlarm extends Base {
           alarmConfig.whereType == "sum" &&
           this.contrastData(maxErrorCount, serviceType, res) == true
         ) {
-          
           await this.sendAlert({
             alarmConfig,
             currentData: jsRes,
@@ -201,16 +193,13 @@ class WatchAlarm extends Base {
           // 单个错误推送
           jsRes.forEach(async (item) => {
             // 短时间内报警过静默
-            if (!redisConfig.isOpen || !await redis.asyncGet(getRedisMsgKey(alarmConfig.id, item.errorMsg))) {
-              await this.sendAlert({
-                alarmConfig,
-                currentData: item.count,
-                errorMsg: item.errorMsg,
-              });
-            }
+            await this.sendAlert({
+              alarmConfig,
+              currentData: item.count,
+              errorMsg: item.errorMsg,
+            });
           });
         }
-
         break;
       case alertEum.ALERT_RESOURCE_ERROR:
         let resourceRes = await resourceModel.getAlertCount({
@@ -237,13 +226,11 @@ class WatchAlarm extends Base {
         ) {
           // 单个错误推送
           resourceRes.forEach(async (item) => {
-            if (!redisConfig.isOpen || !await redis.asyncGet(getRedisMsgKey(alarmConfig.id, item.url))) {
-              await this.sendAlert({
-                alarmConfig,
-                currentData: item.count,
-                errorMsg: item.url,
-              });
-            }
+            await this.sendAlert({
+              alarmConfig,
+              currentData: item.count,
+              errorMsg: item.url,
+            });
           });
         }
         break;
@@ -272,13 +259,11 @@ class WatchAlarm extends Base {
         ) {
           // 单个错误推送
           httpRes.forEach(async (item) => {
-            if (!redisConfig.isOpen || !await redis.asyncGet(getRedisMsgKey(alarmConfig.id, item.pathName))) {
-              await this.sendAlert({
-                alarmConfig,
-                currentData: item.count,
-                errorMsg: item.pathName,
-              });
-            }
+            await this.sendAlert({
+              alarmConfig,
+              currentData: item.count,
+              errorMsg: item.pathName,
+            });
           });
         }
 
@@ -308,13 +293,11 @@ class WatchAlarm extends Base {
         ) {
           // 单个错误推送
           promiseRes.forEach(async (item) => {
-            if (!redisConfig.isOpen || !await redis.asyncGet(getRedisMsgKey(alarmConfig.id, item.errorMsg))) {
-              await this.sendAlert({
-                alarmConfig,
-                currentData: item.count,
-                errorMsg: item.errorMsg,
-              });
-            }
+            await this.sendAlert({
+              alarmConfig,
+              currentData: item.count,
+              errorMsg: item.errorMsg,
+            });
           });
         }
         break;
@@ -329,6 +312,16 @@ class WatchAlarm extends Base {
    */
   async sendAlert(data) {
     const { alarmConfig, currentData, errorMsg = "" } = data;
+    const redisKey = errorMsg
+      ? getRedisMsgKey(alarmConfig.id, errorMsg)
+      : getRedisKey(alarmConfig.id);
+
+    // 之前报警过就静默推送
+    if (redisConfig.isOpen && await redis.asyncGet(redisKey)) {
+      console.log(`项目${alarmConfig.name}监听的${alarmConfig.errorName}错误在${alarmConfig.alarmIntervalS}秒内报警过，自动跳过`)
+      return
+    }
+    
     let alarmMsg = `项目【${alarmConfig.name}】监控的【${
       alarmConfig.errorName
     }】错误， 最近${errorMsg ? `【${errorMsg}】 错误 ` : ""}【${
@@ -343,8 +336,8 @@ class WatchAlarm extends Base {
     // TODO:记录当前错误到数据库，后续检查报警用
 
     // redis 记录
-    let redisKey = errorMsg ? getRedisMsgKey(alarmConfig.id, errorMsg) : getRedisKey(alarmConfig.id)
-    !redisConfig.isOpen && await redis.asyncSetex(redisKey, alarmConfig.alarmIntervalS, 1);
+    redisConfig.isOpen &&
+      (await redis.asyncSetex(redisKey, alarmConfig.alarmIntervalS, 1));
   }
 }
 

@@ -20,6 +20,7 @@ class RedisClient {
     this.redisClient = new Redis({
       port: redisConfig.port,
       host: redisConfig.host,
+      password: redisConfig.password || '',
       retryStrategy: (hasRetryTimes) => {
         // 关闭自动重连功能
         return false;

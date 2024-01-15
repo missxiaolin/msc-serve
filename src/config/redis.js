@@ -5,14 +5,20 @@ import env from './env'
 const development = {
     host: '127.0.0.1',
     port: '6379',
-    isOpen: false
+    password: '',
+    isOpen: true
 }
 
 // 测试环境配置
 const testing = development
 
 // 线上环境配置
-const production = testing
+const production = {
+    host: '106.15.43.125',
+    port: '6666',
+    password: 'eY7NusYCgb6ClhOB',
+    isOpen: true
+}
 
 let config = {
     development,
