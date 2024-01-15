@@ -9,7 +9,6 @@ const axios = require("axios");
  */
 async function sendDingTalkMessage(data) {
   const { alarmMsg, title } = data;
-  console.log(dingConfig)
   const webhookUrl = dingConfig.webhook;
   if (!webhookUrl) {
     return '请先配置机器人！'

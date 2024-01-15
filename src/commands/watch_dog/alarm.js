@@ -8,6 +8,7 @@ import JsModel from "../../model/js_model";
 import PromiseLog from "../../model/promise_log";
 import ResourceModel from "../../model/resource_model";
 import HttpModel from "../../model/http_model";
+import AlarmHistoryModel from '../../model/alarm_history_model'
 import * as alertEum from "../../constants/err";
 import redisConfig from "../../config/redis";
 import redis from "../../library/redis";
@@ -18,6 +19,7 @@ const pageModel = new PageModel();
 const promiseLog = new PromiseLog();
 const resourceModel = new ResourceModel();
 const httpModel = new HttpModel();
+const alarmHistoryModel = new AlarmHistoryModel();
 
 const jsModel = new JsModel();
 const BASE_REDIS_KEY = "plat_fe_fee_watch_alarm_";
@@ -348,23 +350,24 @@ class WatchAlarm extends Base {
       : getRedisKey(alarmConfig.id);
 
     // 之前报警过就静默推送
-    // if (r  edisConfig.isOpen && (await redis.asyncGet(redisKey))) {
-    //   console.log(
-    //     `项目${alarmConfig.name}监听的${alarmConfig.errorName}错误在${alarmConfig.alarmIntervalS}秒内报警过，自动跳过`
-    //   );
-    //   return;
-    // }
+    if (redisConfig.isOpen && (await redis.asyncGet(redisKey))) {
+      console.log(
+        `项目${alarmConfig.name}监听的${alarmConfig.errorName}错误在${alarmConfig.alarmIntervalS}秒内报警过，自动跳过`
+      );
+      return;
+    }
 
     let alertTypes = alarmConfig.alertType
       ? JSON.parse(alarmConfig.alertType)
       : [];
+    // 多种告警模式推送（本期只支持钉钉）
     alertTypes.forEach(async (v) => {
       if (v == 1) {
         let alarmMsg = `项目：${alarmConfig.name}\n\n 告警名称：${
           alarmConfig.errorName
         } \n\n 告警时间：${startTime} - ${endTime} \n\n 阈值：${
           alarmConfig.timeRangeS
-        }秒内, ${alarmConfig.whereType == "sum" ? "总和" : "单个"} ${
+        }秒内, ${alarmConfig.whereType == "sum" ? "总和" : "单次"} ${
           alarmConfig.serviceType
         } ${alarmConfig.maxErrorCount} \n\n 错误：${
           errorMsg ? `${errorMsg}` : ""
@@ -375,7 +378,12 @@ class WatchAlarm extends Base {
           alarmMsg,
         });
         // 记录当前错误到数据库，后续检查报警用
-        console.log(dingRes);
+        await alarmHistoryModel.save({
+          alarmId: alarmConfig.id,
+          errorMsg: utils.isType().isString(dingRes) && dingRes ? dingRes : '',
+          isSuccess: dingRes == true ? 1 : 0,
+          updateTime: moment().format(DATE_FORMAT.DISPLAY_BY_SECOND)
+        })
         // redis 记录
         redisConfig.isOpen &&
           (await redis.asyncSetex(redisKey, alarmConfig.alarmIntervalS, 1));
