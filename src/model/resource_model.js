@@ -162,4 +162,47 @@ export default class ResourceModel {
     let res = await Knex.raw(sql);
     return res[0];
   }
+
+  /**
+   * 报警用
+   * @param {*} params
+   * @returns
+   */
+  async getAlertCount(params) {
+    let {
+      startTime = "",
+      endTime = "",
+      monitorAppId = "",
+      whereType = "sum",
+      maxErrorCount = 0,
+      serviceType = '='
+    } = params;
+    let tableName = getTableName();
+    let res = Knex.from(tableName)
+      .where("happenTime", "<", endTime)
+      .andWhere("happenTime", ">", startTime);
+    if (monitorAppId) {
+      res = res.andWhere("monitorAppId", monitorAppId);
+    }
+    if (whereType == "sum") {
+      res = await res.count("* as count").catch((err) => {
+        console.log(err);
+        return 0;
+      });
+      return res[0].count;
+    } else if (whereType == "single") {
+      res = await res
+        .select(["url"])
+        .count("* as count")
+        .having("count", serviceType, maxErrorCount)
+        .groupBy(["url"])
+        .catch((err) => {
+          console.log(err);
+          return [];
+        });
+      return res;
+    } else {
+      return 0;
+    }
+  }
 }

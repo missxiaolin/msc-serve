@@ -63,6 +63,11 @@ export default class HttpModel {
     return id;
   }
 
+  /**
+   * 获取id
+   * @param {*} ids
+   * @returns
+   */
   async getIds(ids) {
     let select = this.tableColumnArr;
     select.push("id");
@@ -159,5 +164,52 @@ export default class HttpModel {
     }
     res = res.groupBy("pathName");
     return await res;
+  }
+
+  /**
+   * 报警用
+   * @param {*} params
+   * @returns
+   */
+  async getAlertCount(params) {
+    let {
+      startTime = "",
+      endTime = "",
+      monitorAppId = "",
+      whereType = "sum",
+      maxErrorCount = 0,
+      serviceType = "=",
+    } = params;
+    let tableName = getTableName();
+    let res = Knex.from(tableName)
+      .where("happenTime", "<", endTime)
+      .andWhere("happenTime", ">", startTime);
+    if (monitorAppId) {
+      res = res.andWhere("monitorAppId", monitorAppId);
+    }
+    if (whereType == "sum") {
+      res = await res
+        .andWhere("status", "!=", 200)
+        .count("* as count")
+        .catch((err) => {
+          console.log(err);
+          return 0;
+        });
+      return res[0].count;
+    } else if (whereType == "single") {
+      res = await res
+        .andWhere("status", "!=", 200)
+        .select(["pathName"])
+        .count("* as count")
+        .having("count", serviceType, maxErrorCount)
+        .groupBy(["pathName"])
+        .catch((err) => {
+          console.log(err);
+          return [];
+        });
+      return res;
+    } else {
+      return 0;
+    }
   }
 }

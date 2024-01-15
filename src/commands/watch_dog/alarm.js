@@ -2,14 +2,23 @@ import moment from "moment";
 import Base from "../base";
 import AlertModel from "../../model/alert";
 import DATE_FORMAT from "../../constants/date_format";
-import utils, { isHourSlot } from "../../library/utils";
+import utils, { isHourSlot, isType } from "../../library/utils";
 import PageModel from '../../model/page_model'
+import JsModel from '../../model/js_model'
+import PromiseLog from '../../model/promise_log'
+import ResourceModel from '../../model/resource_model'
+import HttpModel from '../../model/http_model'
 import * as alertEum from "../../constants/err";
 
 import redis from "../../library/redis";
 
 const alertModel = new AlertModel();
 const pageModel = new PageModel();
+const promiseLog = new PromiseLog();
+const resourceModel = new ResourceModel();
+const httpModel = new HttpModel();
+
+const jsModel = new JsModel()
 const BASE_REDIS_KEY = "plat_fe_fee_watch_alarm_";
 const MAX_QUERY_COUNT = 10;
 const MAX_SLEEP_COUNT = 60;
@@ -140,19 +149,20 @@ class WatchAlarm extends Base {
     } = alarmConfig;
     const endTime = moment().format(DATE_FORMAT.DISPLAY_BY_SECOND);
     const startTime = moment(endTime, "YYYY-MM-DD HH:mm:ss").subtract(alarmConfig.timeRangeS, 'seconds').format(DATE_FORMAT.DISPLAY_BY_SECOND);
+    let param = {
+      startTime,
+      endTime,
+      monitorAppId
+    }
     switch (errorType) {
       case alertEum.ALERT_PAGE_PV: // pv
         const pvCount = await pageModel.getIsUCount({
-          startTime,
-          endTime,
+          ...param,
           isUv: false,
           isIp: false,
-          monitorAppId
         })
-        console.log(startTime, endTime, pvCount)
         if (this.contrastData(maxErrorCount, serviceType, pvCount) == true) {
           await this.sendAlert({
-            redisKey,
             alarmConfig,
             currentData: pvCount
           })
@@ -160,27 +170,122 @@ class WatchAlarm extends Base {
         break;
       case alertEum.ALERT_PAGE_UV: // uv
         const uvCount = await pageModel.getIsUCount({
-          startTime,
-          endTime,
+          ...param,
           isUv: true,
           isIp: false,
-          monitorAppId
         })
         if (this.contrastData(maxErrorCount, serviceType, uvCount) == true) {
           await this.sendAlert({
-            redisKey,
             alarmConfig,
             currentData: uvCount
           })
         }
         break;
-      case ALERT_JS_ERROR:
+      case alertEum.ALERT_JS_ERROR: // js 错误
+        let jsRes = await jsModel.getAlertCount({
+          whereType: alarmConfig.whereType,
+          ...param,
+          maxErrorCount: alarmConfig.maxErrorCount,
+          serviceType: alarmConfig.serviceType
+        })
+        // 总数
+        if (alarmConfig.whereType == 'sum' && this.contrastData(maxErrorCount, serviceType, res) == true) {
+          await this.sendAlert({
+            alarmConfig,
+            currentData: jsRes
+          })
+        }
+        // 单个对比
+        if (alarmConfig.whereType == 'single' && jsRes && jsRes.length > 0) {
+          // 单个错误推送
+          jsRes.forEach(async (item) => {
+            await this.sendAlert({
+              alarmConfig,
+              currentData: item.count,
+              errorMsg: item.errorMsg
+            })
+          })
+        }
+
         break;
-      case ALERT_RESOURCE_ERROR:
+      case alertEum.ALERT_RESOURCE_ERROR:
+        let resourceRes = await resourceModel.getAlertCount({
+          ...param,
+          whereType: alarmConfig.whereType,
+          maxErrorCount: alarmConfig.maxErrorCount,
+          serviceType: alarmConfig.serviceType
+        })
+        // 总数
+        if (alarmConfig.whereType == 'sum' && this.contrastData(maxErrorCount, serviceType, resourceRes) == true) {
+          await this.sendAlert({
+            alarmConfig,
+            currentData: resourceRes
+          })
+        }
+        // 单个对比
+        if (alarmConfig.whereType == 'single' && resourceRes && resourceRes.length > 0) {
+          // 单个错误推送
+          resourceRes.forEach(async (item) => {
+            await this.sendAlert({
+              alarmConfig,
+              currentData: item.count,
+              errorMsg: item.url
+            })
+          })
+        }
         break;
-      case ALERT_HTTP_LOG:
+      case alertEum.ALERT_HTTP_LOG:
+        let httpRes = await httpModel.getAlertCount({
+          ...param,
+          whereType: alarmConfig.whereType,
+          maxErrorCount: alarmConfig.maxErrorCount,
+          serviceType: alarmConfig.serviceType
+        })
+        // 总数
+        if (alarmConfig.whereType == 'sum' && this.contrastData(maxErrorCount, serviceType, httpRes) == true) {
+          await this.sendAlert({
+            alarmConfig,
+            currentData: httpRes
+          })
+        }
+        // 单个对比
+        if (alarmConfig.whereType == 'single' && httpRes && httpRes.length > 0) {
+          // 单个错误推送
+          httpRes.forEach(async (item) => {
+            await this.sendAlert({
+              alarmConfig,
+              currentData: item.count,
+              errorMsg: item.pathName
+            })
+          })
+        }
+        
         break;
-      case ALERT_PROMISE_ERROR:
+      case alertEum.ALERT_PROMISE_ERROR:
+        let promiseRes = await promiseLog.getAlertCount({
+          ...param,
+          whereType: alarmConfig.whereType,
+          maxErrorCount: alarmConfig.maxErrorCount,
+          serviceType: alarmConfig.serviceType
+        })
+        // 总数
+        if (alarmConfig.whereType == 'sum' && this.contrastData(maxErrorCount, serviceType, promiseRes) == true) {
+          await this.sendAlert({
+            alarmConfig,
+            currentData: promiseRes
+          })
+        }
+        // 单个对比
+        if (alarmConfig.whereType == 'single' && promiseRes && promiseRes.length > 0) {
+          // 单个错误推送
+          promiseRes.forEach(async (item) => {
+            await this.sendAlert({
+              alarmConfig,
+              currentData: item.count,
+              errorMsg: item.errorMsg
+            })
+          })
+        }
         break;
       default:
     }
@@ -193,8 +298,8 @@ class WatchAlarm extends Base {
    * @param {*} message 
    */
   async sendAlert (data) {
-    const { redisKey, alarmConfig,  currentData} = data
-    const alarmMsg = `项目【${alarmConfig.name}】监控的【${alarmConfig.errorName}】错误， 最近【${alarmConfig.timeRangeS}】秒内达到数量【${currentData}】, 达到阈值【${alarmConfig.maxErrorCount}】${alarmConfig.note ? ',触发报警, 报警备注【】。' : '。'}`
+    const { redisKey, alarmConfig,  currentData, errorMsg = ''} = data
+    let alarmMsg = `项目【${alarmConfig.name}】监控的【${alarmConfig.errorName}】错误， 最近${errorMsg ?  `【${errorMsg}】 错误 ` : ''}【${alarmConfig.timeRangeS}】秒内达到数量【${currentData}】, 达到阈值【${alarmConfig.maxErrorCount}】${alarmConfig.note ? `,触发报警, 报警备注【${alarmConfig.note}】。` : '。'}`
     // TODO: 发送告警
     console.log(alarmMsg)
     // TODO:记录当前错误到数据库，后续检查报警用
