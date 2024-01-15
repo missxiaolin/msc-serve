@@ -7,7 +7,7 @@
 #
 # Host: 127.0.0.1 (MySQL 5.7.44)
 # Database: msc_log
-# Generation Time: 2024-01-15 02:49:53 +0000
+# Generation Time: 2024-01-15 09:50:24 +0000
 # ************************************************************
 
 
@@ -73,11 +73,28 @@ LOCK TABLES `alarm_config` WRITE;
 
 INSERT INTO `alarm_config` (`id`, `monitorAppId`, `errorType`, `errorName`, `timeRangeS`, `maxErrorCount`, `alarmIntervalS`, `isEnable`, `alertType`, `note`, `serviceType`, `whereType`, `startHour`, `endHour`, `startTime`, `updateTime`)
 VALUES
-	(1,'adm','JS_ERROR','js错误',3600,2,60,1,'[1]','js','>','single','00:00:06','23:59:59','2024-01-13 09:46:56','2024-01-14 20:19:19'),
+	(1,'adm','JS_ERROR','js错误',123600,2,60,1,'[1]','js','>','single','00:00:06','23:59:59','2024-01-13 09:46:56','2024-01-15 15:34:12'),
 	(2,'adm','PAGE_PV','PV告警',3600,3,30,0,'[1]','','>','sum','00:00:00','23:59:59','2024-01-13 10:00:30','2024-01-14 20:24:43');
 
 /*!40000 ALTER TABLE `alarm_config` ENABLE KEYS */;
 UNLOCK TABLES;
+
+
+# Dump of table alarm_history
+# ------------------------------------------------------------
+
+DROP TABLE IF EXISTS `alarm_history`;
+
+CREATE TABLE `alarm_history` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `alarmId` int(11) DEFAULT NULL COMMENT '关联告警表id',
+  `sendContent` varchar(3000) NOT NULL COMMENT '发送内容',
+  `errorMsg` varchar(2000) NOT NULL DEFAULT '' COMMENT '错误',
+  `isSuccess` tinyint(5) NOT NULL COMMENT '是否成功',
+  `updateTime` datetime NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
 
 
 # Dump of table click_log
