@@ -133,20 +133,13 @@ class WatchAlarm extends Base {
     redisKey
   ) {
     const {
-      id,
-      name: projectName,
       monitorAppId,
       errorType, // 错误类型
-      errorName, // 要报警错误名字
-      timerangeS: timeRange, // 报警时间范围_秒
-      alarmIntervalS: alarmInterval,// 报警时间间隔_秒
       maxErrorCount, // 报警错误数阈值
-      note,
       serviceType
     } = alarmConfig;
     const endTime = moment().format(DATE_FORMAT.DISPLAY_BY_SECOND);
-    const startTime = moment(endTime, "YYYY-MM-DD HH:mm:ss").subtract(timeRange, 'seconds').format(DATE_FORMAT.DISPLAY_BY_SECOND);
-    let alarmMsg = ''
+    const startTime = moment(endTime, "YYYY-MM-DD HH:mm:ss").subtract(alarmConfig.timeRangeS, 'seconds').format(DATE_FORMAT.DISPLAY_BY_SECOND);
     switch (errorType) {
       case alertEum.ALERT_PAGE_PV: // pv
         const pvCount = await pageModel.getIsUCount({
@@ -156,12 +149,12 @@ class WatchAlarm extends Base {
           isIp: false,
           monitorAppId
         })
+        console.log(startTime, endTime, pvCount)
         if (this.contrastData(maxErrorCount, serviceType, pvCount) == true) {
-          alarmMsg = `项目【${projectName}】监控的【${errorName}】错误， 最近【${timeRange}】秒内错误数【${pvCount}】, 达到阈值【${maxErrorCount}】,触发报警, 报警备注【${note}】。`
           await this.sendAlert({
             redisKey,
-            alarmInterval,
-            alarmMsg
+            alarmConfig,
+            currentData: pvCount
           })
         }
         break;
@@ -174,11 +167,10 @@ class WatchAlarm extends Base {
           monitorAppId
         })
         if (this.contrastData(maxErrorCount, serviceType, uvCount) == true) {
-          alarmMsg = `项目【${projectName}】监控的【${errorName}】错误， 最近【${timeRange}】秒内错误数【${uvCount}】, 达到阈值【${maxErrorCount}】,触发报警, 报警备注【${note}】。`
           await this.sendAlert({
             redisKey,
-            alarmInterval,
-            alarmMsg
+            alarmConfig,
+            currentData: uvCount
           })
         }
         break;
@@ -201,11 +193,14 @@ class WatchAlarm extends Base {
    * @param {*} message 
    */
   async sendAlert (data) {
-    const { alarmMsg, redisKey, alarmInterval } = data
+    const { redisKey, alarmConfig,  currentData} = data
+    const alarmMsg = `项目【${alarmConfig.name}】监控的【${alarmConfig.errorName}】错误， 最近【${alarmConfig.timeRangeS}】秒内达到数量【${currentData}】, 达到阈值【${alarmConfig.maxErrorCount}】${alarmConfig.note ? ',触发报警, 报警备注【】。' : '。'}`
     // TODO: 发送告警
+    console.log(alarmMsg)
+    // TODO:记录当前错误到数据库，后续检查报警用
 
     // redis 记录
-    await redis.asyncSetex(redisKey, alarmInterval, 1);
+    // await redis.asyncSetex(redisKey, alarmConfig.alarmIntervalS, 1);
   }
 }
 
