@@ -1,7 +1,8 @@
 import Knex from "../library/mysql";
 import _ from "lodash";
 import Logger from "../library/logger";
-import * as config from "../constants/err";
+import moment from "moment";
+import DATE_FORMAT from "../constants/date_format";
 
 const BASE_TABLE_NAME = "sourcemap";
 const TABLE_COLUMN = [];
@@ -54,47 +55,6 @@ export default class SourcemapModel {
 
   /**
    * 修改
-   * @param {*} data 
-   * @param {*} id 
-   * @returns 
-   */
-  async update(data, id) {
-    let tableName = getTableName();
-    let updateResult = await Knex.from(tableName).update(data).where('id', id)
-    return updateResult
-  }
-
-  /**
-   * 获取
-   * @param {*} params 
-   * @returns 
-   */
-  async getFirst(params) {
-    let { monitorAppId, fieldname = '', version = '' } = params;
-    let tableName = getTableName();
-
-    let res = Knex.from(tableName)
-      .select("*")
-      .where("monitorAppId", "=", monitorAppId);
-    
-    if (fieldname) {
-        res = res.andWhere('filename', filename)
-    }
-
-    if (version) {
-        res = res.andWhere('version', version)
-    }
-
-    res = await res.first().catch((e) => {
-      Logger.warn("查询失败, 错误原因 =>", e);
-      return {};
-    });
-
-    return res;
-  }
-
-  /**
-   * 修改
    * @param {*} data
    * @param {*} id
    * @returns
@@ -106,20 +66,30 @@ export default class SourcemapModel {
   }
 
   /**
-   * 获取所有开启的告警
+   * 获取
+   * @param {*} params
    * @returns
    */
-  async getAllEnabled() {
+  async getFirst(params) {
+    let { monitorAppId, fieldname = "", version = "" } = params;
     let tableName = getTableName();
-    let res = await Knex.select("alarm_config.*", "projects.name")
-      .from(tableName)
-      .join(
-        "projects",
-        "alarm_config.monitorAppId",
-        "=",
-        "projects.monitorAppId"
-      )
-      .where("alarm_config.isEnable", ALERT_OPEN);
+
+    let res = Knex.from(tableName)
+      .select("*")
+      .where("monitorAppId", "=", monitorAppId);
+
+    if (fieldname) {
+      res = res.andWhere("filename", filename);
+    }
+
+    if (version) {
+      res = res.andWhere("version", version);
+    }
+
+    res = await res.first().catch((e) => {
+      Logger.warn("查询失败, 错误原因 =>", e);
+      return {};
+    });
 
     return res;
   }
@@ -130,12 +100,15 @@ export default class SourcemapModel {
    * @returns
    */
   async getPages(params) {
-    let { pageSize = 10, page = 1, monitorAppId = "" } = params;
+    let { pageSize = 10, page = 1, monitorAppId = "", version = "" } = params;
     let tableName = getTableName();
 
-    let res = await Knex.select("*")
-      .from(tableName)
-      .where("monitorAppId", monitorAppId)
+    let res = Knex.from(tableName).where("monitorAppId", monitorAppId);
+
+    if (version) {
+      res = res.andWhere("version", version);
+    }
+    res = await res
       .orderBy("updateTime", "desc")
       .limit(pageSize)
       .offset(page * pageSize - pageSize)
@@ -143,6 +116,10 @@ export default class SourcemapModel {
         console.log(err);
         return [];
       });
+
+    res.forEach((item) => {
+      item.updateTime = moment().format(DATE_FORMAT.DISPLAY_BY_SECOND);
+    });
 
     return res;
   }
@@ -153,18 +130,20 @@ export default class SourcemapModel {
    * @returns
    */
   async getPagesCount(params) {
-    const { monitorAppId = "" } = params;
+    const { monitorAppId = "", version = "" } = params;
     let tableName = getTableName();
     let res = Knex.from(tableName);
 
-    res = await res
-      .count("* as alertCount")
-      .where("monitorAppId", monitorAppId)
-      .catch((err) => {
-        console.log(err);
-        return 0;
-      });
+    res = res.count("* as count").where("monitorAppId", monitorAppId);
+    if (version) {
+      res = res.andWhere("version", version);
+    }
 
-    return res[0].alertCount;
+    res = await res.catch((err) => {
+      console.log(err);
+      return 0;
+    });
+
+    return res[0].count;
   }
 }

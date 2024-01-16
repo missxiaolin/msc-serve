@@ -9,7 +9,12 @@ const sourcemapSave = RouterConfigBuilder.routerConfigBuilder('/adm/sourcemap/sa
     return sourcemapController.sourcemapSave(req, res)
 }, true, true)
 
+// sourcemap列表
+const sourcemapList = RouterConfigBuilder.routerConfigBuilder('/adm/sourcemap/list', RouterConfigBuilder.METHOD_TYPE_POST, (req, res) => {
+    return sourcemapController.sourcemapList(req, res)
+}, true)
 
 export default {
     ...sourcemapSave,
+    ...sourcemapList
 }

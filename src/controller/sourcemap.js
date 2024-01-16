@@ -28,27 +28,47 @@ export default class SourcemapController extends Base {
     const monitorAppId = req.get("MonitorAppId") || "";
     const file = req.file;
     let param = {
-        monitorAppId,
-        filename: file.fieldname,
-        originalname: file.originalname,
-        destination: file.destination,
-        path: file.path,
-        size: file.size,
-        version: data.version,
-        updateTime: startAt
-    }
+      monitorAppId,
+      filename: file.filename,
+      originalname: file.originalname,
+      destination: file.destination,
+      path: file.path,
+      size: file.size,
+      version: data.version,
+      updateTime: startAt,
+    };
     const sourcemap = await sourcemapModel.getFirst({
-        monitorAppId: monitorAppId,
-        version: data.version
-    })
+      monitorAppId: monitorAppId,
+      version: data.version,
+    });
     if (sourcemap) {
-        result = await sourcemapModel.update({
-            ...param
-        }, sourcemap.id);
+      result = await sourcemapModel.update(
+        {
+          ...param,
+        },
+        sourcemap.id
+      );
     } else {
-        result = await sourcemapModel.save(param)
+      result = await sourcemapModel.save(param);
     }
 
+    return this.send(res, result);
+  }
+
+  /**
+   * 列表
+   * @param {*} req
+   * @param {*} res
+   * @returns
+   */
+  async sourcemapList(req, res) {
+    let data = req.body || {},
+      result = {};
+
+    const monitorAppId = req.get("MonitorAppId") || "";
+    data.monitorAppId = monitorAppId;
+    result.list = await sourcemapModel.getPages(data);
+    result.count = await sourcemapModel.getPagesCount(data);
     return this.send(res, result);
   }
 }
