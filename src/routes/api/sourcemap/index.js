@@ -14,7 +14,14 @@ const sourcemapList = RouterConfigBuilder.routerConfigBuilder('/adm/sourcemap/li
     return sourcemapController.sourcemapList(req, res)
 }, true)
 
+// sourcemap version列表
+const sourcemapVersionList = RouterConfigBuilder.routerConfigBuilder('/adm/sourcemap/version/list', RouterConfigBuilder.METHOD_TYPE_POST, (req, res) => {
+    return sourcemapController.getAllGruopByVersion(req, res)
+}, true)
+
+
 export default {
     ...sourcemapSave,
-    ...sourcemapList
+    ...sourcemapList,
+    ...sourcemapVersionList
 }

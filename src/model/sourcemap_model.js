@@ -146,4 +146,26 @@ export default class SourcemapModel {
 
     return res[0].count;
   }
+
+  /**
+   * 获取文件下所有版本号
+   * @param {*} params
+   */
+  async getAllGruopByVersion(params) {
+    const { monitorAppId = "", version = "", filename = "" } = params;
+    let tableName = getTableName();
+    let res = Knex.from(tableName)
+      .select(["version"])
+      .where("monitorAppId", monitorAppId);
+    if (version) {
+      res = res.andWhere("version", version);
+    }
+    if (filename) {
+      res = res.andWhere("filename", filename);
+    }
+
+    res = await res.groupBy(["version"]);
+
+    return res
+  }
 }

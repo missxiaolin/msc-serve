@@ -71,4 +71,19 @@ export default class SourcemapController extends Base {
     result.count = await sourcemapModel.getPagesCount(data);
     return this.send(res, result);
   }
+
+  /**
+   * 根据版本分组拿到所有结果
+   * @param {*} req
+   * @param {*} res
+   * @returns
+   */
+  async getAllGruopByVersion(req, res) {
+    let data = req.body || {},
+      result = [];
+    const monitorAppId = req.get("MonitorAppId") || "";
+    data.monitorAppId = monitorAppId;
+    result = await sourcemapModel.getAllGruopByVersion(data);
+    return this.send(res, result);
+  }
 }
