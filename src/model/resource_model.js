@@ -15,6 +15,7 @@ export default class ResourceModel {
   constructor() {
     this.tableColumnArr = [
       "monitorAppId",
+      "category",
       "userAgent",
       "uuId",
       "level",

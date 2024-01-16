@@ -15,6 +15,7 @@ export default class PageModel {
   constructor() {
     this.tableColumnArr = [
       "monitorAppId",
+      "category",
       "ip",
       "userAgent",
       "uuId",

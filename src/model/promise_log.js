@@ -17,6 +17,7 @@ export default class PromiseLog {
   constructor() {
     this.tableColumnArr = [
       "monitorAppId",
+      "category",
       "userAgent",
       "uuId",
       "level",

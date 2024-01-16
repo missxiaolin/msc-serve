@@ -15,6 +15,7 @@ export default class HttpModel {
   constructor() {
     this.tableColumnArr = [
       "monitorAppId",
+      "category",
       "uuId",
       "level",
       "happenTime",

@@ -15,6 +15,7 @@ export default class UserClickeModel {
   constructor() {
     this.tableColumnArr = [
       "monitorAppId",
+      "category",
       "uuId",
       "level",
       "happenTime",
