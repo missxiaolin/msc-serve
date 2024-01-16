@@ -8,6 +8,7 @@ import request from './request/index'
 import project from './project'
 import userBehavior from './userBehavior'
 import alert from './alert'
+import sourcemap from './sourcemap'
 
 export default {
     ...index,
@@ -19,5 +20,6 @@ export default {
     ...request,
     ...project,
     ...userBehavior,
-    ...alert
+    ...alert,
+    ...sourcemap
 }

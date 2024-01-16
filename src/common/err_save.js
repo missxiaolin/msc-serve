@@ -94,7 +94,7 @@ export default class ErrorSave {
           data.duration = item.duration || "";
           data.method = item.method || "";
           data.pathName = item.pathName || "";
-          data.requestText = item.requestText || "";
+          data.requestText = Util.getInstance().isType().isString(item.requestText) && item.requestText ? item.requestText : Util.getInstance().isType().isPlainObject(item.requestText) && item.requestText ? JSON.stringify(item.requestText) :"";
           data.responseText = item.responseText || "";
           data.httpOptions  = item.httpOptions || "";
           data.status = item.status || "";

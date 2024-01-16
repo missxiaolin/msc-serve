@@ -9,9 +9,10 @@ const METHOD_TYPE_POST = 'post'
  * @param {String} methodType   接口类型, METHOD_TYPE_GET / METHOD_TYPE_POST
  * @param {Function} func       实际controller函数
  * @param {Boolean} needLogin   是否需要登录
+ * @param {Boolean} isUpdateFile是否上传
  * @param {Object}
  */
-function routerConfigBuilder(url = '/', methodType = METHOD_TYPE_GET, func, needLogin = false) {
+function routerConfigBuilder(url = '/', methodType = METHOD_TYPE_GET, func, needLogin = false, isUpdateFile = false) {
     let routerConfig = {}
     routerConfig[url] = {
         methodType,
@@ -23,7 +24,8 @@ function routerConfigBuilder(url = '/', methodType = METHOD_TYPE_GET, func, need
                 res.send(API_RES.showError('服务器错误', 10001, e.stack))
             }
         },
-        needLogin
+        needLogin,
+        isUpdateFile
     }
     return routerConfig
 }
