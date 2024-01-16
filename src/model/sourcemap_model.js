@@ -3,7 +3,7 @@ import _ from "lodash";
 import Logger from "../library/logger";
 import * as config from "../constants/err";
 
-const BASE_TABLE_NAME = "alarm_config";
+const BASE_TABLE_NAME = "sourcemap";
 const TABLE_COLUMN = [];
 
 const DISOLAYT_TABLE_COLUMN = [];
@@ -24,7 +24,7 @@ export default class SourcemapModel {
       "path",
       "size",
       "version",
-      "updateTime"
+      "updateTime",
     ];
   }
 
@@ -52,8 +52,45 @@ export default class SourcemapModel {
     return id > 0;
   }
 
+  /**
+   * 修改
+   * @param {*} data 
+   * @param {*} id 
+   * @returns 
+   */
+  async update(data, id) {
+    let tableName = getTableName();
+    let updateResult = await Knex.from(tableName).update(data).where('id', id)
+    return updateResult
+  }
+
+  /**
+   * 获取
+   * @param {*} params 
+   * @returns 
+   */
   async getFirst(params) {
-    const {  } = params;
+    let { monitorAppId, fieldname = '', version = '' } = params;
+    let tableName = getTableName();
+
+    let res = Knex.from(tableName)
+      .select("*")
+      .where("monitorAppId", "=", monitorAppId);
+    
+    if (fieldname) {
+        res = res.andWhere('filename', filename)
+    }
+
+    if (version) {
+        res = res.andWhere('version', version)
+    }
+
+    res = await res.first().catch((e) => {
+      Logger.warn("查询失败, 错误原因 =>", e);
+      return {};
+    });
+
+    return res;
   }
 
   /**
