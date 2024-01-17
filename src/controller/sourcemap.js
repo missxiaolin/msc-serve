@@ -113,8 +113,7 @@ export default class SourcemapController extends Base {
     }
     // 读取 Source Map 文件
     const sourceMapData = fs.readFileSync(sourcemap.path, "utf-8");
-    // 这个是源码
-    result.sourcesContent = JSON.parse(sourceMapData).sourcesContent;
+    
     // 创建 SourceMapConsumer 对象
     SourceMapConsumer.with(
       sourceMapData,
@@ -128,6 +127,8 @@ export default class SourcemapController extends Base {
 
         // 输出原始位置信息
         console.log("originalPosition", originalPosition);
+        // 这个是源码
+        result.sourcesContent = JSON.parse(sourceMapData).sourcesContent[0];
         result.originalPosition = originalPosition
         return this.send(res, result);
       },
