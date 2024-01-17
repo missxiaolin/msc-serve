@@ -2,6 +2,8 @@ import Base from "./base";
 import moment from "moment";
 import SourcemapModel from "../model/sourcemap_model";
 
+const fs = require("fs");
+const { SourceMapConsumer } = require("source-map");
 const sourcemapModel = new SourcemapModel();
 
 export default class SourcemapController extends Base {
@@ -85,5 +87,55 @@ export default class SourcemapController extends Base {
     data.monitorAppId = monitorAppId;
     result = await sourcemapModel.getAllGruopByVersion(data);
     return this.send(res, result);
+  }
+
+  /**
+   * @param {*} req
+   * @param {*} res
+   * @returns
+   */
+  async SourcemapAnalysis(req, res) {
+    let data = req.body || {},
+      result = {};
+
+    const monitorAppId = req.get("MonitorAppId") || "";
+    data.monitorAppId = monitorAppId;
+    const sourcemap = await sourcemapModel.getFirst({
+      monitorAppId: monitorAppId,
+      version: data.version,
+    });
+    console.log(sourcemap);
+    if (!sourcemap) {
+      return this.send(res, {}, false, "未找到该版本文件(1000)");
+    }
+    if (fs.existsSync(`/${sourcemap.path}`)) {
+      return this.send(res, {}, false, "未找到该版本文件(1001)");
+    }
+    // 读取 Source Map 文件
+    const sourceMapData = fs.readFileSync(sourcemap.path, "utf-8");
+    // 这个是源码
+    result.sourcesContent = JSON.parse(sourceMapData).sourcesContent;
+    // 创建 SourceMapConsumer 对象
+    SourceMapConsumer.with(
+      sourceMapData,
+      null,
+      (consumer) => {
+        // 通过调用 consumer.originalPositionFor() 方法获取原始代码中的位置信息
+        const originalPosition = consumer.originalPositionFor({
+          line: data.line,
+          column: data.column,
+        });
+
+        // 输出原始位置信息
+        console.log("originalPosition", originalPosition);
+        result.originalPosition = originalPosition
+        return this.send(res, result);
+      },
+      (error) => {
+        return this.send(res, {}, false, "错误解析失败");
+      }
+    );
+
+    
   }
 }

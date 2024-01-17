@@ -19,9 +19,15 @@ const sourcemapVersionList = RouterConfigBuilder.routerConfigBuilder('/adm/sourc
     return sourcemapController.getAllGruopByVersion(req, res)
 }, true)
 
+// sourcemap解析
+const sourcemapAnalysis = RouterConfigBuilder.routerConfigBuilder('/adm/sourcemap/analysis', RouterConfigBuilder.METHOD_TYPE_POST, (req, res) => {
+    return sourcemapController.SourcemapAnalysis(req, res)
+}, true)
+
 
 export default {
     ...sourcemapSave,
     ...sourcemapList,
-    ...sourcemapVersionList
+    ...sourcemapVersionList,
+    ...sourcemapAnalysis
 }
