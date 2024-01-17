@@ -96,3 +96,9 @@ npm：https://www.npmjs.com/package/superagent
 作用：根据 IP 解析地址
 安装：npm i -S ipip-ipdb
 npm：https://www.npmjs.com/package/ipip-ipdb
+
+### 源码解析
+
+作用：根据js上传报错位置解析源代码错误位置
+安装：npm i -S source-map
+npm：https://www.npmjs.com/package/source-map
