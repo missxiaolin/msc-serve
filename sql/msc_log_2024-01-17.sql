@@ -7,7 +7,7 @@
 #
 # Host: 127.0.0.1 (MySQL 5.7.44)
 # Database: msc_log
-# Generation Time: 2024-01-15 09:50:24 +0000
+# Generation Time: 2024-01-17 05:49:33 +0000
 # ************************************************************
 
 
@@ -104,6 +104,7 @@ DROP TABLE IF EXISTS `click_log`;
 
 CREATE TABLE `click_log` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `category` varchar(30) NOT NULL DEFAULT '' COMMENT '类别',
   `monitorAppId` varchar(100) NOT NULL DEFAULT '' COMMENT '项目',
   `uuId` varchar(100) NOT NULL DEFAULT '' COMMENT '用户标识',
   `level` varchar(10) NOT NULL DEFAULT '' COMMENT '级别',
@@ -156,6 +157,7 @@ DROP TABLE IF EXISTS `http_log`;
 
 CREATE TABLE `http_log` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `category` varchar(30) NOT NULL COMMENT '类别',
   `monitorAppId` varchar(100) NOT NULL DEFAULT '' COMMENT '项目',
   `uuId` varchar(100) NOT NULL DEFAULT '' COMMENT '用户标识',
   `level` varchar(10) NOT NULL DEFAULT '' COMMENT '级别',
@@ -191,11 +193,11 @@ DROP TABLE IF EXISTS `js_log`;
 
 CREATE TABLE `js_log` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `category` varchar(30) NOT NULL COMMENT '类别',
   `monitorAppId` varchar(100) NOT NULL DEFAULT '' COMMENT '项目',
   `userAgent` varchar(500) NOT NULL DEFAULT '' COMMENT 'UA',
   `uuId` varchar(100) NOT NULL DEFAULT '' COMMENT '用户标识',
   `level` varchar(10) NOT NULL DEFAULT '' COMMENT '级别',
-  `category` varchar(30) NOT NULL DEFAULT '' COMMENT '上报类别',
   `happenTime` varchar(30) NOT NULL DEFAULT '' COMMENT '上报时间',
   `deviceType` varchar(100) NOT NULL DEFAULT '' COMMENT '设备',
   `os` varchar(100) NOT NULL DEFAULT '' COMMENT '设备',
@@ -256,11 +258,11 @@ DROP TABLE IF EXISTS `page_log`;
 
 CREATE TABLE `page_log` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `category` varchar(30) NOT NULL COMMENT '上报类别',
   `monitorAppId` varchar(100) NOT NULL DEFAULT '' COMMENT '项目',
   `userAgent` varchar(500) NOT NULL DEFAULT '' COMMENT 'UA',
   `uuId` varchar(100) NOT NULL DEFAULT '' COMMENT '用户标识',
   `level` varchar(10) NOT NULL DEFAULT '' COMMENT '级别',
-  `category` varchar(30) NOT NULL DEFAULT '' COMMENT '上报类别',
   `happenTime` varchar(30) NOT NULL DEFAULT '' COMMENT '上报时间',
   `deviceType` varchar(100) NOT NULL DEFAULT '' COMMENT '设备',
   `os` varchar(100) NOT NULL DEFAULT '' COMMENT '设备',
@@ -354,6 +356,7 @@ DROP TABLE IF EXISTS `promise_log`;
 
 CREATE TABLE `promise_log` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `category` varchar(30) NOT NULL DEFAULT '' COMMENT '类别',
   `monitorAppId` varchar(100) NOT NULL DEFAULT '' COMMENT '项目',
   `userAgent` varchar(500) NOT NULL DEFAULT '' COMMENT 'UA',
   `uuId` varchar(100) NOT NULL DEFAULT '' COMMENT '用户标识',
@@ -389,6 +392,7 @@ DROP TABLE IF EXISTS `resource_log`;
 
 CREATE TABLE `resource_log` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `category` varchar(30) NOT NULL DEFAULT '' COMMENT '类别',
   `monitorAppId` varchar(100) NOT NULL DEFAULT '' COMMENT '项目',
   `userAgent` varchar(500) NOT NULL DEFAULT '' COMMENT 'UA',
   `uuId` varchar(100) NOT NULL DEFAULT '' COMMENT '用户标识',
@@ -403,7 +407,7 @@ CREATE TABLE `resource_log` (
   `screenWidth` int(11) NOT NULL COMMENT '设备宽度',
   `language` varchar(30) NOT NULL DEFAULT '' COMMENT '语言',
   `netWork` varchar(10) NOT NULL DEFAULT '' COMMENT '网络',
-  `ip` varchar(300) DEFAULT NULL COMMENT 'ip',
+  `ip` varchar(300) NOT NULL DEFAULT '' COMMENT 'ip',
   `country` varchar(10) NOT NULL DEFAULT '' COMMENT '省',
   `province` varchar(10) NOT NULL DEFAULT '' COMMENT '市',
   `city` varchar(10) NOT NULL DEFAULT '' COMMENT '区',
@@ -418,6 +422,35 @@ CREATE TABLE `resource_log` (
   KEY `m_id_time` (`monitorAppId`,`happenTime`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
+
+
+# Dump of table sourcemap
+# ------------------------------------------------------------
+
+DROP TABLE IF EXISTS `sourcemap`;
+
+CREATE TABLE `sourcemap` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `monitorAppId` varchar(300) NOT NULL COMMENT '项目',
+  `filename` varchar(100) NOT NULL DEFAULT '' COMMENT 'url',
+  `originalname` varchar(300) NOT NULL,
+  `destination` varchar(100) NOT NULL DEFAULT '',
+  `path` varchar(300) NOT NULL,
+  `size` int(20) NOT NULL,
+  `version` varchar(30) NOT NULL DEFAULT '' COMMENT '版本号',
+  `updateTime` datetime NOT NULL COMMENT '上传时间',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+LOCK TABLES `sourcemap` WRITE;
+/*!40000 ALTER TABLE `sourcemap` DISABLE KEYS */;
+
+INSERT INTO `sourcemap` (`id`, `monitorAppId`, `filename`, `originalname`, `destination`, `path`, `size`, `version`, `updateTime`)
+VALUES
+	(3,'adm','list-037e6ddc.js.map','list-037e6ddc.js.map','uploads/adm/1.0.0','uploads/adm/1.0.0/list-037e6ddc.js.map',9676,'1.0.0','2024-01-16 17:12:31');
+
+/*!40000 ALTER TABLE `sourcemap` ENABLE KEYS */;
+UNLOCK TABLES;
 
 
 # Dump of table user_behavior
