@@ -71,14 +71,14 @@ export default class SourcemapModel {
    * @returns
    */
   async getFirst(params) {
-    let { monitorAppId, fieldname = "", version = "" } = params;
+    let { monitorAppId, filename = "", version = "" } = params;
     let tableName = getTableName();
 
     let res = Knex.from(tableName)
       .select("*")
       .where("monitorAppId", "=", monitorAppId);
 
-    if (fieldname) {
+    if (filename) {
       res = res.andWhere("filename", filename);
     }
 

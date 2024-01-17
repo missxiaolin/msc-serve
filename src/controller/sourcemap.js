@@ -29,6 +29,7 @@ export default class SourcemapController extends Base {
 
     const monitorAppId = req.get("MonitorAppId") || "";
     const file = req.file;
+    
     let param = {
       monitorAppId,
       filename: file.filename,
@@ -42,6 +43,7 @@ export default class SourcemapController extends Base {
     const sourcemap = await sourcemapModel.getFirst({
       monitorAppId: monitorAppId,
       version: data.version,
+      filename: param.filename
     });
     if (sourcemap) {
       result = await sourcemapModel.update(
@@ -103,8 +105,8 @@ export default class SourcemapController extends Base {
     const sourcemap = await sourcemapModel.getFirst({
       monitorAppId: monitorAppId,
       version: data.version,
+      filename: data.filename
     });
-    console.log(sourcemap);
     if (!sourcemap) {
       return this.send(res, {}, false, "未找到该版本文件(1000)");
     }
