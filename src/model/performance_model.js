@@ -227,6 +227,39 @@ export default class PerformanceModel {
     return {};
   }
 
+  /**
+   * @param {*} params
+   * @returns
+   */
+  async getWxAvgNtTimeDataSql(params) {
+    let {
+      startTime = "",
+      endTime = "",
+      monitorAppId = "",
+      simpleUrl = ''
+    } = params;
+    let sql = `select avg(JSON_EXTRACT(textValue,'$.firstRenderduration')) as "firstRenderduration", avg(JSON_EXTRACT(textValue,'$.scriptduration')) as "scriptduration", avg(JSON_EXTRACT(textValue,'$.routeduration')) as "routeduration", avg(JSON_EXTRACT(textValue,'$.appLaunchduration')) as "appLaunchduration", avg(JSON_EXTRACT(textValue,'$.loadPackageduration')) as "loadPackageduration" from performance where happenTime > "${startTime}" and happenTime < "${endTime}" and textValue != '' and \`key\` = "wx-performance"`;
+    if (monitorAppId) {
+      sql = `${sql} and monitorAppId = "${monitorAppId}"`;
+    }
+    if (simpleUrl) {
+      sql = `${sql} and simpleUrl = "${simpleUrl}"`;
+    }
+    let res = await Knex.raw(sql);
+    if (res.length > 0) {
+      return res[0];
+    }
+
+    
+    
+
+    return {};
+  }
+
+  /**
+   * @param {*} params 
+   * @returns 
+   */
   async getAvgKey(params) {
     let {
       startTime = "",

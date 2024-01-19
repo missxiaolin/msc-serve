@@ -119,29 +119,12 @@ export default class Performance extends Base {
       }
     }
 
-    // if (result.project.projectType == 1) {
-    //   let ntAvg = await performanceModel.getAvgNtTimeDataSql(data);
-    //   result.NT = ntAvg[0] || {};
-    // } else if (result.project.projectType == 2) {
-    //   const appLaunch = await performanceModel.getWxAvgNtTimeDataSql(data, 'appLaunch');
-    //   const route = await performanceModel.getWxAvgNtTimeDataSql(data, 'route');
-    //   const firstRender = await performanceModel.getWxAvgNtTimeDataSql(data, 'firstRender');
-    //   const script = await performanceModel.getWxAvgNtTimeDataSql(data, 'script');
-    //   const loadPackage = await performanceModel.getWxAvgNtTimeDataSql(data, 'loadPackage');
-    //   result.NT = {
-    //     appLaunch: appLaunch[0].avgNum,
-    //     route: route[0].avgNum || 0,
-    //     firstRender: firstRender[0].avgNum,
-    //     script: script[0].avgNum,
-    //     loadPackage: loadPackage[0].avgNum
-    //   }
-    // }
-
-    // let fpAvg = await performanceModel.getAvgFpTimeDataSql(data);
-    // let fcpAvg = await performanceModel.getAvgFpTimeDataSql(data);
-
-    // result.FP = fpAvg[0] || {};
-    // result.FCP = fcpAvg[0] || {};
+    if (result.project.projectType == 2) {
+      let nt = await performanceModel.getWxAvgNtTimeDataSql({
+        ...data,
+      });
+      result.nt = nt[0];
+    }
 
     return this.send(res, result);
   }
