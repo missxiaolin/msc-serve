@@ -50,6 +50,7 @@ export default class PerformanceModel {
       "cumulative-layout-shift",
       "fps",
       "api-complete-time",
+      "wx-resource-flow"
     ];
   }
 

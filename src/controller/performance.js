@@ -21,34 +21,50 @@ export default class Performance extends Base {
       result = {};
     const monitorAppId = req.get("MonitorAppId") || "";
     data.monitorAppId = monitorAppId;
-    result.project = await projectModel.getMonitorAppIdDetail(monitorAppId);
+    const project = await projectModel.getMonitorAppIdDetail(monitorAppId);
+    result.project = project;
+    if (!project) {
+      return this.send(res, {}, false, "未找到项目");
+    }
     let list = await performanceModel.getPages({
       ...data,
-      key: "page-information",
+      key:
+        project.projectType == 1
+          ? "page-information"
+          : project.projectType == 2
+          ? "wx-performance"
+          : "",
     });
     let sessionIds = list.map((item) => item.sessionId);
-    let performances = await performanceModel.getPerformances(sessionIds)
+    let performances = await performanceModel.getPerformances(sessionIds);
     list.forEach((pageItem) => {
-      if (pageItem.textValue && Util.getInstance().isType().isString(pageItem.textValue)) {
-        pageItem.textValue = JSON.parse(pageItem.textValue)
+      if (
+        pageItem.textValue &&
+        Util.getInstance().isType().isString(pageItem.textValue)
+      ) {
+        pageItem.textValue = JSON.parse(pageItem.textValue);
       }
-      performances.forEach(p => {
-        
+      performances.forEach((p) => {
         if (p.textValue && Util.getInstance().isType().isString(p.textValue)) {
-          p.textValue = JSON.parse(p.textValue)
+          p.textValue = JSON.parse(p.textValue);
         }
         if (pageItem.sessionId == p.sessionId) {
-          pageItem[p.key] = p
+          pageItem[p.key] = p;
         }
-      })
-    })
-    
+      });
+    });
+
     let count = await performanceModel.getPagesCount({
       ...data,
-      key: "page-information"
+      key:
+        project.projectType == 1
+          ? "page-information"
+          : project.projectType == 2
+          ? "wx-performance"
+          : "",
     });
     result.list = list;
-    result.performances = performances;
+
     result.count = count;
     return this.send(res, result);
   }
@@ -80,11 +96,11 @@ export default class Performance extends Base {
         result.nt = nt[0];
         const fpNum = await performanceModel.getAvgKey({
           ...data,
-          key: 'first-paint'
-        })
+          key: "first-paint",
+        });
         result.fp = {
-          value: fpNum[0].numValue || 0
-        }
+          value: fpNum[0].numValue || 0,
+        };
       } else {
         result.nt = {
           dnsLookup: 0,
@@ -99,7 +115,7 @@ export default class Performance extends Base {
           domReady: 0,
           pageLoad: 0,
         };
-        result.fp = 0
+        result.fp = 0;
       }
     }
 
