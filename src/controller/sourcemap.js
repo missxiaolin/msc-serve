@@ -28,6 +28,9 @@ export default class SourcemapController extends Base {
       result = {};
 
     const monitorAppId = req.get("MonitorAppId") || "";
+    if (!monitorAppId) {
+      return this.send(res, {}, false, "请先选择项目，在进行配置！"); 
+    }
     const file = req.file;
     
     let param = {

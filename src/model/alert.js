@@ -2,6 +2,8 @@ import Knex from "../library/mysql";
 import _ from "lodash";
 import Logger from "../library/logger";
 import * as config from "../constants/err";
+import DATE_FORMAT from "../constants/date_format";
+import moment from "moment";
 
 const BASE_TABLE_NAME = "alarm_config";
 const TABLE_COLUMN = [];
@@ -30,6 +32,7 @@ export default class AlertModel {
       "startHour",
       "endHour",
       "alertType",
+      "dingConfig",
       "startTime",
       "updateTime",
     ];
@@ -114,6 +117,10 @@ export default class AlertModel {
       .catch((err) => {
         console.log(err);
         return [];
+      });
+
+      res.forEach((item) => {
+        item.updateTime = moment().format(DATE_FORMAT.DISPLAY_BY_SECOND)
       });
 
     return res;

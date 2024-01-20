@@ -19,6 +19,9 @@ export default class AlertController extends Base {
       result = {};
 
     const monitorAppId = req.get("MonitorAppId") || "";
+    if (!monitorAppId) {
+      return this.send(res, {}, false, "请先选择项目，在进行配置！"); 
+    }
     data.monitorAppId = monitorAppId;
     if (data.id == 0 || !data.id) {
       result = await aleryModel.save({
