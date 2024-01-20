@@ -376,6 +376,7 @@ class WatchAlarm extends Base {
         let dingRes = await sendDingTalkMessage({
           title: alarmConfig.errorName,
           alarmMsg,
+          dingConfig: alarmConfig.dingConfig || ""
         });
         // 记录当前错误到数据库，后续检查报警用
         await alarmHistoryModel.save({

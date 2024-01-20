@@ -1,4 +1,3 @@
-import dingConfig from "../../config/ding";
 const axios = require("axios");
 
 /**
@@ -8,8 +7,8 @@ const axios = require("axios");
  * @param {*} data
  */
 async function sendDingTalkMessage(data) {
-  const { alarmMsg, title } = data;
-  const webhookUrl = dingConfig.webhook;
+  const { alarmMsg, title, dingConfig } = data;
+  const webhookUrl = dingConfig;
   if (!webhookUrl) {
     return '请先配置机器人！'
   }
