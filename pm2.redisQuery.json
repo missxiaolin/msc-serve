@@ -1,0 +1,6 @@
+[
+    {
+      "name": "montor-task",
+      "script": "npm run command Redie:Mq"
+    }
+]
