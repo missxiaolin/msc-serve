@@ -1,5 +1,5 @@
 {
-  "name": "fee-task-manager",
+  "name": "msc-task-manager",
   "script": "node ./dist/command",
   "cwd": "./",
   "args": ["Task:Manager"],
