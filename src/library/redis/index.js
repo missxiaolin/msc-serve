@@ -130,10 +130,10 @@ class RedisClient {
     let result = await this.redisClient
       .blpop(name, timeout)
       .catch((e) => {
-        // Logger.log("Redis异常=>");
-        // Logger.log(e);
+        Logger.log("Redis异常=>");
+        Logger.log(e);
       });
-    await this._autoDisconnect();
+    // await this._autoDisconnect();
     return result;
   }
 
