@@ -1,13 +1,6 @@
 {
   "name": "msc-task-manager",
-  "script": "node ./dist/command",
-  "cwd": "./",
-  "args": ["Task:Manager"],
-  "watch": ["dist"],
-  "ignore_watch": ["node_modules", "log"],
-  "watch_options": {
-    "followSymlinks": true
-  },
+  "script": "npm run command Task:Manager",
   "error_file": "./log/pm2/command/task-manager-err.log",
   "out_file": "./log/pm2/command/task-manager-out.log",
   "env": {
