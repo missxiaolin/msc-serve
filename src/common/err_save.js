@@ -145,8 +145,6 @@ export default class ErrorSave {
         case error.PERFORMANCE:
           const sessionId = item.metrics.sessionId || "";
           for (let key in item.metrics.objs) {
-            // console.log(item.metrics.objs[key])
-            console.log(key)
             performanceModel.save({
               monitorAppId: data.monitorAppId,
               uuId: data.uuId,
