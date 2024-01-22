@@ -20,7 +20,7 @@ class RedisClient {
     this.redisClient = new Redis({
       port: redisConfig.port,
       host: redisConfig.host,
-      password: redisConfig.password || '',
+      password: redisConfig.password || "",
       retryStrategy: (hasRetryTimes) => {
         // 关闭自动重连功能
         return false;
@@ -116,6 +116,38 @@ class RedisClient {
         Logger.log("Redis异常=>");
         Logger.log(e);
       });
+    await this._autoDisconnect();
+    return result;
+  }
+
+  /**
+   * 消息队列拿值
+   * @param {*} name
+   * @param {*} timeout
+   */
+  async asyncBrPop(name, timeout) {
+    this._autoConnect();
+    let result = await this.redisClient
+      .blpop(name, timeout)
+      .catch((e) => {
+        // Logger.log("Redis异常=>");
+        // Logger.log(e);
+      });
+    await this._autoDisconnect();
+    return result;
+  }
+
+  /**
+   * 消息队列存储值
+   * @param {*} name
+   * @param {*} content
+   */
+  async asyncLPush(name, content) {
+    this._autoConnect();
+    let result = await this.redisClient.rpush(name, content).catch((e) => {
+      // Logger.log("Redis异常=>");
+      // Logger.log(e);
+    });
     await this._autoDisconnect();
     return result;
   }

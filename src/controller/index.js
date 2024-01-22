@@ -4,6 +4,8 @@ import _ from "lodash";
 import ErrorSave from "../common/err_save";
 import LIpip from "../library/ipip";
 import config from "../config/common";
+import redisConfig from '../config/redis'
+import redis from "../library/redis";
 import md5 from "md5";
 import AdmUser from "../model/adm_user";
 import ProjectModel from "../model/project";
@@ -44,7 +46,12 @@ export default class Index extends Base {
         (error) => {}
       );
     }
-    if (!config.use.mq) {
+
+    if (config.use.redisMq && redisConfig.isOpen) {
+      redis.asyncLPush(redisConfig.mqKey.name, JSON.stringify(data))
+    }
+
+    if (!config.use.mq && !(config.use.redisMq && redisConfig.isOpen)) {
       errprSave.save(data);
     }
     return this.send(res, { title: "保存成功" });
