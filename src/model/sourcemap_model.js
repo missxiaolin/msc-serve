@@ -118,7 +118,7 @@ export default class SourcemapModel {
       });
 
     res.forEach((item) => {
-      item.updateTime = moment().format(DATE_FORMAT.DISPLAY_BY_SECOND);
+      item.updateTime = moment(item.updateTime).format(DATE_FORMAT.DISPLAY_BY_SECOND);
     });
 
     return res;
