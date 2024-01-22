@@ -3,7 +3,7 @@ import RabbitMq from "../../library/mq/index";
 import ErrorSave from "../../common/err_save";
 const errprSave = new ErrorSave();
 
-const mq = new RabbitMq();
+
 // const MAX_RUN_TIME = 29 * 1000 // 29s后自动关闭
 
 class SaveLog extends Base {
@@ -23,6 +23,7 @@ class SaveLog extends Base {
    * @param {*} options
    */
   async execute(args, options) {
+    const mq = new RabbitMq();
     mq.receiveQueueMsg(
       "webLogSave",
       (res) => {

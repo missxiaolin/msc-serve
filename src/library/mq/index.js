@@ -4,6 +4,9 @@ import mqConfig from '../../config/mq'
 
 export default class RabbitMq {
     constructor() {
+        if (!mqConfig.isOpen) {
+            return
+        }
         this.hosts = mqConfig.hosts;
         this.index = mqConfig.index;
         this.length = this.hosts.length;

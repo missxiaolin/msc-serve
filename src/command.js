@@ -12,6 +12,8 @@ import ace from '@adonisjs/ace'
 
 const registedCommandList = [
     './commands/demo', // 命令demo测试
+    './commands/save_log/mqLog.js', // RabbitMq
+    './commands/save_log/redisLog.js', // RedisMq
     './commands/task/index', // 定时任务
     './commands/page/index', // page 分析
     './commands/dataHour/dataInit.js', // dataHour表初始化
