@@ -1,6 +1,6 @@
 [
     {
-      "name": "montor-task",
+      "name": "montor-redis-mq",
       "script": "npm run command Redie:Mq"
     }
 ]
