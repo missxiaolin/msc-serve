@@ -103,6 +103,13 @@ export default class ErrorSave {
           data.type = item.type || "";
           data.eventType = item.eventType || "";
           const httpId = await httpModel.save(data)
+
+          if (data.requestText.length > 500) {
+            data.requestText = '内容过大'
+          }
+          if (data.responseText.length > 500) {
+            data.responseText = '内容过大'
+          }
           this.userBehaviorSave(data, httpId)
           break;
         case error.USER_CLICK:
