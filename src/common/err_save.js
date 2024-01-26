@@ -153,7 +153,7 @@ export default class ErrorSave {
               score: item.metrics.objs[key].score || 0,
               numValue: Util.getInstance().isType().isNumeric(item.metrics.objs[key].value) && item.metrics.objs[key].value ? item.metrics.objs[key].value : 0,
               textValue: (Util.getInstance().isType().isPlainObject(item.metrics.objs[key].value) || Util.getInstance().isType().isArray(item.metrics.objs[key].value)) && item.metrics.objs[key].value ? JSON.stringify(item.metrics.objs[key].value) : '',
-              simpleUrl: (key == 'page-information' && item.metrics.objs[key].value.simpleUrl) ? item.metrics.objs[key].value.simpleUrl : key == 'wx-performance' ? item.metrics.objs[key].page : '',
+              simpleUrl: (key == 'page-information' && item.metrics.objs[key].value.simpleUrl) ? item.metrics.objs[key].value.simpleUrl : (key == 'wx-performance' || key == 'ali-performance') ? item.metrics.objs[key].page : '',
               happenTime: item.happenDate
             });
           }
