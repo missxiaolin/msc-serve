@@ -1,0 +1,2 @@
+import{_ as a,r as s,o as r,a as t,b as e,q as o,k as d,l as n,y as l}from"./index-79304586.js";const i={class:"error-page"},c={class:"error-page-svg"};const p=a({},[["render",function(a,p){const u=s("el-button"),f=s("router-link");return r(),t("div",i,[e("div",c,[o(a.$slots,"default",{},void 0,!0)]),d(f,{to:"/"},{default:n((()=>[d(u,{type:"primary"},{default:n((()=>[l("回到首页")])),_:1})])),_:1})])}],["__scopeId","data-v-2fba9562"]]);export{p as E};
+//# sourceMappingURL=ErrorPageLayout-25f519e3.js.map
