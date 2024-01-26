@@ -106,6 +106,7 @@ export default class PerformanceModel {
     }
     if (key) {
       res = res.andWhere("key", key);
+      res = res.andWhere("key", '!=', "{}")
     }
     res = await res
       .orderBy("happenTime", "desc")
