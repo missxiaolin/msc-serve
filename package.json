@@ -26,7 +26,7 @@
     "cors": "^2.8.5",
     "debug": "~2.6.9",
     "ejs": "~2.6.1",
-    "express": "~4.16.1",
+    "express": "^4.18.2",
     "http-errors": "~1.6.3",
     "ioredis": "^4.28.0",
     "ipip-datx": "^0.2.2",

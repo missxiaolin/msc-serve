@@ -3,6 +3,7 @@ import login from "../middleware/login";
 import RouterConfigBuilder from "../library/utils/router_config_builder";
 import Api from "./api";
 import fs from 'fs'
+import path from 'path'
 
 const multer = require("multer");
 
@@ -97,9 +98,10 @@ for (let url of Object.keys(routerConfigMap)) {
 }
 
 /* GET home page. */
-// withoutLoginRouter.get('/', function (req, res) {
-//   res.json({ title: '根路径' })
-// })
+withoutLoginRouter.get('/', function (req, res) {
+  // res.json({ title: '根路径' })
+  res.sendFile(path.join(__dirname, '../views', 'index.html'));
+})
 
 // 处理逻辑为: 从上到下, 依次处理
 baseRouter.use("/", withoutLoginRouter);

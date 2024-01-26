@@ -3,7 +3,6 @@ import "@babel/polyfill";
 process.env.TZ = "Asia/Shanghai";
 
 import path from "path";
-import createError from "http-errors";
 import express from "express";
 import cookieParser from "cookie-parser";
 import morgan from "morgan";
@@ -12,19 +11,9 @@ import cors from "cors";
 import appConfig from "./config/app";
 import bodyParser from "body-parser";
 import _ from "lodash";
-import ejs from "ejs";
 
 const startup = () => {
   const app = express();
-
-  // view engine setup
-  app.set("views", path.join(__dirname, "views"));
-
-  // 设置模板引擎为ejs
-  app.engine("html", ejs.__express);
-  // app.engine('html', ejs.renderFile)
-  app.set("view engine", "html");
-  // app.set('view engine', 'ejs')
 
   app.use(morgan("dev"));
   // app.use(express.json())
@@ -39,16 +28,7 @@ const startup = () => {
   app.use(cookieParser());
 
   /* 添加静态路径 */
-  // app.use(express.static(path.join(__dirname, './views/static')))
-
-  app.use(
-    express.static(path.join(__dirname, "./views/static"), {
-      etag: false,
-      setHeaders: (res, path, stat) => {
-        res.set("Cache-Control", "no-store");
-      },
-    })
-  );
+  app.use(express.static(path.join(__dirname, '../views')));
 
   // app.options('*', cors())
 
@@ -87,25 +67,24 @@ const startup = () => {
   // 支持前端History模式 => https://router.vuejs.org/zh/guide/essentials/history-mode.html#后端配置例子
   // 将所有404页面均返回index.html
   // 设置正确的 MIME 类型
-  // app.use((req, res, next) => {
-  //   const ext = path.extname(req.url);
-  //   if (ext === ".js") {
-  //     res.type("application/javascript");
-  //   } else if (ext === ".css") {
-  //     res.type("text/css");
-  //   } else {
-  //     res.type("html");
-  //   }
-  //   next();
-  // });
+  app.use((req, res, next) => {
+    const ext = path.extname(req.url);
+    if (ext === ".js") {
+      res.type("application/javascript");
+    } else if (ext === ".css") {
+      res.type("text/css");
+    } else {
+      res.type("html");
+    }
+    next();
+  });
   app.use("*", (req, res) => {
-    res.json({
-      success: false,
-      errorMessage: '接口不存在',
-      model: {}
-    })
-    // res.render("index");
-    // res.sendFile(path.join(__dirname, 'dist/index.html'));
+    // res.json({
+    //   success: false,
+    //   errorMessage: '接口不存在',
+    //   model: {}
+    // })
+    res.sendFile(path.join(__dirname, '../views/index.html'));
   });
   // app.use('*', (req, res) => {
   //   res.json({
