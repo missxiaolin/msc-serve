@@ -145,6 +145,8 @@ export default class PerformanceModel {
     }
     if (key) {
       res = res.andWhere("key", key);
+      res = res.andWhere("textValue", '!=', '');
+      res = res.andWhere("textValue", '!=', '{}');
     }
     res = await res.count("* as performanceCount").catch((err) => {
       console.log(err);
