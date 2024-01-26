@@ -33,6 +33,8 @@ export default class Performance extends Base {
           ? "page-information"
           : project.projectType == 2
           ? "wx-performance"
+          : project.projectType == 3
+          ? "ali-performance"
           : "",
     });
     let sessionIds = list.map((item) => item.sessionId);
@@ -61,6 +63,8 @@ export default class Performance extends Base {
           ? "page-information"
           : project.projectType == 2
           ? "wx-performance"
+          : project.projectType == 3
+          ? "ali-performance"
           : "",
     });
     result.list = list;
