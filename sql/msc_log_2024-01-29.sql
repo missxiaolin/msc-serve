@@ -7,7 +7,7 @@
 #
 # Host: 127.0.0.1 (MySQL 5.7.44)
 # Database: msc_log
-# Generation Time: 2024-01-20 11:24:58 +0000
+# Generation Time: 2024-01-29 02:54:26 +0000
 # ************************************************************
 
 
@@ -75,7 +75,7 @@ LOCK TABLES `alarm_config` WRITE;
 INSERT INTO `alarm_config` (`id`, `monitorAppId`, `errorType`, `errorName`, `timeRangeS`, `maxErrorCount`, `alarmIntervalS`, `isEnable`, `alertType`, `dingConfig`, `note`, `serviceType`, `whereType`, `startHour`, `endHour`, `startTime`, `updateTime`)
 VALUES
 	(1,'adm','JS_ERROR','js错误',123600,2,60,1,'[]','','js','>','single','00:00:06','23:59:59','2024-01-13 09:46:56','2024-01-20 19:19:45'),
-	(2,'adm','PAGE_PV','PV告警',3600,3,30,0,'[1]','','','>','sum','00:00:00','23:59:59','2024-01-13 10:00:30','2024-01-14 20:24:43');
+	(5,'adm','PAGE_PV','PV告警',3600,3,30,0,'[1]','','','>','sum','00:00:00','23:59:59','2024-01-13 10:00:30','2024-01-14 20:24:43');
 
 /*!40000 ALTER TABLE `alarm_config` ENABLE KEYS */;
 UNLOCK TABLES;
@@ -183,6 +183,27 @@ CREATE TABLE `http_log` (
   `eventType` varchar(50) NOT NULL DEFAULT '' COMMENT 'http ： load error abort',
   PRIMARY KEY (`id`),
   KEY `m_id_time` (`monitorAppId`,`happenTime`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+
+
+# Dump of table issueInfo
+# ------------------------------------------------------------
+
+DROP TABLE IF EXISTS `issueInfo`;
+
+CREATE TABLE `issueInfo` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `monitorAppId` varchar(300) NOT NULL DEFAULT '' COMMENT '项目ID',
+  `category` varchar(50) NOT NULL DEFAULT '' COMMENT '错误类别',
+  `errorMsg` varchar(2000) NOT NULL DEFAULT '' COMMENT '错误信息',
+  `simpleUrl` varchar(2000) NOT NULL DEFAULT '' COMMENT '错误页面',
+  `errorTotal` int(11) NOT NULL COMMENT '错误数量',
+  `startTime` datetime NOT NULL COMMENT '开始时间',
+  `endtTime` datetime NOT NULL COMMENT '修复时间',
+  `handlerUser` int(11) NOT NULL COMMENT '修复人',
+  `status` tinyint(4) NOT NULL COMMENT '状态 1: 未修复 2: 修复中 3: 已忽略 4: 已修复 5: 重复出现',
+  PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 
@@ -343,9 +364,10 @@ LOCK TABLES `projects` WRITE;
 
 INSERT INTO `projects` (`id`, `name`, `desc`, `monitorAppId`, `watch`, `cookieUserKey`, `maxQueues`, `projectType`, `encryption`, `delay`, `status`, `startTime`, `updateTime`)
 VALUES
-	(4,'监控平台adm','监控平台adm','adm','[\"pageChange\",\"jsError\",\"vueError\",\"promise\",\"xhr\",\"performance\",\"whiteScreen\",\"click\",\"resource\",\"fetch\",\"request\"]','user',3,'1','0',30,1,'2023-12-28 15:21:40','2024-01-01 08:14:23'),
-	(5,'小程序应用','小程序应用','wmp','[\"pageChange\",\"jsError\",\"resource\",\"request\",\"performance\",\"click\"]','user_id',1,'2','0',30,1,'2024-01-02 13:35:51','2024-01-17 15:13:35'),
-	(6,'原人小助手','原人小助手','ys-tool-mp','[\"pageChange\",\"jsError\",\"performance\",\"request\",\"click\"]','user_id',8,'2','0',30,1,'2024-01-19 14:46:53','2024-01-19 14:47:05');
+	(4,'监控平台adm','监控平台adm','adm','[\"pageChange\",\"jsError\",\"vueError\",\"promise\",\"xhr\",\"performance\",\"whiteScreen\",\"click\",\"resource\",\"fetch\",\"request\"]','userId',9,'1','0',30,1,'2023-12-28 15:21:40','2024-01-21 14:57:37'),
+	(5,'小程序应用','小程序应用','wmp','[\"pageChange\",\"request\",\"jsError\",\"performance\",\"click\"]','user_id',6,'2','0',30,1,'2024-01-04 10:49:54','2024-01-04 10:49:54'),
+	(6,'原人小助手','原人小助手','ys-tool-mp','[\"pageChange\",\"jsError\",\"performance\",\"request\",\"click\"]','user_id',8,'2','0',30,1,'2024-01-19 14:46:53','2024-01-19 14:47:05'),
+	(7,'支付宝小程序','支付宝小程序接入','zmp','[\"pageChange\",\"jsError\",\"request\",\"performance\",\"click\"]','user_id',1,'3','0',30,1,'2024-01-25 13:15:08','2024-01-25 18:56:55');
 
 /*!40000 ALTER TABLE `projects` ENABLE KEYS */;
 UNLOCK TABLES;
