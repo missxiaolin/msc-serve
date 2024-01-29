@@ -8,9 +8,11 @@ import cookieParser from "cookie-parser";
 import morgan from "morgan";
 import router from "./routes/index";
 import cors from "cors";
-import appConfig from "./config/app";
 import bodyParser from "body-parser";
 import _ from "lodash";
+import dotenv from 'dotenv'
+
+const appConfig = dotenv.config().parsed
 
 const startup = () => {
   const app = express();
@@ -110,10 +112,10 @@ const startup = () => {
     res.render("error");
   });
 
-  app.set("port", appConfig.port);
+  app.set("port", appConfig['EXPRESS_PORT']);
 
-  app.listen(appConfig.port, function () {
-    console.log(`${appConfig.name} listening on port ${appConfig.port}`);
+  app.listen(appConfig['EXPRESS_PORT'], function () {
+    console.log(`${appConfig['EXPRESS_NAME']} listening on port ${appConfig['EXPRESS_PORT']}`);
   });
 };
 

@@ -10,16 +10,16 @@ import Base from "../base";
 class SaveLog extends Base {
     static get signature() {
         return `
-                SaveLog:Mq
+                Es:Save
             `;
       }
     
       static get description() {
-        return "解析mq日志, 按日志创建时间将原日志和解析后合法的json日志落在log文件中, 每运行30s自动退出";
+        return "Elasticsearch 存储";
       }
     
       /**
-       * 收集log
+       * ES 存储方便查询更快
        * @param {*} args
        * @param {*} options
        */

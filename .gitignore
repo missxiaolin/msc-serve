@@ -2,3 +2,4 @@
 /dist
 /uploads
 /log
+.env
