@@ -1,15 +1,10 @@
 import Base from "./base";
-import UserBehaviorModel from "../model/user_behavior";
 import PageModel from "../model/page_model";
-import JsModel from "../model/js_model";
-import HttpModel from "../model/http_model";
-import UserClickeModel from "../model/user_click_model";
+import Es from '../library/es/index'
 
 const pageModel = new PageModel();
-const jsModel = new JsModel();
-const httpModel = new HttpModel();
-const userClickeModel = new UserClickeModel();
-const userBehavior = new UserBehaviorModel();
+const es = new Es();
+
 
 export default class User extends Base {
   /**
@@ -25,70 +20,30 @@ export default class User extends Base {
     const monitorAppId = req.get("MonitorAppId") || "";
     data.monitorAppId = monitorAppId;
     result.pageDetail = await pageModel.getPageDetail(data);
-    let userList = await userBehavior.getPages(data);
-    let jsId = [],
-      jsList = [],
-      pageId = [],
-      pageList = [],
-      httpId = [],
-      httpList = [],
-      clickId = [],
-      clickList = [];
-    userList.forEach((item) => {
-      switch (item.category) {
-        case "PAGE_CHANGE":
-          pageId.push(item.tb_id);
-          break;
-        case "USER_CLICK":
-          clickId.push(item.tb_id);
-          break;
-        case "HTTP_LOG":
-          httpId.push(item.tb_id);
-          break;
-        case "JS_ERROR":
-          jsId.push(item.tb_id);
-          break;
-        default:
+    const searchParams = {
+      index: 'msc-log',
+      body: {
+        query: {
+          bool: {
+            must: [
+              { match: { monitorAppId } }
+            ]
+          }
+        },
+        sort: [
+          { happenTime: { order: 'desc' } }
+        ],
+        from: data.page * data.pageSize - data.pageSize,  // 从第几条开始
+        size: data.pageSize  // 每页显示数量
       }
-    });
-    if (jsId.length > 0) {
-      jsList = await jsModel.getIds(jsId);
-    }
-    if (pageId.length > 0) {
-      pageList = await pageModel.getIds(pageId);
-    }
-    if (httpId.length > 0) {
-      httpList = await httpModel.getIds(httpId);
-    }
-    if (clickId.length > 0) {
-      clickList = await userClickeModel.getIds(clickId);
-    }
-
-    userList.forEach((item, index) => {
-      jsList.forEach((jsItem) => {
-        if (item.tb_id == jsItem.id) {
-          userList[index] = Object.assign(item, jsItem);
-        }
-      });
-      pageList.forEach((pageItem) => {
-        if (item.tb_id == pageItem.id) {
-          userList[index] = Object.assign(item, pageItem);
-        }
-      });
-      httpList.forEach((httpItem) => {
-        if (item.tb_id == httpItem.id) {
-          userList[index] = Object.assign(item, httpItem);
-        }
-      });
-      clickList.forEach((clickItem) => {
-        if (item.tb_id == clickItem.id) {
-          userList[index] = Object.assign(item, clickItem);
-        }
-      });
-    });
-
-    result.userList = userList;
-    result.count = await userBehavior.getPagesCount(data);
+    };
+    const esUserList = await await es.search(searchParams);
+    let userList = []
+    const esUserListData = esUserList && esUserList.hits && esUserList.hits.hits ? esUserList.hits.hits : []
+    esUserListData.forEach(item => {
+      userList.push(item._source)
+    })
+    result.userList = userList
 
     return this.send(res, result);
   }

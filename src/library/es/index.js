@@ -14,13 +14,28 @@ export default class Es {
 
   /**
    * 保存数据
-   * @param {*} data 
-   * @returns 
+   * @param {*} data
+   * @returns
    */
   async saveData(body) {
     return await this.esClient.bulk({
       body,
     });
+  }
+
+  /**
+   * 查询
+   * @param {*} query
+   * @returns
+   */
+  async search(query) {
+    try {
+      const body = await this.esClient.search(query);
+      return body;
+    } catch (e) {
+      console.log(e);
+      return [];
+    }
   }
 
   /**
@@ -30,6 +45,14 @@ export default class Es {
   async createIndex(key) {
     return await this.esClient.indices.create({
       index: key,
+      body: {
+        mappings: {
+          properties: {
+            happenTime: { type: "keyword" },
+            // 其他字段的映射配置
+          },
+        },
+      },
     });
   }
 
@@ -40,12 +63,11 @@ export default class Es {
   async indicesList() {
     const { body } = await this.esClient.cat.indices({ format: "json" });
     if (body) {
-        console.log(body)
       // 输出索引列表
       const indices = body.map((index) => index.index);
       return indices;
     } else {
-      return {}
+      return {};
     }
   }
 }
