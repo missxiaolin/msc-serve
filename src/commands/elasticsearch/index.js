@@ -1,4 +1,10 @@
 import Base from "../base";
+import Es from "../../library/es/index"
+import PageModel from "../../model/page_model"
+
+
+const es = new Es();
+const pageModel = new PageModel();
 
 // 安装
 // docker pull docker.elastic.co/elasticsearch/elasticsearch:7.15.1
@@ -7,23 +13,30 @@ import Base from "../base";
 // docker pull docker.elastic.co/kibana/kibana:7.15.1
 // docker run -d --name kibana --link elasticsearch:elasticsearch -p 5601:5601 docker.elastic.co/kibana/kibana:7.15.1
 
-class SaveLog extends Base {
-    static get signature() {
-        return `
+class EsSave extends Base {
+  static get signature() {
+    return `
                 Es:Save
+                {startTime:日志扫描范围上限格式}
+                {endTime:日志扫描范围下限格式}
             `;
-      }
-    
-      static get description() {
-        return "Elasticsearch 存储";
-      }
-    
-      /**
-       * ES 存储方便查询更快
-       * @param {*} args
-       * @param {*} options
-       */
-      async execute(args, options) {
-        
-      }
+  }
+
+  static get description() {
+    return "Elasticsearch 存储";
+  }
+
+  /**
+   * ES 存储方便查询更快
+   * @param {*} args
+   * @param {*} options
+   */
+  async execute(args, options) {
+    let { startTime, endTime } = args;
+    console.log(startTime, endTime)
+    // pageModel.
+    // console.log(es.saveData())
+  }
 }
+
+export default EsSave

@@ -19,6 +19,9 @@ const registedCommandList = [
     './commands/dataHour/dataInit.js', // dataHour表初始化
     './commands/dataHour/index.js', // 分析数据插入
     './commands/watch_dog/alarm.js', // 监控发送
+    './commands/elasticsearch/esCreateIndex.js', // es 索引创建
+    './commands/elasticsearch/esIndxList.js', // 获取es索引列表
+    './commands/elasticsearch/index.js', // es存储
 ]
 
 
