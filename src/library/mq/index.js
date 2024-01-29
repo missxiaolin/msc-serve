@@ -22,7 +22,7 @@ export default class RabbitMq {
      */
     sendQueueMsg(queueName, msg, successCallback, errorCallBack) {
         let self = this;
-        self.open
+        return self.open
             .then(function (conn) {
                 return conn.createChannel()
             })
@@ -37,7 +37,7 @@ export default class RabbitMq {
                         channel.close()
                     }
                 }).catch(function (e) {
-                    errorCallBack ** errorCallBack(e)
+                    typeof errorCallBack === "function" && errorCallBack(e)
                     setTimeout(() => {
                         if (channel) {
                             channel.close()

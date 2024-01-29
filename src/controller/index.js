@@ -11,11 +11,13 @@ import AdmUser from "../model/adm_user";
 import ProjectModel from "../model/project";
 import Token from "../library/utils/token";
 import PageDataAnalysisModel from "../model/page_analysis_model";
+import RabbitMq from "../library/mq/index";
 
 const errprSave = new ErrorSave();
 const admUser = new AdmUser();
 const pageDataAnalysisModel = new PageDataAnalysisModel();
 const projectModel = new ProjectModel();
+const mq = new RabbitMq();
 
 /**
  * 首页
@@ -45,15 +47,12 @@ export default class Index extends Base {
         (res) => {},
         (error) => {}
       );
-    }
-
-    if (config.use.redisMq && redisConfig.isOpen) {
+    } else if (config.use.redisMq && redisConfig.isOpen) {
       redis.asyncLPush(redisConfig.mqKey.name, JSON.stringify(data))
-    }
-
-    if (!config.use.mq && !(config.use.redisMq && redisConfig.isOpen)) {
+    } else {
       errprSave.save(data);
     }
+
     return this.send(res, { title: "保存成功" });
   }
 

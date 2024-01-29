@@ -12,6 +12,7 @@ const development = {
   },
   nginxLogFilePath: '/Users/xiaolin/web/miss/msc/msc-serve/dist/log/nginx' // ngnix日志文件根路径，此路径下面的日志文件命名格式请参照readme
 }
+
 // 测试环境配置
 const testing = development
 const production = testing

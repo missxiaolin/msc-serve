@@ -30,7 +30,7 @@ class SaveLog extends Base {
     mq.receiveQueueMsg(
       "webLogSave",
       (res) => {
-        errprSave.save(res);
+        errprSave.save(JSON.parse(res));
       },
       (error) => {}
     );
