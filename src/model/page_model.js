@@ -71,8 +71,8 @@ export default class PageModel {
   }
 
   async getIds(ids) {
-    let select = this.tableColumnArr
-    select.push('id')
+    let select = this.tableColumnArr;
+    select.push("id");
     let tableName = getTableName();
     let res = await Knex.select(this.tableColumnArr)
       .from(tableName)
@@ -83,8 +83,8 @@ export default class PageModel {
 
   /**
    * 获取单个详情
-   * @param {*} params 
-   * @returns 
+   * @param {*} params
+   * @returns
    */
   async getPageDetail(params) {
     let {
@@ -92,7 +92,7 @@ export default class PageModel {
       endTime,
       monitorAppId = "",
       simpleUrl = "",
-      uuId = ''
+      uuId = "",
     } = params;
     let tableName = getTableName();
     let res = Knex.from(tableName)
@@ -137,7 +137,7 @@ export default class PageModel {
       res = res.andWhere("simpleUrl", simpleUrl);
     }
     if (isUv) {
-      res = res.andWhere('uuId', '!=', '')
+      res = res.andWhere("uuId", "!=", "");
       res = await res.countDistinct("uuId as pageCount").catch((err) => {
         console.log(err);
         return [];
@@ -241,6 +241,29 @@ export default class PageModel {
     }
 
     res = await res;
+
+    return res;
+  }
+
+  /**
+   * 获取指定时间内的数据
+   * @param {*} params
+   * @returns
+   */
+  async getTimeData(params) {
+    let { startTime, endTime, monitorAppId = "" } = params;
+    let tableName = getTableName();
+    let res = Knex.from(tableName)
+      .where("happenTime", "<", endTime)
+      .andWhere("happenTime", ">", startTime);
+
+    if (monitorAppId) {
+      res = res.andWhere("monitorAppId", monitorAppId);
+    }
+    res = await res.catch((err) => {
+      console.log(err);
+      return [];
+    });
 
     return res;
   }

@@ -293,4 +293,27 @@ export default class JsModel {
     let res = await Knex.raw(sql);
     return res[0];
   }
+
+  /**
+   * 获取指定时间内的数据
+   * @param {*} params
+   * @returns
+   */
+  async getTimeData(params) {
+    let { startTime, endTime, monitorAppId = "" } = params;
+    let tableName = getTableName();
+    let res = Knex.from(tableName)
+      .where("happenTime", "<", endTime)
+      .andWhere("happenTime", ">", startTime);
+
+    if (monitorAppId) {
+      res = res.andWhere("monitorAppId", monitorAppId);
+    }
+    res = await res.catch((err) => {
+      console.log(err);
+      return [];
+    });
+
+    return res;
+  }
 }

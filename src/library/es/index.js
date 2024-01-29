@@ -12,9 +12,14 @@ export default class Es {
     this.esClient = client;
   }
 
-  async saveData(data) {
+  /**
+   * 保存数据
+   * @param {*} data 
+   * @returns 
+   */
+  async saveData(body) {
     return await this.esClient.bulk({
-      body: data,
+      body,
     });
   }
 

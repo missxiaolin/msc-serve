@@ -1,10 +1,18 @@
 import Base from "../base";
 import Es from "../../library/es/index"
 import PageModel from "../../model/page_model"
+import JsModel from "../../model/js_model"
+import UserClickeModel from "../../model/user_click_model"
+import HttpModel from "../../model/http_model"
+import dotenv from "dotenv";
+const appConfig = dotenv.config().parsed;
 
 
 const es = new Es();
 const pageModel = new PageModel();
+const jsModel = new JsModel();
+const userClickeModel = new UserClickeModel();
+const httpModel = new HttpModel();
 
 // 安装
 // docker pull docker.elastic.co/elasticsearch/elasticsearch:7.15.1
@@ -32,10 +40,86 @@ class EsSave extends Base {
    * @param {*} options
    */
   async execute(args, options) {
+    if (!appConfig["ELASTICSEARCH_ISOPEN"]) {
+      return;
+    }
     let { startTime, endTime } = args;
-    console.log(startTime, endTime)
-    // pageModel.
-    // console.log(es.saveData())
+    this.pageEsSave(startTime, endTime)
+    this.httpEsSave(startTime, endTime)
+    this.userClickEsSave(startTime, endTime)
+    this.jsEsSave(startTime, endTime)
+  }
+
+  /**
+   * js 错误保存
+   * @param {*} startTime 
+   * @param {*} endTime 
+   */
+  async jsEsSave(startTime, endTime) {
+    let res = await jsModel.getTimeData({
+      startTime,
+      endTime
+    })
+    if (!res || res.length === 0) return
+    const body = res.flatMap(doc => [
+      { index: { _index: 'msc-log' } },
+      doc
+    ]);
+    console.log(await es.saveData(body))
+  }
+
+  /**
+   * 用户点击
+   * @param {*} startTime 
+   * @param {*} endTime 
+   */
+  async userClickEsSave(startTime, endTime) {
+    let res = await userClickeModel.getTimeData({
+      startTime,
+      endTime
+    })
+    if (!res || res.length === 0) return
+    const body = res.flatMap(doc => [
+      { index: { _index: 'msc-log' } },
+      doc
+    ]);
+    console.log(await es.saveData(body))
+  }
+
+  /**
+   * 网络请求
+   * @param {*} startTime 
+   * @param {*} endTime 
+   */
+  async httpEsSave(startTime, endTime) {
+    let res = await httpModel.getTimeData({
+      startTime,
+      endTime
+    })
+    if (!res || res.length === 0) return
+    const body = res.flatMap(doc => [
+      { index: { _index: 'msc-log' } },
+      doc
+    ]);
+    console.log(await es.saveData(body))
+  }
+
+  /**
+   * 页面信息存储
+   * @param {*} startTime 
+   * @param {*} endTime 
+   */
+  async pageEsSave(startTime, endTime) {
+    let res = await pageModel.getTimeData({
+      startTime,
+      endTime
+    })
+    if (!res || res.length === 0) return
+    const body = res.flatMap(doc => [
+      { index: { _index: 'msc-log' } },
+      doc
+    ]);
+    console.log(await es.saveData(body))
   }
 }
 
