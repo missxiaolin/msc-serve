@@ -6,6 +6,9 @@ const errprSave = new ErrorSave();
 
 // const MAX_RUN_TIME = 29 * 1000 // 29s后自动关闭
 
+// 安装
+// docker pull rabbitmq:3.9.10-management
+// docker run -d --hostname my-rabbit --name rabbitmq -p 15672:15672 -p 5672:5672 rabbitmq:3.9.10-management
 class SaveLog extends Base {
   static get signature() {
     return `
