@@ -1,15 +1,16 @@
 import knex from 'knex'
-import sqlConfig from '../../config/mysql'
 import Logger from '../logger'
+import dotenv from "dotenv";
+const appConfig = dotenv.config().parsed;
 
 const Knex = knex({
     client: 'mysql',
     connection: {
-        host: sqlConfig.host,
-        port: sqlConfig.port,
-        database: sqlConfig.database,
-        user: sqlConfig.user,
-        password: sqlConfig.password
+        host: appConfig.MYSQL_HOST,
+        port: appConfig.MYSQL_PORT,
+        database: appConfig.MYSQL_DATABASE,
+        user: appConfig.MYSQL_USER,
+        password: appConfig.MYSQL_PASSWORD
     },
     debug: false,
     pool: {

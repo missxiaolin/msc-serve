@@ -10,7 +10,7 @@ import ResourceModel from "../../model/resource_model";
 import HttpModel from "../../model/http_model";
 import AlarmHistoryModel from '../../model/alarm_history_model'
 import * as alertEum from "../../constants/err";
-import redisConfig from "../../config/redis";
+import dotenv from "dotenv";
 import redis from "../../library/redis";
 import { sendDingTalkMessage } from "../../library/dingTalk/index";
 
@@ -25,6 +25,8 @@ const jsModel = new JsModel();
 const BASE_REDIS_KEY = "plat_fe_fee_watch_alarm_";
 const MAX_QUERY_COUNT = 10;
 const MAX_SLEEP_COUNT = 60;
+
+const appConfig = dotenv.config().parsed;
 
 /**
  * @param {number} id 报警配置id
@@ -350,7 +352,7 @@ class WatchAlarm extends Base {
       : getRedisKey(alarmConfig.id);
 
     // 之前报警过就静默推送
-    if (redisConfig.isOpen && (await redis.asyncGet(redisKey))) {
+    if (appConfig.REDIS_IS_OPEN == 1 && (await redis.asyncGet(redisKey))) {
       console.log(
         `项目${alarmConfig.name}监听的${alarmConfig.errorName}错误在${alarmConfig.alarmIntervalS}秒内报警过，自动跳过`
       );
@@ -387,7 +389,7 @@ class WatchAlarm extends Base {
           updateTime: moment().format(DATE_FORMAT.DISPLAY_BY_SECOND)
         })
         // redis 记录
-        redisConfig.isOpen &&
+        appConfig.REDIS_IS_OPEN == 1 &&
           (await redis.asyncSetex(redisKey, alarmConfig.alarmIntervalS, 1));
       }
     });

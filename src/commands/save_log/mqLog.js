@@ -2,6 +2,8 @@ import Base from "../base";
 import RabbitMq from "../../library/mq/index";
 import ErrorSave from "../../common/err_save";
 const errprSave = new ErrorSave();
+import dotenv from "dotenv";
+const appConfig = dotenv.config().parsed;
 
 
 // const MAX_RUN_TIME = 29 * 1000 // 29s后自动关闭
@@ -26,6 +28,9 @@ class SaveLog extends Base {
    * @param {*} options
    */
   async execute(args, options) {
+    if (appConfig.RABBIT_MQ_IS_OPEN == 0) {
+        return
+    }
     const mq = new RabbitMq();
     mq.receiveQueueMsg(
       "webLogSave",

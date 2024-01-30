@@ -1,14 +1,16 @@
 import amqp from 'amqplib'
-import mqConfig from '../../config/mq'
+import dotenv from "dotenv";
+const appConfig = dotenv.config().parsed;
 
 
 export default class RabbitMq {
     constructor() {
-        if (!mqConfig.isOpen) {
+        
+        if (appConfig.RABBIT_MQ_IS_OPEN == 0) {
             return
         }
-        this.hosts = mqConfig.hosts;
-        this.index = mqConfig.index;
+        this.hosts = JSON.parse(appConfig.RABBIT_MQ_HOSTS);
+        this.index = appConfig.RABBIT_MQ_INDEX;
         this.length = this.hosts.length;
         this.open = amqp.connect(this.hosts[this.index]);
     }

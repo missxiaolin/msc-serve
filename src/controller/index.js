@@ -4,7 +4,8 @@ import _ from "lodash";
 import ErrorSave from "../common/err_save";
 import LIpip from "../library/ipip";
 import config from "../config/common";
-import redisConfig from '../config/redis'
+import dotenv from "dotenv";
+const appConfig = dotenv.config().parsed;
 import redis from "../library/redis";
 import md5 from "md5";
 import AdmUser from "../model/adm_user";
@@ -47,8 +48,9 @@ export default class Index extends Base {
         (res) => {},
         (error) => {}
       );
-    } else if (config.use.redisMq && redisConfig.isOpen) {
-      redis.asyncLPush(redisConfig.mqKey.name, JSON.stringify(data))
+    } else if (config.use.redisMq && appConfig.REDIS_IS_OPEN == 1) {
+      let mqKey = JSON.parse(appConfig.REDIS_MQ_KEY) 
+      redis.asyncLPush(mqKey.name, JSON.stringify(data))
     } else {
       errprSave.save(data);
     }

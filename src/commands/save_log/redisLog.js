@@ -1,6 +1,6 @@
 import Base from "../base";
 import ErrorSave from "../../common/err_save";
-import redisConfig from "../../config/redis";
+import dotenv from "dotenv";
 import redis from "../../library/redis";
 
 const errprSave = new ErrorSave();
@@ -8,6 +8,8 @@ const cluster = require("cluster");
 const os = require("os");
 const numCPUs = os.cpus().length; // 获取CPU核心数
 const consumerCount = 3; // 配置消费者数量
+
+const appConfig = dotenv.config().parsed;
 
 class SaveLog extends Base {
   static get signature() {
@@ -26,7 +28,7 @@ class SaveLog extends Base {
    * @param {*} options
    */
   async execute(args, options) {
-    if (!redisConfig.isOpen) {
+    if (appConfig.REDIS_IS_OPEN == 0) {
       return;
     }
     if (cluster.isMaster) {
@@ -66,8 +68,9 @@ class SaveLog extends Base {
         let res = null;
         // console.log("队列执行");
         try {
+          let mqKey = JSON.parse(appConfig.REDIS_MQ_KEY) 
           // 从队列中获取任务, 采用阻塞式获取任务 最大阻塞时间为config.queue.timeout
-          res = await redis.asyncBrPop(redisConfig.mqKey.name, redisConfig.mqKey.brPopTimeout)
+          res = await redis.asyncBrPop(mqKey.name, mqKey.brPopTimeout)
           if (res === null || !res) {
             continue;
           }
