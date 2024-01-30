@@ -19,8 +19,10 @@ class EsIndexList extends Base {
    * @param {*} options
    */
   async execute(args, options) {
-    const indexs = await es.indicesList()
-    console.log(indexs)
+    const body = await es.indicesList()
+    // 输出索引列表
+    const indices = body.map((item) => item.index);
+    console.log(indices);
   }
 }
 

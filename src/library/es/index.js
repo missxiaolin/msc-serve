@@ -24,6 +24,15 @@ export default class Es {
   }
 
   /**
+   * 删除数据
+   * @param {*} query 
+   * @returns 
+   */
+  async deleteOldData(query) {
+    return await this.esClient.deleteByQuery(query);
+  }
+
+  /**
    * 查询
    * @param {*} query
    * @returns
@@ -61,13 +70,6 @@ export default class Es {
    * @returns
    */
   async indicesList() {
-    const { body } = await this.esClient.cat.indices({ format: "json" });
-    if (body) {
-      // 输出索引列表
-      const indices = body.map((index) => index.index);
-      return indices;
-    } else {
-      return {};
-    }
+    return await this.esClient.cat.indices({ format: "json" });
   }
 }
