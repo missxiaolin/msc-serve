@@ -99,11 +99,14 @@ export default class Performance extends Base {
         });
         result.nt = nt[0];
         const fpNum = await performanceModel.getAvgKey({
-          ...data,
+          sessionIds: sessionIds,
+          monitorAppId,
+          startTime: data.startTime,
+          endTime: data.endTime,
           key: "first-paint",
         });
         result.fp = {
-          value: fpNum[0].numValue || 0,
+          numValue: fpNum[0].numValue || 0,
         };
       } else {
         result.nt = {
