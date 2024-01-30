@@ -8,6 +8,10 @@ https://github.com/missxiaolin/msc-sdk
 
 https://github.com/missxiaolin/msc-adm
 
+## 服务第三方插件介绍
+
+https://github.com/missxiaolin/msc-serve/blob/main/plugins.md
+
 ## 基础安装
 
 ### 安装git
@@ -70,10 +74,14 @@ npm install -g pm2
 然后cd到你的express项目里面
 
 ~~~
+<!-- 项目配置 -->
+cp .env.example .env
 <!-- 运行项目 -->
 pm2 start pm2.json
 <!-- 运行脚本 -->
-pm2 start pm2.ta.json
+pm2 start pm2.task.json
+<!-- redis 消息队列 -->
+pm2 start pm2.redisQuery.json
 ~~~
 
 最后做下nginx 反向代理
