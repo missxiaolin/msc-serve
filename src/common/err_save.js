@@ -99,14 +99,15 @@ export default class ErrorSave {
           data.statusText = item.statusText || "";
           data.type = item.type || "";
           data.eventType = item.eventType || "";
-          const httpId = await httpModel.save(data)
-
-          if (data.requestText.length > 500) {
+          if (data.requestText.length > 2000) {
             data.requestText = '内容过大'
           }
-          if (data.responseText.length > 500) {
+          if (data.responseText.length > 2000) {
             data.responseText = '内容过大'
           }
+          const httpId = await httpModel.save(data)
+
+          
           break;
         case error.USER_CLICK:
           data.level = item.level || "";
