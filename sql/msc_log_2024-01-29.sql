@@ -7,7 +7,7 @@
 #
 # Host: 127.0.0.1 (MySQL 5.7.44)
 # Database: msc_log
-# Generation Time: 2024-01-29 02:54:26 +0000
+# Generation Time: 2024-01-29 10:55:47 +0000
 # ************************************************************
 
 
@@ -464,24 +464,6 @@ CREATE TABLE `sourcemap` (
   `version` varchar(30) NOT NULL DEFAULT '' COMMENT '版本号',
   `updateTime` datetime NOT NULL COMMENT '上传时间',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
-
-
-# Dump of table user_behavior
-# ------------------------------------------------------------
-
-DROP TABLE IF EXISTS `user_behavior`;
-
-CREATE TABLE `user_behavior` (
-  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
-  `monitorAppId` varchar(100) NOT NULL DEFAULT '' COMMENT '项目',
-  `uuId` varchar(100) NOT NULL DEFAULT '' COMMENT '用户ID',
-  `category` varchar(30) NOT NULL DEFAULT '' COMMENT '类别',
-  `tb_id` int(11) NOT NULL COMMENT '联表id',
-  `createTime` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '时间',
-  PRIMARY KEY (`id`),
-  KEY `monitorAppId` (`monitorAppId`,`createTime`,`uuId`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 

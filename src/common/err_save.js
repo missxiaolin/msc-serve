@@ -7,7 +7,6 @@ import UserClickeModel from "../model/user_click_model";
 import HttpModel from "../model/http_model";
 import JsModel from "../model/js_model";
 import PromiseLog from "../model/promise_log";
-import UserBehaviorModel from '../model/user_behavior'
 import Util from "./utils";
 import DATE_FORMAT from "../constants/date_format";
 import moment from "moment";
@@ -19,7 +18,6 @@ const userClickeModel = new UserClickeModel();
 const httpModel = new HttpModel();
 const js_model = new JsModel();
 const promise_log = new PromiseLog()
-const userBehaviorModel = new UserBehaviorModel();
 
 export default class ErrorSave {
   constructor() {}
@@ -68,7 +66,6 @@ export default class ErrorSave {
           data.hook = item.hook || "";
           data.componentNameTrace = item.componentNameTrace || "";
           const jsId = await js_model.save(data);
-          this.userBehaviorSave(data, jsId)
           break;
         case error.RESOURCE_ERROR:
           data.level = item.level || "";
@@ -110,7 +107,6 @@ export default class ErrorSave {
           if (data.responseText.length > 500) {
             data.responseText = '内容过大'
           }
-          this.userBehaviorSave(data, httpId)
           break;
         case error.USER_CLICK:
           data.level = item.level || "";
@@ -130,7 +126,6 @@ export default class ErrorSave {
           data.viewport = item.viewport ? JSON.stringify(item.viewport) : "";
           data.targetInfo = item.targetInfo ? JSON.stringify(item.targetInfo)  : "";
           const clickId = await userClickeModel.save(data);
-          this.userBehaviorSave(data, clickId)
           break;
         case error.PAGE_PV:
           data.level = item.level || "";
@@ -147,7 +142,6 @@ export default class ErrorSave {
           data.referrer = item.referrer || "";
           data.type = item.type || "";
           const pageId = await pageModel.save(data);
-          this.userBehaviorSave(data, pageId);
           break;
         case error.PERFORMANCE:
           const sessionId = item.metrics.sessionId || "";
@@ -179,20 +173,5 @@ export default class ErrorSave {
         default:
       }
     });
-  }
-
-  /**
-   * 记录用户行为数据
-   * @param {*} data 
-   * @param {*} id 
-   */
-  userBehaviorSave(data, id) {
-    userBehaviorModel.save({
-      monitorAppId: data.monitorAppId || '',
-      uuId: data.uuId || '',
-      category: data.category || '',
-      tb_id: id,
-      createTime: moment().format(DATE_FORMAT.DISPLAY_BY_MILLSECOND)
-    })
   }
 }

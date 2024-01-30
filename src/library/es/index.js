@@ -4,7 +4,7 @@ const appConfig = dotenv.config().parsed;
 
 export default class Es {
   constructor() {
-    if (!appConfig["ELASTICSEARCH_ISOPEN"]) {
+    if (appConfig["ELASTICSEARCH_ISOPEN"] == 0) {
       return;
     }
     // 创建 Elasticsearch 客户端实例
