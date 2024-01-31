@@ -7,7 +7,7 @@
 #
 # Host: 127.0.0.1 (MySQL 5.7.44)
 # Database: msc_log
-# Generation Time: 2024-01-29 10:55:47 +0000
+# Generation Time: 2024-01-31 08:51:18 +0000
 # ************************************************************
 
 
@@ -405,6 +405,27 @@ CREATE TABLE `promise_log` (
   `startTime` varchar(300) NOT NULL DEFAULT '' COMMENT '页面加载后 至 发生错误时间,',
   PRIMARY KEY (`id`),
   KEY `m_id_time` (`monitorAppId`,`happenTime`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+
+
+# Dump of table record_screen
+# ------------------------------------------------------------
+
+DROP TABLE IF EXISTS `record_screen`;
+
+CREATE TABLE `record_screen` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `monitorAppId` varchar(100) DEFAULT NULL,
+  `uuId` int(11) DEFAULT NULL,
+  `category` varchar(30) DEFAULT NULL,
+  `errorType` varchar(30) NOT NULL,
+  `level` varchar(10) DEFAULT NULL,
+  `pageUrl` varchar(300) NOT NULL DEFAULT '',
+  `simpleUrl` varchar(300) NOT NULL DEFAULT '',
+  `happenTime` datetime NOT NULL,
+  `url` varchar(100) NOT NULL DEFAULT '',
+  PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 
