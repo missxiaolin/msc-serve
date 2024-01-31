@@ -9,6 +9,7 @@ import project from './project'
 import userBehavior from './userBehavior'
 import alert from './alert'
 import sourcemap from './sourcemap'
+import recordScreen from './recordScreen'
 
 export default {
     ...index,
@@ -21,5 +22,6 @@ export default {
     ...project,
     ...userBehavior,
     ...alert,
-    ...sourcemap
+    ...sourcemap,
+    ...recordScreen
 }
