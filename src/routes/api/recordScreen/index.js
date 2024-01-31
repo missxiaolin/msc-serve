@@ -9,7 +9,12 @@ const recordScreenList = RouterConfigBuilder.routerConfigBuilder('/adm/recordscr
     return recordscreenController.recordscreenList(req, res)
 }, true)
 
+// 解析视频返回
+const recordScreenVideo = RouterConfigBuilder.routerConfigBuilder('/adm/recordscreen/video', RouterConfigBuilder.METHOD_TYPE_POST, (req, res) => {
+    return recordscreenController.recordscreenGetVideo(req, res)
+}, true)
 
 export default {
     ...recordScreenList,
+    ...recordScreenVideo
 }

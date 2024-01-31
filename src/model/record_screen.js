@@ -61,13 +61,22 @@ export default class RecordScreenModel {
    * @returns
    */
   async getPages(params) {
-    let { pageSize = 10, page = 1, simpleUrl } = params;
+    let {
+      pageSize = 10,
+      page = 1,
+      simpleUrl,
+      startTime = "",
+      endTime = "",
+    } = params;
     let tableName = getTableName();
 
-    let res = Knex.select("*").from(tableName);
+    let res = Knex.select("*")
+      .from(tableName)
+      .where("happenTime", "<", endTime)
+      .andWhere("happenTime", ">", startTime);
 
     if (simpleUrl) {
-      res = res.where("simpleUrl", simpleUrl);
+      res = res.andWhere("simpleUrl", simpleUrl);
     }
 
     res = await res
@@ -83,7 +92,7 @@ export default class RecordScreenModel {
       item.happenTime = moment(item.happenTime).format(
         DATE_FORMAT.DISPLAY_BY_SECOND
       );
-      item.error_desc = ERROR_STEMMER[item.errorType]
+      item.error_desc = ERROR_STEMMER[item.errorType];
     });
 
     return res;
@@ -95,14 +104,17 @@ export default class RecordScreenModel {
    * @returns
    */
   async getPagesCount(params) {
-    let { simpleUrl } = params;
+    let { simpleUrl, startTime = "", endTime = "" } = params;
     let tableName = getTableName();
     let res = Knex.from(tableName);
 
-    res = res.count("* as recordScreenCount");
+    res = res
+      .count("* as recordScreenCount")
+      .where("happenTime", "<", endTime)
+      .andWhere("happenTime", ">", startTime);
 
     if (simpleUrl) {
-      res = res.where("simpleUrl", simpleUrl);
+      res = res.andWhere("simpleUrl", simpleUrl);
     }
     res = await res.catch((err) => {
       console.log(err);
@@ -110,5 +122,25 @@ export default class RecordScreenModel {
     });
 
     return res[0].recordScreenCount;
+  }
+
+  /**
+   * 获取详情
+   * @param {*} params 
+   * @returns 
+   */
+  async getIdDetail(params) {
+    let tableName = getTableName();
+
+    let res = await Knex.select("*")
+      .from(tableName)
+      .where("id", params.id)
+      .first()
+      .catch((err) => {
+        console.log(err);
+        return [];
+      });
+
+    return res;
   }
 }
