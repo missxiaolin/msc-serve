@@ -238,6 +238,7 @@ export default class ErrorSave {
               data.pageUrl = item.pageUrl || "";
               data.simpleUrl = item.simpleUrl || "";
               data.url = filePath;
+              data.errorType = item.errorType || "";
               recordScreenModel.save(data);
             }
           });

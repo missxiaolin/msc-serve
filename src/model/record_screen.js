@@ -22,7 +22,8 @@ export default class RecordScreenModel {
         "pageUrl",
         "simpleUrl",
         "happenTime",
-        "url"
+        "url",
+        "errorType"
     ];
   }
 
