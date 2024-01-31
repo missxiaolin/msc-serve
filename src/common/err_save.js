@@ -7,7 +7,9 @@ import UserClickeModel from "../model/user_click_model";
 import HttpModel from "../model/http_model";
 import JsModel from "../model/js_model";
 import PromiseLog from "../model/promise_log";
+import RecordScreenModel from "../model/record_screen";
 import Util from "./utils";
+import fs from "fs";
 import DATE_FORMAT from "../constants/date_format";
 import moment from "moment";
 
@@ -17,14 +19,15 @@ const pageModel = new PageModel();
 const userClickeModel = new UserClickeModel();
 const httpModel = new HttpModel();
 const js_model = new JsModel();
-const promise_log = new PromiseLog()
+const promise_log = new PromiseLog();
+const recordScreenModel = new RecordScreenModel();
 
 export default class ErrorSave {
   constructor() {}
 
   /**
    * 分类数据
-   * @param {*} res 
+   * @param {*} res
    */
   save(res) {
     let useData = res.data.lists;
@@ -59,7 +62,9 @@ export default class ErrorSave {
           data.line = item.line || 0;
           data.type = item.type || "";
           data.col = item.col || 0;
-          data.stackTraces = item.stackTraces ? JSON.stringify(item.stackTraces) : "";
+          data.stackTraces = item.stackTraces
+            ? JSON.stringify(item.stackTraces)
+            : "";
           data.componentName = item.componentName || "";
           data.subType = item.subType || "";
           data.propsData = item.propsData || "";
@@ -91,23 +96,29 @@ export default class ErrorSave {
           data.duration = item.duration || "";
           data.method = item.method || "";
           data.pathName = item.pathName || "";
-          data.requestText = Util.getInstance().isType().isString(item.requestText) && item.requestText ? item.requestText : Util.getInstance().isType().isPlainObject(item.requestText) && item.requestText ? JSON.stringify(item.requestText) :"";
+          data.requestText =
+            Util.getInstance().isType().isString(item.requestText) &&
+            item.requestText
+              ? item.requestText
+              : Util.getInstance().isType().isPlainObject(item.requestText) &&
+                item.requestText
+              ? JSON.stringify(item.requestText)
+              : "";
           data.responseText = item.responseText || "";
-          data.httpOptions  = item.httpOptions || "";
+          data.httpOptions = item.httpOptions || "";
           data.status = item.status || "";
           data.timeout = item.timeout || "";
           data.statusText = item.statusText || "";
           data.type = item.type || "";
           data.eventType = item.eventType || "";
           if (data.requestText.length > 2000) {
-            data.requestText = '内容过大'
+            data.requestText = "内容过大";
           }
           if (data.responseText.length > 2000) {
-            data.responseText = '内容过大'
+            data.responseText = "内容过大";
           }
-          const httpId = await httpModel.save(data)
+          const httpId = await httpModel.save(data);
 
-          
           break;
         case error.USER_CLICK:
           data.level = item.level || "";
@@ -125,7 +136,9 @@ export default class ErrorSave {
           data.startTime = item.startTime || "";
           data.innerHTML = item.innerHTML || "";
           data.viewport = item.viewport ? JSON.stringify(item.viewport) : "";
-          data.targetInfo = item.targetInfo ? JSON.stringify(item.targetInfo)  : "";
+          data.targetInfo = item.targetInfo
+            ? JSON.stringify(item.targetInfo)
+            : "";
           const clickId = await userClickeModel.save(data);
           break;
         case error.PAGE_PV:
@@ -153,10 +166,31 @@ export default class ErrorSave {
               key,
               sessionId,
               score: item.metrics.objs[key].score || 0,
-              numValue: Util.getInstance().isType().isNumeric(item.metrics.objs[key].value) && item.metrics.objs[key].value ? item.metrics.objs[key].value : 0,
-              textValue: (Util.getInstance().isType().isPlainObject(item.metrics.objs[key].value) || Util.getInstance().isType().isArray(item.metrics.objs[key].value)) && item.metrics.objs[key].value ? JSON.stringify(item.metrics.objs[key].value) : '',
-              simpleUrl: (key == 'page-information' && item.metrics.objs[key].value.simpleUrl) ? item.metrics.objs[key].value.simpleUrl : (key == 'wx-performance' || key == 'ali-performance') ? item.metrics.objs[key].page : '',
-              happenTime: item.happenDate
+              numValue:
+                Util.getInstance()
+                  .isType()
+                  .isNumeric(item.metrics.objs[key].value) &&
+                item.metrics.objs[key].value
+                  ? item.metrics.objs[key].value
+                  : 0,
+              textValue:
+                (Util.getInstance()
+                  .isType()
+                  .isPlainObject(item.metrics.objs[key].value) ||
+                  Util.getInstance()
+                    .isType()
+                    .isArray(item.metrics.objs[key].value)) &&
+                item.metrics.objs[key].value
+                  ? JSON.stringify(item.metrics.objs[key].value)
+                  : "",
+              simpleUrl:
+                key == "page-information" &&
+                item.metrics.objs[key].value.simpleUrl
+                  ? item.metrics.objs[key].value.simpleUrl
+                  : key == "wx-performance" || key == "ali-performance"
+                  ? item.metrics.objs[key].page
+                  : "",
+              happenTime: item.happenDate,
             });
           }
           break;
@@ -167,10 +201,48 @@ export default class ErrorSave {
           data.happenTime = item.happenDate || "";
           data.pageUrl = item.pageUrl || "";
           data.simpleUrl = item.simpleUrl || "";
-          data.errorMsg = Util.getInstance().isType().isPlainObject(item.errorMsg) && item.errorMsg.message ? item.errorMsg.message : Util.getInstance().isType().isString(item.errorMsg) && item.errorMsg ? item.errorMsg : '';
+          data.errorMsg =
+            Util.getInstance().isType().isPlainObject(item.errorMsg) &&
+            item.errorMsg.message
+              ? item.errorMsg.message
+              : Util.getInstance().isType().isString(item.errorMsg) &&
+                item.errorMsg
+              ? item.errorMsg
+              : "";
           data.startTime = item.startTime || "";
-          promise_log.save(data)
-          break
+          promise_log.save(data);
+          break;
+        case error.RECORD_SCREEN:
+          if (!item.events) {
+            return;
+          }
+          const dir = `uploads/video/${data.monitorAppId}`;
+          if (!fs.existsSync(dir)) {
+            fs.mkdirSync(dir, { recursive: true });
+          }
+          const fileNmae = `${data.uuId}-${
+            item.sessionId
+          }-${moment().valueOf()}.text`;
+          const filePath = `${dir}/${fileNmae}`;
+          if (fs.existsSync(filePath)) {
+            return;
+          }
+          fs.writeFile(filePath, item.events, (err) => {
+            if (err) {
+              console.error("文件创建失败:", err);
+            } else {
+              data.level = item.level || "";
+              data.category = item.category || "";
+              data.happenDate = item.happenDate || "";
+              data.happenTime = item.happenDate || "";
+              data.pageUrl = item.pageUrl || "";
+              data.simpleUrl = item.simpleUrl || "";
+              data.url = filePath;
+              recordScreenModel.save(data);
+            }
+          });
+          
+          break;
         default:
       }
     });
