@@ -55,9 +55,22 @@ export default class PageDataAnalysisModel {
    * @param {*} id
    * @returns
    */
-  async updateData(data, id) {
+  async updateDataId(data, id) {
     let tableName = getTableName();
     let updateResult = await Knex.from(tableName).update(data).where("id", id);
+    return updateResult;
+  }
+
+  /**
+   * 修改
+   * @param {*} data 
+   * @param {*} monitorAppId 
+   * @param {*} happenTime 
+   * @returns 
+   */
+  async updateDataMonitorAppIdTime(data, monitorAppId, happenTime) {
+    let tableName = getTableName();
+    let updateResult = await Knex.from(tableName).update(data).where("monitorAppId", monitorAppId).andWhere("happenTime", happenTime);
     return updateResult;
   }
 
