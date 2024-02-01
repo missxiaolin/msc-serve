@@ -95,7 +95,7 @@ export default class TaskManager extends Base {
    */
   async registerTaskRepeatPer1Day() {
     schedule.scheduleJob("0 0 0 * * *", () => {
-      const summaryCommandList = ["Data:Hour:Init"];
+      const summaryCommandList = ["Data:Table:Init"];
       for (let summaryCommand of summaryCommandList) {
         this.dispatchParseCommand(summaryCommand);
       }

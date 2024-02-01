@@ -16,7 +16,7 @@ const registedCommandList = [
     './commands/save_log/redisLog.js', // RedisMq
     './commands/task/index', // 定时任务
     './commands/page/index', // page 分析
-    './commands/dataHour/dataInit.js', // dataHour表初始化
+    './commands/common/dayTable.js', // 凌晨各类数据表表初始化
     './commands/dataHour/index.js', // 分析数据插入
     './commands/watch_dog/alarm.js', // 监控发送
     './commands/elasticsearch/esCreateIndex.js', // es 索引创建

@@ -10,12 +10,12 @@ const dataHourModel = new DataHourModel()
 class DataHourInit extends Base {
   static get signature() {
     return `
-         Data:Hour:Init
+         Data:Table:Init
          `;
   }
 
   static get description() {
-    return "[每天执行1次]， 初始化dataHour表数据";
+    return "[每天执行1次]， 初始化各类表数据";
   }
 
   /**
@@ -29,6 +29,7 @@ class DataHourInit extends Base {
     let allProject = await projectModel.getStatusAll();
     allProject.forEach((item) => {
       dataHours.forEach((hour) => {
+        // data_hour表数据初始化
         this.save({
           monitorAppId: item.monitorAppId,
           hour
