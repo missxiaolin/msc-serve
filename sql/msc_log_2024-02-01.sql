@@ -7,7 +7,7 @@
 #
 # Host: 127.0.0.1 (MySQL 5.7.44)
 # Database: msc_log
-# Generation Time: 2024-01-31 08:51:18 +0000
+# Generation Time: 2024-02-01 02:40:40 +0000
 # ************************************************************
 
 
@@ -109,7 +109,7 @@ CREATE TABLE `click_log` (
   `monitorAppId` varchar(100) NOT NULL DEFAULT '' COMMENT '项目',
   `uuId` varchar(100) NOT NULL DEFAULT '' COMMENT '用户标识',
   `level` varchar(10) NOT NULL DEFAULT '' COMMENT '级别',
-  `happenTime` varchar(30) NOT NULL DEFAULT '' COMMENT '上报时间',
+  `happenTime` datetime NOT NULL COMMENT '上报时间',
   `screenHeight` int(11) NOT NULL COMMENT '设备高度',
   `screenWidth` int(11) NOT NULL COMMENT '设备宽度',
   `pageUrl` varchar(1000) NOT NULL DEFAULT '' COMMENT '页面链接',
@@ -138,7 +138,7 @@ DROP TABLE IF EXISTS `data_hour`;
 CREATE TABLE `data_hour` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `monitorAppId` varchar(100) NOT NULL DEFAULT '' COMMENT '项目ID',
-  `happenTime` varchar(30) NOT NULL DEFAULT '' COMMENT '时间精确到小时',
+  `happenTime` datetime NOT NULL COMMENT '时间精确到小时',
   `pvCount` int(11) NOT NULL COMMENT '页面pv',
   `uvCount` int(11) NOT NULL COMMENT '页面uv',
   `jsErrorCount` int(11) NOT NULL COMMENT 'js错误个数',
@@ -162,7 +162,7 @@ CREATE TABLE `http_log` (
   `monitorAppId` varchar(100) NOT NULL DEFAULT '' COMMENT '项目',
   `uuId` varchar(100) NOT NULL DEFAULT '' COMMENT '用户标识',
   `level` varchar(10) NOT NULL DEFAULT '' COMMENT '级别',
-  `happenTime` varchar(30) NOT NULL DEFAULT '' COMMENT '上报时间',
+  `happenTime` datetime NOT NULL COMMENT '上报时间',
   `netWork` varchar(10) NOT NULL DEFAULT '' COMMENT '网络',
   `ip` varchar(300) DEFAULT NULL COMMENT 'ip',
   `country` varchar(10) NOT NULL DEFAULT '' COMMENT '省',
@@ -220,7 +220,7 @@ CREATE TABLE `js_log` (
   `userAgent` varchar(500) NOT NULL DEFAULT '' COMMENT 'UA',
   `uuId` varchar(100) NOT NULL DEFAULT '' COMMENT '用户标识',
   `level` varchar(10) NOT NULL DEFAULT '' COMMENT '级别',
-  `happenTime` varchar(30) NOT NULL DEFAULT '' COMMENT '上报时间',
+  `happenTime` datetime NOT NULL COMMENT '上报时间',
   `deviceType` varchar(100) NOT NULL DEFAULT '' COMMENT '设备',
   `os` varchar(100) NOT NULL DEFAULT '' COMMENT '设备',
   `browserInfo` varchar(100) NOT NULL DEFAULT '' COMMENT '设备',
@@ -266,7 +266,7 @@ CREATE TABLE `page_data_analysis` (
   `ipCounct` int(11) NOT NULL,
   `jumpCount` int(11) NOT NULL,
   `visitFrequency` float NOT NULL,
-  `happenTime` varchar(30) NOT NULL DEFAULT '',
+  `happenTime` datetime NOT NULL,
   PRIMARY KEY (`id`),
   KEY `m_id_time` (`monitorAppId`,`happenTime`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
@@ -285,7 +285,7 @@ CREATE TABLE `page_log` (
   `userAgent` varchar(500) NOT NULL DEFAULT '' COMMENT 'UA',
   `uuId` varchar(100) NOT NULL DEFAULT '' COMMENT '用户标识',
   `level` varchar(10) NOT NULL DEFAULT '' COMMENT '级别',
-  `happenTime` varchar(30) NOT NULL DEFAULT '' COMMENT '上报时间',
+  `happenTime` datetime NOT NULL COMMENT '上报时间',
   `deviceType` varchar(100) NOT NULL DEFAULT '' COMMENT '设备',
   `os` varchar(100) NOT NULL DEFAULT '' COMMENT '设备',
   `browserInfo` varchar(100) NOT NULL DEFAULT '' COMMENT '设备',
@@ -328,7 +328,7 @@ CREATE TABLE `performance` (
   `score` int(100) NOT NULL COMMENT '分数',
   `textValue` text NOT NULL COMMENT '数据',
   `numValue` int(100) NOT NULL COMMENT '数据',
-  `happenTime` varchar(30) NOT NULL DEFAULT '' COMMENT '时间',
+  `happenTime` datetime NOT NULL COMMENT '时间',
   `simpleUrl` varchar(300) NOT NULL DEFAULT '',
   PRIMARY KEY (`id`),
   KEY `m_id_time` (`monitorAppId`,`happenTime`)
@@ -353,8 +353,8 @@ CREATE TABLE `projects` (
   `encryption` varchar(10) NOT NULL DEFAULT '' COMMENT '0 不加密 1 加密',
   `delay` int(11) NOT NULL COMMENT '应用间隔时间',
   `status` tinyint(2) DEFAULT NULL COMMENT '0 禁用 1 启用',
-  `startTime` varchar(30) NOT NULL DEFAULT '' COMMENT '创建时间',
-  `updateTime` varchar(30) NOT NULL DEFAULT '' COMMENT '修改时间',
+  `startTime` datetime NOT NULL COMMENT '创建时间',
+  `updateTime` datetime NOT NULL COMMENT '修改时间',
   PRIMARY KEY (`id`),
   UNIQUE KEY `name` (`name`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
@@ -385,7 +385,7 @@ CREATE TABLE `promise_log` (
   `userAgent` varchar(500) NOT NULL DEFAULT '' COMMENT 'UA',
   `uuId` varchar(100) NOT NULL DEFAULT '' COMMENT '用户标识',
   `level` varchar(10) NOT NULL DEFAULT '' COMMENT '级别',
-  `happenTime` varchar(30) NOT NULL DEFAULT '' COMMENT '上报时间',
+  `happenTime` datetime NOT NULL COMMENT '上报时间',
   `deviceType` varchar(100) NOT NULL DEFAULT '' COMMENT '设备',
   `os` varchar(100) NOT NULL DEFAULT '' COMMENT '设备',
   `browserInfo` varchar(100) NOT NULL DEFAULT '' COMMENT '设备',
@@ -442,7 +442,7 @@ CREATE TABLE `resource_log` (
   `userAgent` varchar(500) NOT NULL DEFAULT '' COMMENT 'UA',
   `uuId` varchar(100) NOT NULL DEFAULT '' COMMENT '用户标识',
   `level` varchar(10) NOT NULL DEFAULT '' COMMENT '级别',
-  `happenTime` varchar(30) NOT NULL DEFAULT '' COMMENT '上报时间',
+  `happenTime` datetime NOT NULL COMMENT '上报时间',
   `deviceType` varchar(100) NOT NULL DEFAULT '' COMMENT '设备',
   `os` varchar(100) NOT NULL DEFAULT '' COMMENT '设备',
   `browserInfo` varchar(100) NOT NULL DEFAULT '' COMMENT '设备',

@@ -117,14 +117,6 @@ class PageAnalysis extends Base {
    * @param {*} data
    */
   async handleSavePage(data) {
-    // let res = await pageDataAnalysisModel.getTimeMData(data.happenTime, data.monitorAppId);
-    // if (res && res.id) {
-    //   // 修改
-    //   await pageDataAnalysisModel.updateData(data, res.id);
-    // } else {
-    //   // 保存
-    //   await pageDataAnalysisModel.save(data);
-    // }
     await pageDataAnalysisModel.updateDataMonitorAppIdTime(data, data.monitorAppId, data.happenTime);
   }
 }
