@@ -23,6 +23,7 @@ const registedCommandList = [
     './commands/elasticsearch/esIndxList.js', // 获取es索引列表
     './commands/elasticsearch/index.js', // es存储
     './commands/elasticsearch/deleteEsData.js', // es 数据删除
+    './commands/sql/index.js', // sql 初始化
 ]
 
 
