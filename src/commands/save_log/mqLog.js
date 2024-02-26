@@ -5,6 +5,10 @@ const errprSave = new ErrorSave();
 import dotenv from "dotenv";
 const appConfig = dotenv.config().parsed;
 
+const cluster = require("cluster");
+const os = require("os");
+const numCPUs = os.cpus().length; // 获取CPU核心数
+const consumerCount = 3; // 配置消费者数量
 
 // const MAX_RUN_TIME = 29 * 1000 // 29s后自动关闭
 
@@ -31,14 +35,36 @@ class SaveLog extends Base {
     if (appConfig.RABBIT_MQ_IS_OPEN == 0) {
         return
     }
-    const mq = new RabbitMq();
-    mq.receiveQueueMsg(
-      "webLogSave",
-      (res) => {
-        errprSave.save(JSON.parse(res));
-      },
-      (error) => {}
-    );
+    if (cluster.isMaster) {
+      // 创建子进程
+      for (let i = 0; i < Math.min(numCPUs, consumerCount); i++) {
+        this.createWorker();
+      }
+
+      // 监听子进程退出事件
+      cluster.on("exit", (worker, code, signal) => {
+        console.log(
+          `Worker ${worker.process.pid} exited with code ${code} and signal ${signal}`
+        );
+        // 重启子进程
+        this.createWorker();
+      });
+    } else {
+      const mq = new RabbitMq();
+      mq.receiveQueueMsg(
+        "webLogSave",
+        (res) => {
+          errprSave.save(JSON.parse(res));
+        },
+        (error) => {}
+      );
+    }
+    
+  }
+
+  createWorker() {
+    const worker = cluster.fork();
+    console.log(`Worker ${worker.process.pid} started`);
   }
 }
 
